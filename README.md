@@ -24,7 +24,7 @@ Componentes importantes:
 - `servidor/geradorIA.js` — gera desafios usando `process.env.GEMINI_API_KEY`.
 - `servidor/avaliadorCodigo.js` — motor de avaliação (execução em VM + análise AST com `acorn`).
 
-Como a geração funciona (resumo técnico)
+Como a geração funciona
 
 - O gerador constrói um prompt direcionado e pede à IA um JSON contendo campos como `titulo`, `missao`, `codigoSujo`, `codigoLimpo`, `tipo`, `dificuldade`, `nomeDaFuncao` e `testes`.
 - Regras importantes definidas no prompt (ex.: usar `function` tradicional, `for` clássico, manter o nome da função idêntico etc.).
@@ -39,27 +39,42 @@ OBS: O arquivo `.env` deve conter essas variáveis e NÃO deve ser enviado ao re
 
 Instalação e execução (local)
 
-1. Instale dependências:
+1. Requisitos mínimos:
+
+- Node.js (recomendado: versão LTS, ex.: 18.x ou superior)
+- npm (vem com o Node.js)
+
+2. Instalar dependências:
+
+Você pode instalar as dependências listadas em `package.json` executando:
 
 ```bash
 cd laboratorio-qualidade
 npm install
 ```
 
-2. Crie um arquivo `.env` na raiz do projeto com, pelo menos, as variáveis abaixo:
+Ou instalar explicitamente (versões recomendadas refletem o `package.json` atual):
+
+```bash
+npm install express@^5.2.1 @google/generative-ai@^0.24.1 dotenv@^17.4.2 cookie-parser@^1.4.7 acorn@^8.16.0
+```
+
+Também há um arquivo `requisitos.txt` com as dependências e comandos de instalação no repositório.
+
+3. Crie um arquivo `.env` na raiz do projeto com, pelo menos, as variáveis abaixo:
 
 ```
 GEMINI_API_KEY=insira_sua_chave_aqui
 ADMIN_PASSWORD=uma_senha_segura
 ```
 
-3. Inicie o servidor:
+4. Inicie o servidor:
 
 ```bash
 node servidor/app.js
 ```
 
-4. Acesse as interfaces no browser:
+5. Acesse as interfaces no browser:
 
 - Painel do professor: http://localhost:3000/admin.html
 - Área do aluno: http://localhost:3000/aluno.html
@@ -134,10 +149,6 @@ Contribuição
 
 - Sugestões de melhoria e correções podem ser feitas via pull request. Antes de contribuir, execute `npm install` e teste localmente.
 
-Contato
+Professor Wagner de Almeida Junior
+IF Sudeste MG — Campus Juiz de Fora
 
-Professor: IF Sudeste MG — Campus Juiz de Fora
-
----
-
-Se quiser, posso também criar um arquivo `.env.example` (sem valores sensíveis) para facilitar o compartilhamento de configurações não secretas. Deseja que eu crie esse arquivo?

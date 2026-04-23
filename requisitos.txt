@@ -1,0 +1,25 @@
+# Requisitos de instalação
+
+Node.js: recomendado LTS (ex.: 18.x) ou superior
+npm: incluído no Node.js
+
+Dependências (servidor Node.js) — versões recomendadas:
+- express@^5.2.1
+- @google/generative-ai@^0.24.1
+- dotenv@^17.4.2
+- cookie-parser@^1.4.7
+- acorn@^8.16.0
+
+Instalação rápida:
+
+# Instalar a partir do package.json (recomendado)
+cd laboratorio-qualidade
+npm install
+
+# Ou instalar explicitamente as dependências listadas acima
+npm install express@^5.2.1 @google/generative-ai@^0.24.1 dotenv@^17.4.2 cookie-parser@^1.4.7 acorn@^8.16.0
+
+Observações:
+- O frontend utiliza CodeMirror via CDN; não há dependência npm adicional para o cliente.
+- Mantenha chaves sensíveis em `.env` e nunca envie esse arquivo ao repositório.
+- As versões acima refletem o `package.json` atual e podem ser atualizadas conforme necessário.
