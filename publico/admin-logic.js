@@ -21,7 +21,7 @@ async function gerarEmLote() {
     let qtd = document.getElementById("qtd-gerar").value;
     
     let elementoStatus = document.getElementById("status-geracao");
-    elementoStatus.innerText = "IA processando... Isso pode levar alguns segundos.";
+    elementoStatus.innerText = `Gerando ${qtd} questão(ões)... A IA aguarda 10s entre cada uma para evitar bloqueios. Por favor, aguarde.`;
 
     let configuracao = {
         method: "POST",

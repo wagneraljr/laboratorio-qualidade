@@ -8,6 +8,13 @@ const avaliadorCodigo = require("./avaliadorCodigo");
 
 const app = express();
 
+// Função para criar um atraso (sleep) no código
+const atraso = function(milissegundos) {
+    return new Promise(function(resolucao) {
+        setTimeout(resolucao, milissegundos);
+    });
+};
+
 // Permite que o servidor entenda dados no formato JSON
 app.use(express.json());
 app.use(cookieParser()); // Para lidar com cookies (sessões)
@@ -47,7 +54,7 @@ app.post("/api/logout", function(requisicao, resposta) {
     resposta.json({ sucesso: true });
 });
 
-// Verifique se a rota de abastecer está como POST (conforme o cliente.js envia)
+// ROTA DO PROFESSOR (Com mitigação de Rate Limit)
 app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisicao, resposta) {
     let quantidade = requisicao.body.quantidade;
     let tipo = requisicao.body.tipo;
@@ -60,16 +67,30 @@ app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisica
         let listaDeQuestoes = JSON.parse(conteudoAtual);
 
         for (let i = 0; i < quantidade; i++) {
-            let novoExercicio = await geradorIA.gerarNovoDesafio(tipo, dificuldade);
-            if (novoExercicio !== null) {
-                novoExercicio.id = Date.now() + i;
-                listaDeQuestoes.push(novoExercicio);
-                totalGerados = totalGerados + 1;
+            
+            // Se não for a primeira questão, espera 4 segundos antes de continuar
+            if (i > 0) {
+                console.log(`Aguardando 10 segundos... (Questão ${i+1} de ${quantidade})`);
+                await atraso(10000);
+            }
+
+            try {
+                let novoExercicio = await geradorIA.gerarNovoDesafio(tipo, dificuldade);
+                if (novoExercicio !== null) {
+                    novoExercicio.id = Date.now() + i; // ID único
+                    listaDeQuestoes.push(novoExercicio);
+                    totalGerados = totalGerados + 1;
+                }
+            } catch (erroInterno) {
+                console.error("Falha ao gerar a questão", i+1, erroInterno);
+                // O continue faz o laço ignorar o erro e pular para a próxima tentativa
+                continue; 
             }
         }
 
         fs.writeFileSync(caminhoBanco, JSON.stringify(listaDeQuestoes, null, 2));
         resposta.json({ sucesso: true, quantidade: totalGerados });
+        
     } catch (erro) {
         resposta.status(500).json({ sucesso: false, erro: "Falha ao manipular o banco JSON." });
     }
