@@ -1,0 +1,22 @@
+[
+  {
+    "titulo": "Refatorando o Cálculo do Carrinho de Compras Confuso",
+    "missao": "Você recebeu um trecho de código JavaScript que calcula o valor total de um carrinho de compras, incluindo descontos, frete e impostos. Embora o código funcione corretamente, ele apresenta nomes de variáveis e funções pouco descritivos, falta de padronização e o uso de 'números mágicos' diretamente no código. Sua tarefa é refatorar este código para torná-lo mais legível, manutenível e profissional. \n\n**Pontos a refatorar:**\n1.  **Nomes Significativos:** Renomeie variáveis e, se necessário, a função para que seus nomes reflitam claramente sua finalidade.\n2.  **Constantes:** Substitua os 'números mágicos' (valores fixos para percentuais, limites e taxas) por constantes nomeadas, melhorando a clareza e a facilidade de manutenção.\n3.  **Clareza Geral:** Organize o código de forma que o fluxo de cálculo seja fácil de seguir.\n\n**Regras Específicas:**\n*   Mantenha a funcionalidade exata do código original.\n*   Utilize APENAS a declaração tradicional de funções (com a palavra-chave `function`).\n*   Utilize APENAS o loop `for` clássico (ex: `for (let i = 0; i < array.length; i++)`).\n*   É proibido o uso de qualquer método iterador de array (como `forEach`, `map`, `filter`, `reduce`, etc.).",
+    "codigoSujo": "function calcularTudo(coisas) {\n    let sT = 0;\n    for (let i = 0; i < coisas.length; i++) {\n        let p = coisas[i].preco;\n        let q = coisas[i].qtd;\n        sT += p * q;\n    }\n\n    let d = 0;\n    if (sT > 100) {\n        d = sT * 0.10;\n    }\n\n    let e = 15;\n\n    let pDT = sT - d + e;\n\n    let im = pDT * 0.05;\n\n    let r = pDT + im;\n\n    return r;\n}",
+    "codigoLimpo": "function calcularTotalCarrinho(itensDoCarrinho) {\n    const LIMITE_PARA_DESCONTO = 100;\n    const PERCENTUAL_DESCONTO = 0.10; // 10%\n    const CUSTO_FIXO_ENVIO = 15.00;\n    const PERCENTUAL_IMPOSTO = 0.05; // 5%\n\n    let subtotal = 0;\n    for (let i = 0; i < itensDoCarrinho.length; i++) {\n        const item = itensDoCarrinho[i];\n        subtotal += item.preco * item.qtd;\n    }\n\n    let valorDesconto = 0;\n    if (subtotal > LIMITE_PARA_DESCONTO) {\n        valorDesconto = subtotal * PERCENTUAL_DESCONTO;\n    }\n\n    const custoEnvio = CUSTO_FIXO_ENVIO;\n\n    let totalAposDescontoEEnvio = subtotal - valorDesconto + custoEnvio;\n\n    const valorImposto = totalAposDescontoEEnvio * PERCENTUAL_IMPOSTO;\n\n    let totalFinal = totalAposDescontoEEnvio + valorImposto;\n\n    return totalFinal;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "calcularTudo",
+    "testes": [
+      {
+        "parametros": "[ { \"preco\": 10, \"qtd\": 2 }, { \"preco\": 5, \"qtd\": 3 } ]",
+        "saidaEsperada": 52.5
+      },
+      {
+        "parametros": "[ { \"preco\": 50, \"qtd\": 1 }, { \"preco\": 30, \"qtd\": 2 } ]",
+        "saidaEsperada": 119.7
+      }
+    ],
+    "id": 1776972417903
+  }
+]

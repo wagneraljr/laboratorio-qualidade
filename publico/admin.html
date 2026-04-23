@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Conteúdo - Admin</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <nav class="barra-admin">
+        <img src="logo_if.png" alt="Logo IF Sudeste MG" style="max-width: 200px; margin-bottom: 20px;">
+        <h1>Painel do Professor</h1>
+        <div class="acoes-nav">
+            <button onclick="window.location.href='aluno.html'" class="btn-modo-aluno">Alternar para Modo Aluno 🎓</button>
+            <button onclick="fazerLogout()" class="btn-sair">Sair</button>
+        </div>
+    </nav>
+
+    <main class="container-admin">
+        
+        <section class="secao-geracao">
+            <h3>Gerar Novos Desafios</h3>
+            
+            <div class="controles-geracao">
+                <label>Tipo de Exercício:</label>
+                <select id="tipo-gerar">
+                    <option value="correcao">Correção de Bugs</option>
+                    <option value="refatoracao">Refatoração de Código</option>
+                </select>
+
+                <label>Nível de Dificuldade (1 a 5):</label>
+                <input type="number" id="dif-gerar" min="1" max="5" value="1">
+
+                <label>Quantidade a Gerar:</label>
+                <input type="number" id="qtd-gerar" min="1" max="10" value="1">
+
+                <button onclick="gerarEmLote()">Gerar e Salvar no Banco</button>
+            </div>
+            
+            <p id="status-geracao"></p>
+        </section>
+
+        <hr>
+
+        <section class="secao-curadoria">
+            <h3>Gerenciar Banco de Desafios</h3>
+            <div class="filtros-busca">
+                <input type="text" id="busca-texto" placeholder="Buscar por título..." oninput="filtrarLista()">
+                <select id="filtro-tipo" onchange="filtrarLista()">
+                    <option value="todos">Todos os Tipos</option>
+                    <option value="correcao">Correção</option>
+                    <option value="refatoracao">Refatoração</option>
+                </select>
+            </div>
+
+            <div id="lista-desafios" class="grid-desafios">
+                </div>
+        </section>
+        
+    </main>
+
+    <script src="admin-logic.js"></script>
+</body>
+</html>

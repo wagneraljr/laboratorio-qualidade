@@ -1,0 +1,169 @@
+// Importações sem desestruturação
+const express = require("express");
+const path = require("path");
+const fs = require("fs"); // Módulo para manipulação de arquivos
+const geradorIA = require("./geradorIA");
+const cookieParser = require("cookie-parser");
+const avaliadorCodigo = require("./avaliadorCodigo");
+
+const app = express();
+
+// Permite que o servidor entenda dados no formato JSON
+app.use(express.json());
+app.use(cookieParser()); // Para lidar com cookies (sessões)
+
+// Diz ao Express para servir os arquivos da pasta "publico"
+const caminhoPublico = path.join(__dirname, "..", "publico");
+const caminhoBanco = path.join(__dirname, "bancoQuestoes.json");
+
+app.use(express.static(caminhoPublico));
+
+function verificarAutenticacao(requisicao, resposta, proximo) {
+    let token = requisicao.cookies.auth_token;
+    
+    if (token === "logado") {
+        return proximo(); // Autorizado: segue para a página/rota
+    } else {
+        resposta.redirect("/login.html"); // Não autorizado: vai para o login
+    }
+}
+// Rota de Login (POST)
+app.post("/api/login", function(requisicao, resposta) {
+    let senhaDigitada = requisicao.body.senha;
+    let senhaCorreta = process.env.ADMIN_PASSWORD;
+
+    if (senhaDigitada === senhaCorreta) {
+        // Define um cookie que expira em 1 hora
+        resposta.cookie("auth_token", "logado", { maxAge: 3600000, httpOnly: true });
+        resposta.json({ sucesso: true });
+    } else {
+        resposta.status(401).json({ sucesso: false, erro: "Senha incorreta" });
+    }
+});
+
+// Rota para deslogar o professor
+app.post("/api/logout", function(requisicao, resposta) {
+    resposta.clearCookie("auth_token");
+    resposta.json({ sucesso: true });
+});
+
+// Verifique se a rota de abastecer está como POST (conforme o cliente.js envia)
+app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisicao, resposta) {
+    let quantidade = requisicao.body.quantidade;
+    let tipo = requisicao.body.tipo;
+    let dificuldade = parseInt(requisicao.body.dificuldade);
+    
+    let totalGerados = 0;
+
+    try {
+        let conteudoAtual = fs.readFileSync(caminhoBanco, "utf8");
+        let listaDeQuestoes = JSON.parse(conteudoAtual);
+
+        for (let i = 0; i < quantidade; i++) {
+            let novoExercicio = await geradorIA.gerarNovoDesafio(tipo, dificuldade);
+            if (novoExercicio !== null) {
+                novoExercicio.id = Date.now() + i;
+                listaDeQuestoes.push(novoExercicio);
+                totalGerados = totalGerados + 1;
+            }
+        }
+
+        fs.writeFileSync(caminhoBanco, JSON.stringify(listaDeQuestoes, null, 2));
+        resposta.json({ sucesso: true, quantidade: totalGerados });
+    } catch (erro) {
+        resposta.status(500).json({ sucesso: false, erro: "Falha ao manipular o banco JSON." });
+    }
+});
+
+// ROTA DO ALUNO (Agora usando POST para receber os filtros)
+app.post("/api/missao-aleatoria", function(requisicao, resposta) {
+    let tipoDesejado = requisicao.body.tipo;
+    let dificuldadeDesejada = parseInt(requisicao.body.dificuldade);
+
+    let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+    let listaDeQuestoes = JSON.parse(conteudo);
+    
+    let questoesFiltradas = [];
+
+    // Filtra o banco de questões usando for...of
+    for (let questao of listaDeQuestoes) {
+        if (questao.tipo === tipoDesejado && questao.dificuldade === dificuldadeDesejada) {
+            questoesFiltradas.push(questao);
+        }
+    }
+    
+    if (questoesFiltradas.length > 0) {
+        let indice = Math.floor(Math.random() * questoesFiltradas.length);
+        resposta.json({ sucesso: true, dados: questoesFiltradas[indice] });
+    } else {
+        resposta.status(404).json({ sucesso: false, erro: "Nenhuma missão com este perfil no estoque." });
+    }
+});
+
+// Atualize a rota de avaliação:
+app.post("/api/avaliar", function(requisicao, resposta) {
+    let codigoDoAluno = requisicao.body.codigo;
+    let idDaQuestao = requisicao.body.idQuestao; // Precisamos saber qual questão ele está respondendo
+
+    // Busca a questão no banco para pegar os testes corretos
+    let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+    let listaDeQuestoes = JSON.parse(conteudo);
+    
+    let questaoAtual = null;
+    for (let questao of listaDeQuestoes) {
+        if (questao.id === idDaQuestao) {
+            questaoAtual = questao;
+            break;
+        }
+    }
+
+    if (questaoAtual !== null) {
+        // Verifica se é refatoração para acionar a análise de AST no avaliador
+        let codigoOriginalParaAST = null;
+        if (questaoAtual.tipo === "refatoracao") {
+            codigoOriginalParaAST = questaoAtual.codigoSujo;
+        }
+
+        // Manda para o motor de avaliação (Agora passando o código sujo original como 4º parâmetro)
+        let resultadoDaAvaliacao = avaliadorCodigo.executarTestes(
+            codigoDoAluno, 
+            questaoAtual.nomeDaFuncao, 
+            questaoAtual.testes,
+            codigoOriginalParaAST
+        );
+        
+        resposta.json(resultadoDaAvaliacao);
+    } else {
+        resposta.status(404).json({ sucesso: false, erros: ["Questão não encontrada no sistema."] });
+    }
+});
+
+app.get("/api/admin/questoes", verificarAutenticacao, function(requisicao, resposta) {
+    let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+    resposta.json(JSON.parse(conteudo));
+});
+
+// Rota para excluir uma questão específica
+app.delete("/api/admin/questoes/:id", verificarAutenticacao, function(requisicao, resposta) {
+    let idParaExcluir = parseInt(requisicao.params.id);
+    
+    try {
+        let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+        let lista = JSON.parse(conteudo);
+        
+        // Filtra a lista mantendo apenas as que NÃO têm o ID informado
+        let novaLista = lista.filter(function(item) {
+            return item.id !== idParaExcluir;
+        });
+        
+        fs.writeFileSync(caminhoBanco, JSON.stringify(novaLista, null, 2));
+        resposta.json({ sucesso: true });
+    } catch (erro) {
+        resposta.status(500).json({ sucesso: false, erro: "Erro ao excluir questão." });
+    }
+});
+
+// Inicia o servidor na porta 3000
+app.listen(3000, function() {
+    console.log("Servidor rodando! Acesse: http://localhost:3000");
+});

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Área do Aluno - Treinamento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <nav class="barra-admin">
+        <h1>Laboratório do Aluno</h1>
+        <div class="acoes-nav">
+            <button onclick="window.location.href='index.html'" class="btn-sair">Voltar ao Início</button>
+        </div>
+    </nav>
+
+    <main class="container-admin" style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+        
+        <aside class="painel-jogador">
+            <h2>Selecione o Treinamento</h2>
+            
+            <div class="controles-geracao" style="margin-bottom: 20px;">
+                <select id="tipo-aluno">
+                    <option value="correcao">Correção de Bugs</option>
+                    <option value="refatoracao">Refatoração</option>
+                </select>
+                
+                <select id="dif-aluno">
+                    <option value="1">Nível 1 (Básico)</option>
+                    <option value="2">Nível 2</option>
+                    <option value="3">Nível 3</option>
+                    <option value="4">Nível 4</option>
+                    <option value="5">Nível 5 (Avançado)</option>
+                </select>
+                
+                <button id="btn-pedir-estoque" style="width: 100%; margin-top: 10px;">Buscar no Banco</button>
+            </div>
+
+            <hr>
+            
+            <div class="detalhes-missao">
+                <h3 id="titulo-missao">Aguardando seleção...</h3>
+                <p id="descricao-missao">Escolha o tipo e a dificuldade acima e busque no banco.</p>
+            </div>
+
+            <hr>
+
+            <div class="status-jogador">
+                <p>⚡ Energia: <span id="energia">5</span></p>
+                <p>🏆 <span id="barra-xp">0 XP</span></p>
+            </div>
+        </aside>
+
+        <section class="area-trabalho">
+            <textarea id="editor-aluno"></textarea>
+            <button id="btn-avaliar" style="margin-top: 15px; width: 100%; font-size: 1.1em;">Testar Código</button>
+        </section>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="cliente.js"></script>
+</body>
+</html>

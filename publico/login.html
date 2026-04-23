@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Admin - Plataforma</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Acesso do Professor</h1>
+        <input type="password" id="senha" placeholder="Digite a senha">
+        <button onclick="fazerLogin()">Entrar</button>
+    </div>
+
+    <script>
+        async function fazerLogin() {
+            let senha = document.getElementById("senha").value;
+            let resposta = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ senha: senha })
+            });
+            let dados = await resposta.json();
+            if (dados.sucesso) {
+                window.location.href = "/admin.html";
+            } else {
+                alert("Senha inválida!");
+            }
+        }
+    </script>
+</body>
+</html>

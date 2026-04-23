@@ -1,0 +1,169 @@
+/* =========================================================
+   PALETA E VARIÁVEIS REAJUSTADAS
+========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+
+:root {
+    --if-verde: #2F9E41;
+    --if-verde-escuro: #1D6B2A;
+    --if-vermelho: #CD191E;
+    --if-vermelho-escuro: #A11115;
+    
+    --cor-fundo: #F8F9FA;
+    --cor-texto: #2D3436;
+    --cor-texto-claro: #636E72;
+    --cor-fundo-card: #FFFFFF;
+    
+    --borda: 1px solid #DFE6E9;
+    --sombra: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --raio-borda: 6px;
+}
+
+/* =========================================================
+   RESETS E TIPOGRAFIA REDUZIDA
+========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+html {
+    font-size: 14px; /* Redução da base da fonte */
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.5;
+}
+
+h1 { font-size: 1.6rem; color: var(--if-verde); }
+h2 { font-size: 1.4rem; color: var(--if-verde); }
+h3 { font-size: 1.2rem; color: var(--if-verde); }
+h4 { font-size: 1.1rem; }
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+.barra-admin {
+    background-color: #FFFFFF;
+    border-top: 3px solid var(--if-verde);
+    border-bottom: var(--borda);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--sombra);
+}
+
+/* =========================================================
+   BOTÕES REAJUSTADOS (MENORES)
+========================================================= */
+button {
+    background-color: var(--if-verde);
+    color: white;
+    border: none;
+    padding: 8px 16px; /* Padding reduzido */
+    border-radius: var(--raio-borda);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    background-color: var(--if-verde-escuro);
+    transform: translateY(-1px);
+}
+
+.btn-sair { background-color: var(--if-vermelho); }
+.btn-sair:hover { background-color: var(--if-vermelho-escuro); }
+
+.btn-modo-aluno {
+    background-color: transparent;
+    color: var(--if-verde);
+    border: 1.5px solid var(--if-verde);
+}
+
+/* =========================================================
+   INPUTS E FORMULÁRIOS
+========================================================= */
+select, input {
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    border: 1px solid #BDC3C7;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* =========================================================
+   LAYOUTS
+========================================================= */
+.container-admin {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.card-desafio, .painel-jogador, .portal-container {
+    background-color: var(--cor-fundo-card);
+    padding: 20px;
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra);
+    border: var(--borda);
+}
+
+/* =========================================================
+   ÁREA DE CÓDIGO E GABARITO (MELHORIA DE CONTRASTE)
+========================================================= */
+.gabarito-area {
+    background-color: #F1F2F6 !important; /* Fundo cinza muito claro */
+    border-left: 4px solid var(--if-verde);
+    padding: 15px !important;
+    color: #2F3542 !important; /* Texto quase preto para leitura */
+}
+
+.gabarito-area h5 {
+    margin-top: 10px;
+    color: var(--if-verde-escuro);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.gabarito-area pre {
+    background-color: #FFFFFF; /* Fundo branco para o código no gabarito */
+    color: #2D3436;
+    border: 1px solid #D1D8E0;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+}
+
+.codigo-gabarito code {
+    color: #2D3436; 
+    font-weight: 600;
+}
+
+/* =========================================================
+   COMPONENTES DO ALUNO
+========================================================= */
+.status-jogador {
+    margin-top: 15px;
+    padding: 10px;
+    background: #E8F5E9;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+.CodeMirror {
+    height: 400px !important; /* Altura reajustada */
+    border: var(--borda);
+    font-size: 14px;
+}
