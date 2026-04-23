@@ -34,5 +34,178 @@
       }
     ],
     "id": 1776977910174
+  },
+  {
+    "titulo": "Desafio de Validação: Refatorando um Validador de E-mail Básico",
+    "missao": "Você foi contratado para aprimorar um sistema de cadastro e percebeu que o validador de e-mail existente possui algumas falhas sutis. Sua tarefa é analisar o código JavaScript fornecido, identificar os erros de lógica que permitem e-mails inválidos passarem (ou, em alguns casos, rejeitam válidos) e corrigi-los para que a função `validarEmailSimples` valide e-mails de acordo com as seguintes boas práticas para validação básica:\n\n1.  O e-mail não pode ser nulo, indefinido ou uma string vazia.\n2.  Deve ter um comprimento mínimo razoável (por exemplo, 'a@b.c' tem 5 caracteres).\n3.  Deve conter um caractere '@'.\n4.  Deve conter um caractere '.' (ponto).\n5.  O caractere '@' não pode ser o primeiro nem o último caractere do e-mail.\n6.  O caractere '.' (ponto) não pode ser o primeiro nem o último caractere do e-mail.\n7.  Deve haver pelo menos um caractere entre o '@' e o primeiro '.' após ele (ou seja, 'usuario@.com' é inválido).\n8.  O caractere '.' (ponto) deve aparecer DEPOIS do '@'.\n\nSeu objetivo é fazer com que a função retorne `true` apenas para e-mails válidos e `false` para todos os inválidos, corrigindo as falhas presentes.",
+    "codigoSujo": "function validarEmailSimples(email) {\n    if (typeof email !== 'string' || !email) {\n        return false;\n    }\n\n    // Bug 1: Comprimento mínimo inadequado. Um e-mail como 'a@.c' (4 caracteres) passaria por aqui.\n    if (email.length < 4) {\n        return false;\n    }\n\n    var atIndex = email.indexOf('@');\n    var dotIndex = email.indexOf('.');\n\n    if (atIndex === -1 || dotIndex === -1) {\n        return false;\n    }\n\n    // Verifica se '@' está no início ou fim (correto)\n    if (atIndex === 0 || atIndex === email.length - 1) {\n        return false;\n    }\n\n    // Bug 2: Esta condição é insuficiente para a posição do ponto.\n    // Permite casos como 'usuario@.com' porque 'dotIndex < atIndex + 1' avalia para falso (ex: 5 < 4+1 -> 5 < 5 -> Falso).\n    // Isso significa que e-mails com ponto imediatamente após o '@' (que são inválidos) podem passar.\n    if (dotIndex < atIndex + 1) {\n        return false;\n    }\n    \n    // Bug 3: Não há verificação para e-mails que terminam com um ponto.\n    // Exemplo: 'teste@dominio.com.' passaria por todas as verificações atuais.\n\n    return true;\n}",
+    "codigoLimpo": "function validarEmailSimples(email) {\n    if (typeof email !== 'string' || !email) {\n        return false;\n    }\n\n    // Correção 1: Comprimento mínimo adequado para um e-mail básico como 'a@b.c'\n    if (email.length < 5) {\n        return false;\n    }\n\n    var atIndex = email.indexOf('@');\n    var dotIndex = email.indexOf('.');\n\n    if (atIndex === -1 || dotIndex === -1) {\n        return false;\n    }\n\n    if (atIndex === 0 || atIndex === email.length - 1) {\n        return false;\n    }\n\n    // Correção 2: Garante que o ponto está depois do '@' E que há pelo menos um caractere entre eles.\n    // 'dotIndex < atIndex + 2' captura casos como 'usuario@.com' onde o ponto está 'atIndex + 1'.\n    if (dotIndex < atIndex + 2) {\n        return false;\n    }\n\n    // Correção 3: Garante que o e-mail não termina com um ponto.\n    if (email.charAt(email.length - 1) === '.') {\n        return false;\n    }\n\n    // Adicional: Garante que o ponto não está no início do e-mail. (Já coberto pela lógica 'dotIndex < atIndex + 2' \n    // em conjunto com 'atIndex > 0' para a maioria dos casos)\n    if (dotIndex === 0) {\n        return false;\n    }\n\n    return true;\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "validarEmailSimples",
+    "testes": [
+      {
+        "parametros": "[\"a@b.c\"]",
+        "saidaEsperada": true
+      },
+      {
+        "parametros": "[\"user@domain.net\"]",
+        "saidaEsperada": true
+      },
+      {
+        "parametros": "[\"a@.c\"]",
+        "saidaEsperada": false
+      },
+      {
+        "parametros": "[\"test@example.com.\"]",
+        "saidaEsperada": false
+      },
+      {
+        "parametros": "[\"@domain.com\"]",
+        "saidaEsperada": false
+      },
+      {
+        "parametros": "[\"domain.com\"]",
+        "saidaEsperada": false
+      },
+      {
+        "parametros": "[\"email@domain\"]",
+        "saidaEsperada": false
+      },
+      {
+        "parametros": "[\"a@b\"]",
+        "saidaEsperada": false
+      },
+      {
+        "parametros": "[\".user@domain.com\"]",
+        "saidaEsperada": false
+      }
+    ],
+    "id": 1776985634156
+  },
+  {
+    "titulo": "Inventário Desorganizado: Correção de Lógica de Estoque",
+    "missao": "Você foi encarregado de revisar o sistema de inventário de uma pequena loja. A função `calcularValorTotalInventario` deveria calcular o valor monetário total de todos os produtos em estoque, multiplicando o preço de cada item pela sua quantidade em estoque e somando tudo. No entanto, há alguns erros de lógica e sintaxe sutis que a impedem de funcionar corretamente. Seu trabalho é identificar e corrigir esses bugs para que a função retorne o valor total exato do inventário.",
+    "codigoSujo": "function calcularValorTotalInventario(produtos) {\n    let valorTotal;\n\n    for (let i = 0; i <= produtos.length; i++) {\n        let produto = produtos[i];\n        valorTotal = valorTotal + (produto.valor * produto.estoque);\n    }\n\n    return valorTotal;\n}",
+    "codigoLimpo": "function calcularValorTotalInventario(produtos) {\n    let valorTotal = 0;\n\n    for (let i = 0; i < produtos.length; i++) {\n        let produto = produtos[i];\n        valorTotal = valorTotal + (produto.preco * produto.estoque);\n    }\n\n    return valorTotal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "calcularValorTotalInventario",
+    "testes": [
+      {
+        "parametros": "[ { \"nome\": \"Laptop\", \"preco\": 1200, \"estoque\": 2 }, { \"nome\": \"Mouse\", \"preco\": 25, \"estoque\": 10 } ]",
+        "saidaEsperada": 2650
+      },
+      {
+        "parametros": "[ { \"nome\": \"Teclado\", \"preco\": 75, \"estoque\": 3 }, { \"nome\": \"Monitor\", \"preco\": 500, \"estoque\": 1 } ]",
+        "saidaEsperada": 725
+      },
+      {
+        "parametros": "[ { \"nome\": \"Webcam\", \"preco\": 150, \"estoque\": 0 } ]",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": 0
+      }
+    ],
+    "id": 1776985658151
+  },
+  {
+    "titulo": "Depurando a Análise de Texto",
+    "missao": "Você foi encarregado de revisar e corrigir uma função JavaScript que realiza algumas manipulações básicas de string. O objetivo é garantir que a função 'processarTexto' inverta completamente uma string, conte todas as vogais (a, e, i, o, u, tanto maiúsculas quanto minúsculas) e verifique a presença da substring 'js' de forma case-insensitive. Há bugs sutis no código que precisam ser encontrados e corrigidos para que a função opere conforme o esperado.",
+    "codigoSujo": "function processarTexto(texto) {\n    var textoInvertido = \"\";\n    for (var i = texto.length - 1; i >= 1; i--) {\n        textoInvertido += texto[i];\n    }\n\n    var totalVogais = 0;\n    var vogais = \"aeiou\";\n    for (var i = 0; i < texto.length; i++) {\n        if (vogais.indexOf(texto[i]) !== -1) {\n            totalVogais++;\n        }\n    }\n\n    var contemSubstringJS = false;\n    var busca = \"JS\";\n    if (texto.indexOf(busca) !== -1) {\n        contemSubstringJS = true;\n    }\n\n    return {\n        textoInvertido: textoInvertido,\n        totalVogais: totalVogais,\n        contemSubstringJS: contemSubstringJS\n    };\n}",
+    "codigoLimpo": "function processarTexto(texto) {\n    var textoInvertido = \"\";\n    for (var i = texto.length - 1; i >= 0; i--) {\n        textoInvertido += texto[i];\n    }\n\n    var totalVogais = 0;\n    var vogais = \"aeiou\";\n    for (var i = 0; i < texto.length; i++) {\n        if (vogais.indexOf(texto[i].toLowerCase()) !== -1) {\n            totalVogais++;\n        }\n    }\n\n    var contemSubstringJS = false;\n    var busca = \"js\";\n    if (texto.toLowerCase().indexOf(busca) !== -1) {\n        contemSubstringJS = true;\n    }\n\n    return {\n        textoInvertido: textoInvertido,\n        totalVogais: totalVogais,\n        contemSubstringJS: contemSubstringJS\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarTexto",
+    "testes": [
+      {
+        "parametros": "[\"APPLE\"]",
+        "saidaEsperada": {
+          "textoInvertido": "ELPPA",
+          "totalVogais": 2,
+          "contemSubstringJS": false
+        }
+      },
+      {
+        "parametros": "[\"Adoro programar em javascript!\"]",
+        "saidaEsperada": {
+          "textoInvertido": "!tpircsavaj me ramargorp orodA",
+          "totalVogais": 9,
+          "contemSubstringJS": true
+        }
+      }
+    ],
+    "id": 1776985711361
+  },
+  {
+    "titulo": "Corrigindo o Sistema de Inventário Básico",
+    "missao": "Um de seus colegas de equipe desenvolveu uma função para calcular o valor total de todos os produtos no estoque. No entanto, ele cometeu alguns erros básicos que estão resultando em valores incorretos. Sua tarefa é encontrar e corrigir os bugs no código fornecido para que a função 'calcularValorTotalInventario' retorne o valor total exato do inventário, que é a soma de (preço do produto * quantidade em estoque) para cada produto. Mantenha as estruturas de função tradicional e loops 'for' clássicos.",
+    "codigoSujo": "function calcularValorTotalInventario(inventario) {\n    let valorTotal = 1;\n\n    for (let i = 0; i < inventario.length - 1; i++) {\n        let produto = inventario[i];\n        valorTotal += produto.preco + produto.estoque;\n    }\n\n    return valorTotal;\n}",
+    "codigoLimpo": "function calcularValorTotalInventario(inventario) {\n    let valorTotal = 0;\n\n    for (let i = 0; i < inventario.length; i++) {\n        let produto = inventario[i];\n        valorTotal += produto.preco * produto.estoque;\n    }\n\n    return valorTotal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "calcularValorTotalInventario",
+    "testes": [
+      {
+        "parametros": "[{ \"nome\": \"Mouse\", \"preco\": 50, \"estoque\": 10 }, { \"nome\": \"Teclado\", \"preco\": 120, \"estoque\": 5 }]",
+        "saidaEsperada": 1100
+      },
+      {
+        "parametros": "[{ \"nome\": \"Monitor 24 polegadas\", \"preco\": 800, \"estoque\": 2 }]",
+        "saidaEsperada": 1600
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": 0
+      }
+    ],
+    "id": 1776985829356
+  },
+  {
+    "titulo": "Análise de Texto: Inversão, Vogais e Busca",
+    "missao": "Você recebeu um código JavaScript com alguns erros lógicos sutis. Sua tarefa é corrigir a função `processarTextoAnalitico` para que ela retorne um objeto com as seguintes informações corretas sobre a string de entrada (`texto`) e a `palavraChave`:\n\n1.  `textoInvertido`: A string original completamente invertida.\n2.  `numVogais`: A contagem total de vogais (a, e, i, o, u), considerando tanto letras maiúsculas (A, E, I, O, U) quanto minúsculas. Caracteres acentuados como 'á', 'é' não precisam ser considerados vogais para este exercício.\n3.  `contemPalavraChave`: Um valor booleano (true ou false) indicando se a `palavraChave` está presente em *qualquer parte* da string original (`texto`).",
+    "codigoSujo": "function processarTextoAnalitico(texto, palavraChave) {\n\n    let textoInvertido = \"\";\n    for (let i = 0; i < texto.length; i++) {\n        textoInvertido += texto[i];\n    }\n\n    let numVogais = 0;\n    let vogaisPermitidas = \"aeiou\";\n    for (let i = 0; i < texto.length; i++) {\n        if (vogaisPermitidas.indexOf(texto[i]) !== -1) {\n            numVogais++;\n        }\n    }\n\n    let contemPalavraChave = false;\n    if (texto === palavraChave) {\n        contemPalavraChave = true;\n    }\n\n    return {\n        textoInvertido: textoInvertido,\n        numVogais: numVogais,\n        contemPalavraChave: contemPalavraChave\n    };\n}",
+    "codigoLimpo": "function processarTextoAnalitico(texto, palavraChave) {\n\n    let textoInvertido = \"\";\n    for (let i = texto.length - 1; i >= 0; i--) {\n        textoInvertido += texto[i];\n    }\n\n    let numVogais = 0;\n    let vogais = \"aeiouAEIOU\";\n    for (let i = 0; i < texto.length; i++) {\n        if (vogais.indexOf(texto[i]) !== -1) {\n            numVogais++;\n        }\n    }\n\n    let contemPalavraChave = texto.includes(palavraChave);\n\n    return {\n        textoInvertido: textoInvertido,\n        numVogais: numVogais,\n        contemPalavraChave: contemPalavraChave\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarTextoAnalitico",
+    "testes": [
+      {
+        "parametros": [
+          "Hello World",
+          "World"
+        ],
+        "saidaEsperada": {
+          "textoInvertido": "dlroW olleH",
+          "numVogais": 3,
+          "contemPalavraChave": true
+        }
+      },
+      {
+        "parametros": [
+          "Programacao Javascript",
+          "pyTHon"
+        ],
+        "saidaEsperada": {
+          "textoInvertido": "tpircsavaJ oacamarborP",
+          "numVogais": 8,
+          "contemPalavraChave": false
+        }
+      },
+      {
+        "parametros": [
+          "Olá Mundo!",
+          "Olá"
+        ],
+        "saidaEsperada": {
+          "textoInvertido": "!odnuM álO",
+          "numVogais": 4,
+          "contemPalavraChave": true
+        }
+      }
+    ],
+    "id": 1776985890444
   }
 ]

@@ -52,15 +52,6 @@ Você pode instalar as dependências listadas em `package.json` executando:
 cd laboratorio-qualidade
 npm install
 ```
-
-Ou instalar explicitamente (versões recomendadas refletem o `package.json` atual):
-
-```bash
-npm install express@^5.2.1 @google/generative-ai@^0.24.1 dotenv@^17.4.2 cookie-parser@^1.4.7 acorn@^8.16.0
-```
-
-Também há um arquivo `requisitos.txt` com as dependências e comandos de instalação no repositório.
-
 3. Crie um arquivo `.env` na raiz do projeto com, pelo menos, as variáveis abaixo:
 
 ```
