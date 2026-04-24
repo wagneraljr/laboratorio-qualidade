@@ -159,6 +159,21 @@ app.post("/api/avaliar", function(requisicao, resposta) {
     }
 });
 
+// --- ROTA PÚBLICA: BUSCAR BANCO COMPLETO (Usada no Modo Competitivo) ---
+app.get("/api/questoes", function(req, res) {
+    try {
+        // Lê o arquivo JSON do banco de dados
+        let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+        let listaCompleta = JSON.parse(conteudo);
+        
+        // Devolve a lista para o front-end montar a competição
+        res.json(listaCompleta);
+    } catch (erro) {
+        console.error("Erro ao ler o banco de questões:", erro);
+        res.status(500).json({ erro: "Falha interna no servidor." });
+    }
+});
+
 app.get("/api/admin/questoes", verificarAutenticacao, function(requisicao, resposta) {
     let conteudo = fs.readFileSync(caminhoBanco, "utf8");
     resposta.json(JSON.parse(conteudo));
@@ -181,6 +196,53 @@ app.delete("/api/admin/questoes/:id", verificarAutenticacao, function(requisicao
         resposta.json({ sucesso: true });
     } catch (erro) {
         resposta.status(500).json({ sucesso: false, erro: "Erro ao excluir questão." });
+    }
+});
+
+// Criar ou atualizar questão manualmente
+app.post("/api/admin/questoes/atualizar", verificarAutenticacao, function(req, res) {
+    let questaoEditada = req.body;
+    let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+    let lista = JSON.parse(conteudo);
+
+    for (let i = 0; i < lista.length; i++) {
+        if (lista[i].id === questaoEditada.id) {
+            // Se for edição manual, a IA não gerou testes novos, 
+            // mantemos os testes originais se existirem.
+            questaoEditada.testes = lista[i].testes || []; 
+            lista[i] = questaoEditada;
+            break;
+        }
+    }
+
+    fs.writeFileSync(caminhoBanco, JSON.stringify(lista, null, 2));
+    res.json({ sucesso: true });
+});
+
+app.post("/api/admin/questoes/criar", verificarAutenticacao, function(req, res) {
+    let novaQuestao = req.body;
+    let conteudo = fs.readFileSync(caminhoBanco, "utf8");
+    let lista = JSON.parse(conteudo);
+    
+    lista.push(novaQuestao);
+    
+    fs.writeFileSync(caminhoBanco, JSON.stringify(lista, null, 2));
+    res.json({ sucesso: true });
+});
+
+// --- ROTA: SANDBOX DO PROFESSOR (Testes avulsos) ---
+app.post("/api/admin/sandbox/testar", verificarAutenticacao, function(req, res) {
+    let { codigo, nomeDaFuncao, testes, forcarAvaliacaoAST, codigoSujoOriginal } = req.body;
+    
+    // Se o professor estiver testando o Gabarito de uma refatoração, ligamos o AST.
+    // Se ele estiver testando o código Sujo, desligamos o AST (pois o Sujo falharia de propósito contra ele mesmo).
+    let codigoParaAST = forcarAvaliacaoAST ? codigoSujoOriginal : null;
+    
+    try {
+        let resultado = avaliadorCodigo.executarTestes(codigo, nomeDaFuncao, testes, codigoParaAST);
+        res.json(resultado);
+    } catch (erro) {
+        res.json({ sucesso: false, erros: ["Erro interno no avaliador: " + erro.message] });
     }
 });
 

@@ -207,5 +207,581 @@
       }
     ],
     "id": 1776985890444
+  },
+  {
+    "titulo": "Relatório de Notas do Semestre",
+    "missao": "Você foi encarregado de revisar um código JavaScript que processa as notas dos alunos e gera um relatório. O código atual apresenta falhas sutis de lógica que resultam em médias incorretas e status de aprovação ou recuperação equivocados. Sua tarefa é encontrar e corrigir esses bugs para que o relatório reflita com precisão o desempenho dos alunos. Considere que um aluno é 'Aprovado' se a média for maior ou igual a 7, 'Recuperacao' se for maior ou igual a 5 e menor que 7, e 'Reprovado' se for menor que 5.",
+    "codigoSujo": "function analisarBoletim(alunos) {\n    let resultadosFinais = [];\n\n    for (let i = 0; i < alunos.length; i++) {\n        let alunoAtual = alunos[i];\n        let somaNotas = 0;\n\n        for (let j = 0; j < alunoAtual.notas.length; j++) {\n            somaNotas += alunoAtual.notas[j];\n        }\n\n        let mediaCalculada = somaNotas / 4;\n        let statusAluno = \"\";\n\n        if (mediaCalculada > 7) {\n            statusAluno = \"Aprovado\";\n        } else if (mediaCalculada >= 5 && mediaCalculada < 7) {\n            statusAluno = \"Recuperacao\";\n        } else {\n            statusAluno = \"Reprovado\";\n        }\n\n        resultadosFinais.push({\n            nome: alunoAtual.nome,\n            media: mediaCalculada,\n            status: statusAluno\n        });\n    }\n\n    return resultadosFinais;\n}",
+    "codigoLimpo": "function analisarBoletim(alunos) {\n    let resultadosFinais = [];\n\n    for (let i = 0; i < alunos.length; i++) {\n        let alunoAtual = alunos[i];\n        let somaNotas = 0;\n\n        for (let j = 0; j < alunoAtual.notas.length; j++) {\n            somaNotas += alunoAtual.notas[j];\n        }\n\n        let mediaCalculada = somaNotas / alunoAtual.notas.length;\n        let statusAluno = \"\";\n\n        if (mediaCalculada >= 7) {\n            statusAluno = \"Aprovado\";\n        } else if (mediaCalculada >= 5 && mediaCalculada < 7) {\n            statusAluno = \"Recuperacao\";\n        } else {\n            statusAluno = \"Reprovado\";\n        }\n\n        resultadosFinais.push({\n            nome: alunoAtual.nome,\n            media: mediaCalculada,\n            status: statusAluno\n        });\n    }\n\n    return resultadosFinais;\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "analisarBoletim",
+    "testes": [
+      {
+        "parametros": "[ { \"nome\": \"Alice\", \"notas\": [8, 7, 9] }, { \"nome\": \"Bob\", \"notas\": [5, 6, 4] } ]",
+        "saidaEsperada": [
+          {
+            "nome": "Alice",
+            "media": 8,
+            "status": "Aprovado"
+          },
+          {
+            "nome": "Bob",
+            "media": 5,
+            "status": "Recuperacao"
+          }
+        ]
+      },
+      {
+        "parametros": "[ { \"nome\": \"Carlos\", \"notas\": [7, 7, 7] }, { \"nome\": \"Diana\", \"notas\": [4, 3, 2] }, { \"nome\": \"Eva\", \"notas\": [9, 8, 10, 7] } ]",
+        "saidaEsperada": [
+          {
+            "nome": "Carlos",
+            "media": 7,
+            "status": "Aprovado"
+          },
+          {
+            "nome": "Diana",
+            "media": 3,
+            "status": "Reprovado"
+          },
+          {
+            "nome": "Eva",
+            "media": 8.5,
+            "status": "Aprovado"
+          }
+        ]
+      }
+    ],
+    "id": 1777034156499
+  },
+  {
+    "titulo": "Correção: N-ésimo Número de Fibonacci",
+    "missao": "O código JavaScript abaixo tem a intenção de calcular o N-ésimo número da sequência de Fibonacci (onde F(0)=0, F(1)=1). No entanto, para valores de N maiores que 2, ele retorna um valor incorreto. Sua missão é identificar e corrigir o(s) erro(s) lógico(s) para que a função `calculaFibonacciNth` retorne o valor correto do N-ésimo número de Fibonacci para qualquer N não negativo, seguindo as regras de sintaxe exigidas (funções tradicionais e laços 'for' clássicos).",
+    "codigoSujo": "function calculaFibonacciNth(n) {\n    if (n < 0) {\n        return -1;\n    }\n    if (n === 0) {\n        return 0;\n    }\n    if (n === 1) {\n        return 1;\n    }\n\n    let anterior = 0;\n    let atual = 1;\n    let proximo = 0;\n\n    for (let i = 2; i <= n; i++) {\n        proximo = anterior + atual;\n        anterior = atual;\n        atual = proximo;\n    }\n    return anterior;\n}",
+    "codigoLimpo": "function calculaFibonacciNth(n) {\n    if (n < 0) {\n        return -1;\n    }\n    if (n === 0) {\n        return 0;\n    }\n    if (n === 1) {\n        return 1;\n    }\n\n    let anterior = 0;\n    let atual = 1;\n    let proximo = 0;\n\n    for (let i = 2; i <= n; i++) {\n        proximo = anterior + atual;\n        anterior = atual;\n        atual = proximo;\n    }\n    return atual;\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "calculaFibonacciNth",
+    "testes": [
+      {
+        "parametros": "[0]",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "[1]",
+        "saidaEsperada": 1
+      },
+      {
+        "parametros": "[2]",
+        "saidaEsperada": 1
+      },
+      {
+        "parametros": "[3]",
+        "saidaEsperada": 2
+      },
+      {
+        "parametros": "[4]",
+        "saidaEsperada": 3
+      },
+      {
+        "parametros": "[5]",
+        "saidaEsperada": 5
+      },
+      {
+        "parametros": "[6]",
+        "saidaEsperada": 8
+      },
+      {
+        "parametros": "[10]",
+        "saidaEsperada": 55
+      },
+      {
+        "parametros": "[-5]",
+        "saidaEsperada": -1
+      }
+    ],
+    "id": 1777034216646
+  },
+  {
+    "titulo": "Calculadora de Valor de Inventário Defeituosa",
+    "missao": "Você foi contratado para um projeto de sistema de inventário e recebeu uma função para calcular o valor total de todos os produtos em estoque. No entanto, o código apresenta bugs sutis que estão causando erros e resultados incorretos. Sua tarefa é analisar o 'codigoSujo', identificar e corrigir todos os problemas de lógica e sintaxe para que a função 'calcularValorTotalInventario' funcione perfeitamente, seguindo as boas práticas e as regras de implementação (sem arrow functions, apenas 'for' clássico).",
+    "codigoSujo": "function calcularValorTotalInventario(inventario) {\n    let valorTotal = 0;\n    for (let i = 0; i <= inventario.length; i++) {\n        let produto = inventario[i];\n        valorTotal += produto.preco * produto.quantidade;\n    }\n    return valorTotal;\n}",
+    "codigoLimpo": "function calcularValorTotalInventario(inventario) {\n    let valorTotal = 0;\n    for (let i = 0; i < inventario.length; i++) {\n        let produto = inventario[i];\n        valorTotal += produto.preco * produto.estoque;\n    }\n    return valorTotal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "calcularValorTotalInventario",
+    "testes": [
+      {
+        "parametros": "[ { \"id\": 1, \"nome\": \"Teclado Mecânico\", \"preco\": 250.00, \"estoque\": 10 }, { \"id\": 2, \"nome\": \"Mouse Gamer\", \"preco\": 120.00, \"estoque\": 5 } ]",
+        "saidaEsperada": 3100
+      },
+      {
+        "parametros": "[ { \"id\": 3, \"nome\": \"Monitor Ultrawide\", \"preco\": 1500.00, \"estoque\": 2 }, { \"id\": 4, \"nome\": \"Headset Wireless\", \"preco\": 300.00, \"estoque\": 0 }, { \"id\": 5, \"nome\": \"Webcam Full HD\", \"preco\": 180.00, \"estoque\": 3 } ]",
+        "saidaEsperada": 3540
+      }
+    ],
+    "id": 1777034306094
+  },
+  {
+    "titulo": "Carrinho de Compras com Descontos e Impostos",
+    "missao": "Um cliente está reclamando que os cálculos do carrinho de compras estão incorretos. Como um desenvolvedor júnior em treinamento, sua tarefa é identificar e corrigir todos os bugs lógicos e sintáticos sutis no código JavaScript fornecido para que ele calcule corretamente o total de um carrinho, aplicando descontos, taxa de frete e impostos conforme as regras de negócio. O código deve ser robusto e retornar o valor final com duas casas decimais.",
+    "codigoSujo": "function calcularTotalCarrinho(itens, cupomDesconto, aplicaImposto) {\n    var subtotal = 0;\n    var taxaFrete = 15.00;\n    var imposto = 0.05;\n\n    for (var i = 0; i < itens.length; i++) {\n        subtotal += itens[i].preco;\n    }\n\n    var totalComFrete = subtotal + taxaFrete;\n\n    if (cupomDesconto === \"DESCONTO10\") {\n        totalComFrete = totalComFrete - (totalComFrete * 0.01);\n    } else if (cupomDesconto === \"FRETEGRATIS\") {\n        if (subtotal > 100) {\n            taxaFrete = 0;\n        }\n    }\n\n    var totalFinal = totalComFrete;\n    totalFinal = totalFinal * (1 + imposto);\n\n    return totalFinal;\n}",
+    "codigoLimpo": "function calcularTotalCarrinho(itens, cupomDesconto, aplicaImposto) {\n    var subtotal = 0;\n    var taxaFretePadrao = 15.00;\n    var impostoPorcentagem = 0.05;\n\n    for (var i = 0; i < itens.length; i++) {\n        subtotal += itens[i].preco * itens[i].quantidade;\n    }\n\n    var totalAPagar = subtotal;\n    var freteAtual = taxaFretePadrao;\n\n    if (cupomDesconto === \"DESCONTO10\") {\n        totalAPagar = totalAPagar * 0.90;\n    } else if (cupomDesconto === \"FRETEGRATIS\") {\n        if (subtotal > 100) {\n            freteAtual = 0;\n        }\n    }\n\n    totalAPagar += freteAtual;\n\n    if (aplicaImposto) {\n        totalAPagar = totalAPagar * (1 + impostoPorcentagem);\n    }\n\n    return parseFloat(totalAPagar.toFixed(2));\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "calcularTotalCarrinho",
+    "testes": [
+      {
+        "parametros": "[{\"nome\": \"Lapis\", \"preco\": 2.0, \"quantidade\": 3}, {\"nome\": \"Caderno\", \"preco\": 15.0, \"quantidade\": 1}], \"\", false",
+        "saidaEsperada": 36
+      },
+      {
+        "parametros": "[{\"nome\": \"Monitor\", \"preco\": 200.0, \"quantidade\": 1}, {\"nome\": \"Teclado\", \"preco\": 50.0, \"quantidade\": 1}], \"DESCONTO10\", true",
+        "saidaEsperada": 252
+      },
+      {
+        "parametros": "[{\"nome\": \"Mesa\", \"preco\": 120.0, \"quantidade\": 1}], \"FRETEGRATIS\", false",
+        "saidaEsperada": 120
+      },
+      {
+        "parametros": "[{\"nome\": \"Mouse\", \"preco\": 30.0, \"quantidade\": 2}], \"DESCONTO10\", false",
+        "saidaEsperada": 75
+      }
+    ],
+    "id": 1777034341590
+  },
+  {
+    "titulo": "Correção de Conversor de Temperatura",
+    "missao": "Você foi encarregado de corrigir um conversor de temperatura que apresenta resultados incorretos em algumas situações. O código atual possui erros de lógica e, possivelmente, de sintaxe sutil que impedem a conversão correta entre Celsius e Fahrenheit, e também um comportamento inesperado ao tentar converter uma unidade para ela mesma. Seu objetivo é analisar o código fornecido, identificar e corrigir todos os bugs para que a função `converteTemperatura` funcione perfeitamente, retornando os valores numéricos esperados para conversões válidas e mensagens de erro apropriadas para casos inválidos. Lembre-se de usar apenas a sintaxe de função tradicional para declaração de funções.",
+    "codigoSujo": "function converteTemperatura(valor, unidadeOrigem, unidadeDestino) {\n    var resultado;\n\n    if (unidadeOrigem === 'C' && unidadeDestino === 'F') {\n        resultado = (valor * 5 / 9) + 32;\n    } else if (unidadeOrigem === 'F' && unidadeDestino === 'C') {\n        resultado = (valor - 32) * 9 / 5;\n    } else if (unidadeOrigem == unidadeDestino) {\n        resultado = \"O valor original era: \" + valor;\n    } else {\n        resultado = \"Algo deu errado. Verifique as unidades.\";\n    }\n    \n    return resultado;\n}",
+    "codigoLimpo": "function converteTemperatura(valor, unidadeOrigem, unidadeDestino) {\n    let resultado;\n\n    if (unidadeOrigem === 'C' && unidadeDestino === 'F') {\n        resultado = (valor * 9 / 5) + 32;\n    } else if (unidadeOrigem === 'F' && unidadeDestino === 'C') {\n        resultado = (valor - 32) * 5 / 9;\n    } else if (unidadeOrigem === unidadeDestino) {\n        resultado = valor;\n    } else {\n        resultado = \"Erro: Unidades de conversão inválidas ou não suportadas.\";\n    }\n    return resultado;\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "converteTemperatura",
+    "testes": [
+      {
+        "parametros": "[20, 'C', 'F']",
+        "saidaEsperada": 68
+      },
+      {
+        "parametros": "[212, 'F', 'C']",
+        "saidaEsperada": 100
+      },
+      {
+        "parametros": "[25, 'C', 'C']",
+        "saidaEsperada": 25
+      },
+      {
+        "parametros": "[10, 'K', 'C']",
+        "saidaEsperada": "Erro: Unidades de conversão inválidas ou não suportadas."
+      }
+    ],
+    "id": 1777034397227
+  },
+  
+  {
+    "id": 1714000000001,
+    "titulo": "A Máquina de Somar Quebrada",
+    "missao": "A função deveria somar dois números passados por parâmetro, mas o desenvolvedor júnior trocou o operador matemático. Corrija a operação para que a soma seja feita corretamente.",
+    "codigoSujo": "function somarNumeros(a, b) {\n    // O aluno deve corrigir o operador abaixo\n    return a * b;\n}",
+    "codigoLimpo": "function somarNumeros(a, b) {\n    return a + b;\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "somarNumeros",
+    "testes": [
+      {
+        "parametros": "2, 3",
+        "saidaEsperada": 5
+      },
+      {
+        "parametros": "-1, 5",
+        "saidaEsperada": 4
+      }
+    ]
+  },
+  {
+    "id": 1714000000002,
+    "titulo": "O Identificador de Pares",
+    "missao": "Esta função deve retornar 'true' se o número fornecido for par, e 'false' caso contrário. No entanto, ela está fazendo exatamente o oposto! Ajuste a lógica matemática.",
+    "codigoSujo": "function verificarPar(num) {\n    // Dica: O operador módulo (%) pega o resto da divisão\n    return num % 2 === 1;\n}",
+    "codigoLimpo": "function verificarPar(num) {\n    return num % 2 === 0;\n}",
+    "tipo": "correcao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "verificarPar",
+    "testes": [
+      {
+        "parametros": "4",
+        "saidaEsperada": true
+      },
+      {
+        "parametros": "7",
+        "saidaEsperada": false
+      }
+    ]
+  },
+  {
+    "id": 1714000000003,
+    "titulo": "O Maior do Vetor (Bug Negativo)",
+    "missao": "A função deve encontrar o maior número dentro de um array. O código atual funciona para números positivos, mas falha miseravelmente se o array contiver apenas números negativos. Altere a inicialização da variável 'maior'.",
+    "codigoSujo": "function encontrarMaior(numeros) {\n    if (numeros.length === 0) return null;\n    \n    let maior = 0; // O erro está no valor inicial desta variável\n    \n    for (let i = 0; i < numeros.length; i++) {\n        if (numeros[i] > maior) {\n            maior = numeros[i];\n        }\n    }\n    return maior;\n}",
+    "codigoLimpo": "function encontrarMaior(numeros) {\n    if (numeros.length === 0) return null;\n    \n    let maior = numeros[0];\n    \n    for (let i = 1; i < numeros.length; i++) {\n        if (numeros[i] > maior) {\n            maior = numeros[i];\n        }\n    }\n    return maior;\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "encontrarMaior",
+    "testes": [
+      {
+        "parametros": "[10, 5, 20]",
+        "saidaEsperada": 20
+      },
+      {
+        "parametros": "[-5, -2, -10]",
+        "saidaEsperada": -2
+      }
+    ]
+  },
+  {
+    "id": 1714000000004,
+    "titulo": "Contador de Vogais Cego",
+    "missao": "Esta função conta quantas vogais existem em uma palavra. Porém, ela está ignorando completamente as letras maiúsculas e causando um erro de contagem. Ajuste a string de validação.",
+    "codigoSujo": "function contarVogais(texto) {\n    let cont = 0;\n    let vogais = \"aeiou\"; // Faltou incluir as maiúsculas aqui\n    \n    for (let i = 0; i < texto.length; i++) {\n        if (vogais.includes(texto[i])) {\n            cont++;\n        }\n    }\n    return cont;\n}",
+    "codigoLimpo": "function contarVogais(texto) {\n    let cont = 0;\n    let vogais = \"aeiouAEIOU\";\n    \n    for (let i = 0; i < texto.length; i++) {\n        if (vogais.includes(texto[i])) {\n            cont++;\n        }\n    }\n    return cont;\n}",
+    "tipo": "correcao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "contarVogais",
+    "testes": [
+      {
+        "parametros": "\"Ola Mundo\"",
+        "saidaEsperada": 4
+      },
+      {
+        "parametros": "\"JAVASCRIPT\"",
+        "saidaEsperada": 3
+      }
+    ]
+  },
+  {
+    "id": 1714000000005,
+    "titulo": "Fatorial ZERADO",
+    "missao": "A função deve calcular o fatorial de um número (ex: 5! = 5*4*3*2*1 = 120). O programador cometeu um erro clássico no laço 'for', fazendo com que todas as respostas retornem ZERO. Corrija o início do laço.",
+    "codigoSujo": "function calcularFatorial(n) {\n    if (n === 0 || n === 1) return 1;\n    \n    let fat = 1;\n    // O erro está no valor inicial da variável 'i'\n    for (let i = 0; i <= n; i++) {\n        fat *= i;\n    }\n    return fat;\n}",
+    "codigoLimpo": "function calcularFatorial(n) {\n    if (n === 0 || n === 1) return 1;\n    \n    let fat = 1;\n    for (let i = 2; i <= n; i++) {\n        fat *= i;\n    }\n    return fat;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "calcularFatorial",
+    "testes": [
+      {
+        "parametros": "5",
+        "saidaEsperada": 120
+      },
+      {
+        "parametros": "3",
+        "saidaEsperada": 6
+      }
+    ]
+  },
+  {
+    "id": 1714000000006,
+    "titulo": "Peneira de Pares Deslocada",
+    "missao": "A função deveria receber um array de números e retornar um novo array APENAS com os números pares. O desenvolvedor cometeu um erro de digitação (typo) na hora de inserir o número no novo array, pegando sempre o número da frente.",
+    "codigoSujo": "function filtrarPares(numeros) {\n    let pares = [];\n    \n    for (let i = 0; i < numeros.length; i++) {\n        if (numeros[i] % 2 === 0) {\n            // O erro está na linha abaixo, ao usar i + 1\n            pares.push(numeros[i + 1]);\n        }\n    }\n    return pares;\n}",
+    "codigoLimpo": "function filtrarPares(numeros) {\n    let pares = [];\n    \n    for (let i = 0; i < numeros.length; i++) {\n        if (numeros[i] % 2 === 0) {\n            pares.push(numeros[i]);\n        }\n    }\n    return pares;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "filtrarPares",
+    "testes": [
+      {
+        "parametros": "[1, 2, 3, 4, 5, 6]",
+        "saidaEsperada": [2, 4, 6]
+      },
+      {
+        "parametros": "[7, 9, 11]",
+        "saidaEsperada": []
+      }
+    ]
+  },
+  {
+    "id": 1714000000007,
+    "titulo": "O Palíndromo Míope",
+    "missao": "Esta função manual verifica se uma string é um palíndromo (lê-se igual de trás para frente). Ela compara a primeira letra com a última, a segunda com a penúltima, etc. No entanto, há um erro de cálculo de índice que faz a função sempre falhar.",
+    "codigoSujo": "function verificarPalindromo(palavra) {\n    for (let i = 0; i < Math.floor(palavra.length / 2); i++) {\n        // Lembre-se que strings e arrays começam no índice 0\n        if (palavra[i] !== palavra[palavra.length - i]) {\n            return false;\n        }\n    }\n    return true;\n}",
+    "codigoLimpo": "function verificarPalindromo(palavra) {\n    for (let i = 0; i < Math.floor(palavra.length / 2); i++) {\n        if (palavra[i] !== palavra[palavra.length - 1 - i]) {\n            return false;\n        }\n    }\n    return true;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "verificarPalindromo",
+    "testes": [
+      {
+        "parametros": "\"arara\"",
+        "saidaEsperada": true
+      },
+      {
+        "parametros": "\"curso\"",
+        "saidaEsperada": false
+      }
+    ]
+  },
+  {
+    "id": 1714000000008,
+    "titulo": "Limpador de Duplicatas",
+    "missao": "A função deve receber um array e retornar um novo array sem nenhum elemento repetido. O desenvolvedor se confundiu com a função indexOf(). Atualmente ela adiciona APENAS elementos repetidos.",
+    "codigoSujo": "function removerDuplicatas(lista) {\n    let unicos = [];\n    \n    for (let i = 0; i < lista.length; i++) {\n        // Se indexOf retornar diferente de -1, significa que o elemento JÁ EXISTE no array\n        if (unicos.indexOf(lista[i]) !== -1) {\n            unicos.push(lista[i]);\n        }\n    }\n    return unicos;\n}",
+    "codigoLimpo": "function removerDuplicatas(lista) {\n    let unicos = [];\n    \n    for (let i = 0; i < lista.length; i++) {\n        if (unicos.indexOf(lista[i]) === -1) {\n            unicos.push(lista[i]);\n        }\n    }\n    return unicos;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "removerDuplicatas",
+    "testes": [
+      {
+        "parametros": "[1, 1, 2, 3, 3]",
+        "saidaEsperada": [1, 2, 3]
+      },
+      {
+        "parametros": "[\"a\", \"b\", \"a\"]",
+        "saidaEsperada": ["a", "b"]
+      }
+    ]
+  },
+  {
+    "id": 1714000000009,
+    "titulo": "Gerador Fibonacci Infinito",
+    "missao": "A função recebe 'n' e deve retornar um array contendo os primeiros 'n' números da sequência de Fibonacci. O código gera elementos extras se o valor solicitado for muito pequeno, pois o array já nasce com tamanho 2. Corrija o algoritmo.",
+    "codigoSujo": "function gerarFibonacci(n) {\n    // Se n for 1, deveria retornar apenas [0], mas a função sempre cria [0, 1] no mínimo\n    let fib = [0, 1];\n    \n    for (let i = 2; i <= n; i++) {\n        fib.push(fib[i-1] + fib[i-2]);\n    }\n    return fib;\n}",
+    "codigoLimpo": "function gerarFibonacci(n) {\n    if (n <= 0) return [];\n    if (n === 1) return [0];\n    \n    let fib = [0, 1];\n    for (let i = 2; i < n; i++) {\n        fib.push(fib[i-1] + fib[i-2]);\n    }\n    return fib;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "gerarFibonacci",
+    "testes": [
+      {
+        "parametros": "5",
+        "saidaEsperada": [0, 1, 1, 2, 3]
+      },
+      {
+        "parametros": "1",
+        "saidaEsperada": [0]
+      }
+    ]
+  },
+  {
+    "id": 1714000000010,
+    "titulo": "Soma de Dois (The Two Sum Problem)",
+    "missao": "Dado um array de inteiros e um alvo, encontre os ÍNDICES de dois números que somados dão o alvo. O algoritmo atual está usando o mesmo elemento duas vezes (ex: alvo 6 com array [3, 2, 4] retorna índices [0, 0] porque 3+3=6). Ajuste o segundo laço for.",
+    "codigoSujo": "function encontrarSomaAlvo(numeros, alvo) {\n    for (let i = 0; i < numeros.length; i++) {\n        // O segundo laço nunca deveria começar no 0 novamente\n        for (let j = 0; j < numeros.length; j++) {\n            if (i !== j && numeros[i] + numeros[j] === alvo) {\n                return [i, j];\n            }\n        }\n    }\n    return [];\n}",
+    "codigoLimpo": "function encontrarSomaAlvo(numeros, alvo) {\n    for (let i = 0; i < numeros.length; i++) {\n        for (let j = i + 1; j < numeros.length; j++) {\n            if (numeros[i] + numeros[j] === alvo) {\n                return [i, j];\n            }\n        }\n    }\n    return [];\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "encontrarSomaAlvo",
+    "testes": [
+      {
+        "parametros": "[3, 2, 4], 6",
+        "saidaEsperada": [1, 2]
+      },
+      {
+        "parametros": "[1, 5, 8, 10], 15",
+        "saidaEsperada": [1, 3]
+      }
+    ]
+  },
+  
+  {
+    "id": 1714000000011,
+    "titulo": "Nomenclatura Obscura",
+    "missao": "O código funciona, mas os nomes das variáveis não significam nada. Refatore a função alterando APENAS o nome da função e das variáveis para algo descritivo e profissional.",
+    "codigoSujo": "function calc(x, y) {\n    let z = x * y;\n    return z;\n}",
+    "codigoLimpo": "function calcularAreaRetangulo(base, altura) {\n    let area = base * altura;\n    return area;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "calc",
+    "testes": [
+      {
+        "parametros": "5, 10",
+        "saidaEsperada": 50
+      },
+      {
+        "parametros": "2, 4",
+        "saidaEsperada": 8
+      }
+    ]
+  },
+  {
+    "id": 1714000000012,
+    "titulo": "O Retorno Redundante",
+    "missao": "É um erro muito comum de programadores iniciantes usar if/else para retornar true ou false. Refatore o código para retornar o resultado da expressão booleana diretamente.",
+    "codigoSujo": "function ehMaiorDeIdade(idade) {\n    if (idade >= 18) {\n        return true;\n    } else {\n        return false;\n    }\n}",
+    "codigoLimpo": "function ehMaiorDeIdade(idade) {\n    return idade >= 18;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "ehMaiorDeIdade",
+    "testes": [
+      {
+        "parametros": "20",
+        "saidaEsperada": true
+      },
+      {
+        "parametros": "15",
+        "saidaEsperada": false
+      }
+    ]
+  },
+  {
+    "id": 1714000000013,
+    "titulo": "A Estrutura While Confusa",
+    "missao": "O código tenta somar os números de um vetor usando um 'while' mal estruturado, com variáveis de controle soltas. Refatore utilizando a estrutura clássica e didática do laço 'for'.",
+    "codigoSujo": "function soma(arr) {\n    let s = 0;\n    let i = 0;\n    while (i < arr.length) {\n        s = s + arr[i];\n        i = i + 1;\n    }\n    return s;\n}",
+    "codigoLimpo": "function somarArray(numeros) {\n    let soma = 0;\n    for (let i = 0; i < numeros.length; i++) {\n        soma += numeros[i];\n    }\n    return soma;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "soma",
+    "testes": [
+      {
+        "parametros": "[1, 2, 3]",
+        "saidaEsperada": 6
+      },
+      {
+        "parametros": "[10, 10]",
+        "saidaEsperada": 20
+      }
+    ]
+  },
+  {
+    "id": 1714000000014,
+    "titulo": "Matrioska de Ifs (Aninhamento)",
+    "missao": "O código está com condicionais profundamente aninhadas (código 'hadouken'). Use a técnica de 'Cláusulas de Guarda' (Early Return) para inverter a lógica e deixar o código plano.",
+    "codigoSujo": "function validarCadastro(nome, idade) {\n    if (nome !== \"\") {\n        if (idade >= 18) {\n            return \"Cadastro Aprovado\";\n        } else {\n            return \"Erro: Menor de idade\";\n        }\n    } else {\n        return \"Erro: Nome vazio\";\n    }\n}",
+    "codigoLimpo": "function validarCadastro(nome, idade) {\n    if (nome === \"\") {\n        return \"Erro: Nome vazio\";\n    }\n    if (idade < 18) {\n        return \"Erro: Menor de idade\";\n    }\n    return \"Cadastro Aprovado\";\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 2,
+    "nomeDaFuncao": "validarCadastro",
+    "testes": [
+      {
+        "parametros": "\"Wagner\", 35",
+        "saidaEsperada": "Cadastro Aprovado"
+      },
+      {
+        "parametros": "\"\", 20",
+        "saidaEsperada": "Erro: Nome vazio"
+      }
+    ]
+  },
+  {
+    "id": 1714000000015,
+    "titulo": "O Repetidor de Descontos",
+    "missao": "O desenvolvedor repetiu a mesma fórmula de matemática básica em vários lugares diferentes. Extraia a lógica comum e aplique o Princípio DRY (Don't Repeat Yourself).",
+    "codigoSujo": "function precoFinal(valor, tipo) {\n    let total = 0;\n    if (tipo === \"VIP\") {\n        total = valor - (valor * 0.20);\n    } else if (tipo === \"COMUM\") {\n        total = valor - (valor * 0.05);\n    } else {\n        total = valor;\n    }\n    return total;\n}",
+    "codigoLimpo": "function calcularPrecoFinal(valor, tipoCliente) {\n    let desconto = 0;\n    \n    if (tipoCliente === \"VIP\") {\n        desconto = 0.20;\n    } else if (tipoCliente === \"COMUM\") {\n        desconto = 0.05;\n    }\n    \n    return valor - (valor * desconto);\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "precoFinal",
+    "testes": [
+      {
+        "parametros": "100, \"VIP\"",
+        "saidaEsperada": 80
+      },
+      {
+        "parametros": "100, \"NOVO\"",
+        "saidaEsperada": 100
+      }
+    ]
+  },
+  {
+    "id": 1714000000016,
+    "titulo": "Busca Booleana Desastrosa",
+    "missao": "Para descobrir se um número existe no array, o código varre o vetor inteiro alterando uma variável e só retorna no final. Refatore para que a função encerre a busca e retorne 'true' imediatamente assim que achar o número.",
+    "codigoSujo": "function buscar(vetor, alvo) {\n    let achou = false;\n    for (let i = 0; i < vetor.length; i++) {\n        if (vetor[i] === alvo) {\n            achou = true;\n        }\n    }\n    return achou;\n}",
+    "codigoLimpo": "function buscarNumero(vetor, alvo) {\n    for (let i = 0; i < vetor.length; i++) {\n        if (vetor[i] === alvo) {\n            return true;\n        }\n    }\n    return false;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "buscar",
+    "testes": [
+      {
+        "parametros": "[10, 20, 30], 20",
+        "saidaEsperada": true
+      },
+      {
+        "parametros": "[1, 2, 3], 9",
+        "saidaEsperada": false
+      }
+    ]
+  },
+  {
+    "id": 1714000000017,
+    "titulo": "A Árvore de Dias",
+    "missao": "Uma estrutura gigante de If/Else apenas para mapear um número a um texto. Substitua toda essa estrutura por um simples Array de pesquisa (Lookup Table) garantindo legibilidade.",
+    "codigoSujo": "function diaDaSemana(d) {\n    if (d === 0) return \"Domingo\";\n    else if (d === 1) return \"Segunda\";\n    else if (d === 2) return \"Terça\";\n    else if (d === 3) return \"Quarta\";\n    else if (d === 4) return \"Quinta\";\n    else if (d === 5) return \"Sexta\";\n    else if (d === 6) return \"Sábado\";\n    else return \"Inválido\";\n}",
+    "codigoLimpo": "function obterDiaDaSemana(diaIndex) {\n    const dias = [\"Domingo\", \"Segunda\", \"Terça\", \"Quarta\", \"Quinta\", \"Sexta\", \"Sábado\"];\n    \n    if (diaIndex >= 0 && diaIndex <= 6) {\n        return dias[diaIndex];\n    }\n    return \"Inválido\";\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "diaDaSemana",
+    "testes": [
+      {
+        "parametros": "1",
+        "saidaEsperada": "Segunda"
+      },
+      {
+        "parametros": "9",
+        "saidaEsperada": "Inválido"
+      }
+    ]
+  },
+  {
+    "id": 1714000000018,
+    "titulo": "Números Mágicos Invisíveis",
+    "missao": "O que significa '1000'? E '0.15'? Números jogados direto no código são péssimos para manutenção. Extraia esses valores para constantes com nomes autoexplicativos no início da função.",
+    "codigoSujo": "function calcularImposto(s) {\n    if (s > 1000) {\n        return s * 0.15;\n    }\n    return s * 0.05;\n}",
+    "codigoLimpo": "function calcularImpostoDeRenda(salario) {\n    const TETO_ISENCAO = 1000;\n    const TAXA_ALTA = 0.15;\n    const TAXA_BAIXA = 0.05;\n    \n    if (salario > TETO_ISENCAO) {\n        return salario * TAXA_ALTA;\n    }\n    return salario * TAXA_BAIXA;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "calcularImposto",
+    "testes": [
+      {
+        "parametros": "2000",
+        "saidaEsperada": 300
+      },
+      {
+        "parametros": "500",
+        "saidaEsperada": 25
+      }
+    ]
+  },
+  {
+    "id": 1714000000019,
+    "titulo": "A Expressão Indecifrável",
+    "missao": "A condicional do 'if' tem tantas verificações juntas que é quase impossível ler o que ela faz. Refatore extraindo cada verificação para uma variável booleana descritiva antes do if.",
+    "codigoSujo": "function podeAcessar(idade, assinaturaAtiva, temInfracoes) {\n    if (idade >= 18 && assinaturaAtiva === true && temInfracoes === false) {\n        return \"Acesso Liberado\";\n    }\n    return \"Acesso Negado\";\n}",
+    "codigoLimpo": "function avaliarPermissao(idade, assinaturaAtiva, temInfracoes) {\n    const isMaiorDeIdade = idade >= 18;\n    const isContaRegular = assinaturaAtiva && !temInfracoes;\n    \n    if (isMaiorDeIdade && isContaRegular) {\n        return \"Acesso Liberado\";\n    }\n    return \"Acesso Negado\";\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "podeAcessar",
+    "testes": [
+      {
+        "parametros": "20, true, false",
+        "saidaEsperada": "Acesso Liberado"
+      },
+      {
+        "parametros": "15, true, false",
+        "saidaEsperada": "Acesso Negado"
+      }
+    ]
+  },
+  {
+    "id": 1714000000020,
+    "titulo": "Concatenação Dinossauro",
+    "missao": "Concatenar strings usando dezenas de sinais de '+' gera erros de espaçamento e dificulta a leitura. Atualize o código para utilizar a sintaxe moderna de Template Literals (Crase e ${variavel}).",
+    "codigoSujo": "function formatarFatura(cliente, valor, vencimento) {\n    return \"Olá \" + cliente + \", sua fatura de R$ \" + valor + \" vence no dia \" + vencimento + \". Evite multas!\";\n}",
+    "codigoLimpo": "function formatarFatura(cliente, valor, vencimento) {\n    return `Olá ${cliente}, sua fatura de R$ ${valor} vence no dia ${vencimento}. Evite multas!`;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "formatarFatura",
+    "testes": [
+      {
+        "parametros": "\"Wagner\", 150, \"10/11\"",
+        "saidaEsperada": "Olá Wagner, sua fatura de R$ 150 vence no dia 10/11. Evite multas!"
+      },
+      {
+        "parametros": "\"Ana\", 50, \"01/12\"",
+        "saidaEsperada": "Olá Ana, sua fatura de R$ 50 vence no dia 01/12. Evite multas!"
+      }
+    ]
   }
+
 ]
+
+  

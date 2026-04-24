@@ -14,7 +14,7 @@ function analisarVariaveis(codigo) {
             }
         }
         caminhar(ast);
-    } catch (erro) {}
+    } catch (erro) { }
     return Array.from(variaveis).sort();
 }
 
@@ -54,7 +54,7 @@ function analisarCodigoLimpo(codigo) {
                 if (typeof no[chave] === "object") caminhar(no[chave]);
             }
         }
-        
+
         caminhar(ast);
 
         // Define um limite de complexidade (Se for maior que 4, provavelmente está quebrando o SRP)
@@ -74,45 +74,46 @@ function executarTestes(codigoDoAluno, nomeDaFuncao, testes, codigoSujoOriginal 
     let acertos = 0;
     let mensagensErro = [];
 
-    // 1. AVALIAÇÃO ESTRUTURAL E CÓDIGO LIMPO (Refatoração)
+    // 1. AVALIAÇÃO ESTRUTURAL E CÓDIGO LIMPO (Somente para Refatoração)
     if (codigoSujoOriginal !== null) {
         let varsOriginal = analisarVariaveis(codigoSujoOriginal);
         let varsAluno = analisarVariaveis(codigoDoAluno);
-        
+
         if (JSON.stringify(varsOriginal) === JSON.stringify(varsAluno)) {
             return {
                 sucesso: false, totalAcertos: 0, totalTestes: testes.length,
-                erros: ["Falha de Refatoração: Você não renomeou as variáveis para nomes descritivos!"]
+                erros: ["Falha de Refatoração: Você não renomeou as variáveis para nomes descritivos! Os identificadores continuam iguais aos originais."]
             };
         }
 
-        // --- RODA O NOVO LINTER DE CÓDIGO LIMPO ---
         let errosCodigoLimpo = analisarCodigoLimpo(codigoDoAluno);
         if (errosCodigoLimpo.length > 0) {
             return {
                 sucesso: false, totalAcertos: 0, totalTestes: testes.length,
-                // Retorna apenas o primeiro erro de código limpo para não assustar o aluno
-                erros: [errosCodigoLimpo[0]] 
+                erros: [errosCodigoLimpo[0]]
             };
         }
     }
 
-    // 2. AVALIAÇÃO MATEMÁTICA (Máquina Virtual - Inalterada)
-    for (let teste of testes) {
+   // 2. AVALIAÇÃO DE LÓGICA (Máquina Virtual)
+    for (let i = 0; i < testes.length; i++) {
+        let teste = testes[i];
         try {
             let ambienteSeguro = {};
             vm.createContext(ambienteSeguro);
             vm.runInContext(codigoDoAluno, ambienteSeguro, { timeout: 1000 });
-            let chamadaDaFuncao = nomeDaFuncao + "(" + teste.parametros.replace(/[\[\]]/g, "") + ")";
+            
+            let chamadaDaFuncao = nomeDaFuncao + "(" + teste.parametros + ")";
             let resultadoDoAluno = vm.runInContext(chamadaDaFuncao, ambienteSeguro, { timeout: 1000 });
 
             if (JSON.stringify(resultadoDoAluno) === JSON.stringify(teste.saidaEsperada)) {
                 acertos++;
             } else {
-                mensagensErro.push("Falha lógica: Esperava " + JSON.stringify(teste.saidaEsperada) + ", mas retornou " + JSON.stringify(resultadoDoAluno));
+                // FORMATANDO O ERRO COM OS PARÂMETROS EXPLÍCITOS
+                mensagensErro.push(`[Falha no Teste ${i + 1}]\n 📥 Entrada Testada: (${teste.parametros})\n 🏁 Saída Esperada: ${JSON.stringify(teste.saidaEsperada)}\n 📤 Retorno do Código: ${JSON.stringify(resultadoDoAluno)}`);
             }
         } catch (erro) {
-            mensagensErro.push("Erro na execução: " + erro.message);
+            mensagensErro.push(`[Erro no Teste ${i + 1}]\n 📥 Entrada Testada: (${teste.parametros})\n 💥 Exceção: ${erro.message}`);
         }
     }
 

@@ -1,63 +1,174 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Gestão de Conteúdo - Admin</title>
     <link rel="stylesheet" href="estilo.css">
+    <script>
+        (async function verificarAcessoImediato() {
+            try {
+                const resposta = await fetch("/api/admin/questoes");
+                if (!resposta.ok) {
+                    // Se o servidor não retornar 200 OK, expulsa para o login imediatamente
+                    window.location.href = "login.html";
+                }
+            } catch (erro) {
+                window.location.href = "login.html";
+            }
+        })();
+    </script>
 </head>
+
 <body>
     <nav class="barra-admin">
-        <img src="logo_if.png" alt="Logo IF Sudeste MG" style="max-width: 200px; margin-bottom: 20px;">
+        <img src="logo_if.png" alt="Logo IF Sudeste MG" style="max-width: 250px;">
         <h1>Painel do Professor</h1>
         <div class="acoes-nav">
-            <button onclick="window.location.href='aluno.html'" class="btn-modo-aluno">Alternar para Modo Aluno 🎓</button>
+            <button onclick="window.location.href='aluno.html'" class="btn-modo-aluno">Modo Aluno 🎓</button>
             <button onclick="fazerLogout()" class="btn-sair">Sair</button>
         </div>
     </nav>
 
     <main class="container-admin">
-        
         <section class="secao-geracao">
-            <h3>Gerar Novos Desafios</h3>
-            
+            <h3>Gerar Novos Desafios (IA)</h3>
             <div class="controles-geracao">
-                <label>Tipo de Exercício:</label>
-                <select id="tipo-gerar">
-                    <option value="correcao">Correção de Bugs</option>
-                    <option value="refatoracao">Refatoração de Código</option>
-                </select>
-
-                <label>Nível de Dificuldade (1 a 5):</label>
-                <input type="number" id="dif-gerar" min="1" max="5" value="1">
-
-                <label>Quantidade a Gerar:</label>
-                <input type="number" id="qtd-gerar" min="1" max="10" value="1">
-
-                <button onclick="gerarEmLote()">Gerar e Salvar no Banco</button>
+                <div class="item-controle">
+                    <label>Tipo:</label>
+                    <select id="tipo-gerar">
+                        <option value="correcao">Correção de Bugs</option>
+                        <option value="refatoracao">Refatoração</option>
+                    </select>
+                </div>
+                <div class="item-controle">
+                    <label>Dificuldade (1-5):</label>
+                    <input type="number" id="dif-gerar" min="1" max="5" value="1">
+                </div>
+                <div class="item-controle">
+                    <label>Quantidade:</label>
+                    <input type="number" id="qtd-gerar" min="1" max="10" value="1">
+                </div>
+                <button onclick="gerarEmLote()">Gerar via IA</button>
             </div>
-            
             <p id="status-geracao"></p>
         </section>
 
         <hr>
 
         <section class="secao-curadoria">
-            <h3>Gerenciar Banco de Desafios</h3>
-            <div class="filtros-busca">
-                <input type="text" id="busca-texto" placeholder="Buscar por título..." oninput="filtrarLista()">
-                <select id="filtro-tipo" onchange="filtrarLista()">
-                    <option value="todos">Todos os Tipos</option>
-                    <option value="correcao">Correção</option>
-                    <option value="refatoracao">Refatoração</option>
-                </select>
+            <div class="cabecalho-curadoria">
+                <h3>Banco de Questões</h3>
+                <button onclick="toggleFormularioManual()" id="btn-toggle-manual" class="btn-novo">+ Criar
+                    Manualmente</button>
             </div>
 
-            <div id="lista-desafios" class="grid-desafios">
+            <div id="formulario-manual" class="card-edicao-ampla"
+                style="display: none; margin-bottom: 30px; border: 1px solid var(--if-verde); padding: 20px; border-radius: 8px;">
+                <h4>Nova Questão Manual</h4>
+
+                <div class="grid-form-manual"
+                    style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div class="item-controle">
+                        <label>Título da Questão:</label>
+                        <input type="text" id="novo-titulo" placeholder="Ex: Soma de Elementos">
+                    </div>
+                    <div class="item-controle">
+                        <label>Tipo:</label>
+                        <select id="novo-tipo">
+                            <option value="correcao">Correção de Bugs</option>
+                            <option value="refatoracao">Refatoração</option>
+                        </select>
+                    </div>
+                    <div class="item-controle">
+                        <label>Dificuldade (1-5):</label>
+                        <input type="number" id="novo-dificuldade" min="1" max="5" value="1">
+                    </div>
                 </div>
+
+                <div class="item-controle"
+                    style="background: #f8f9fa; padding: 15px; border: 1px dashed #ccc; margin-bottom: 15px; border-radius: 5px;">
+                    <label>🧪 Casos de Teste (Até 5 testes):</label>
+                    <div id="container-testes-manual"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+
+                        <input type="text" id="novo-teste-p1" placeholder="Parâmetros 1 (ex: 5, 10)">
+                        <input type="text" id="novo-teste-s1" placeholder="Saída 1 (ex: 15)">
+
+                        <input type="text" id="novo-teste-p2" placeholder="Parâmetros 2 (ex: [1, 2])">
+                        <input type="text" id="novo-teste-s2" placeholder="Saída 2 (ex: 3)">
+
+                        <input type="text" id="novo-teste-p3" placeholder="Parâmetros 3 (ex: 'Olá, ' + 'Mundo')">
+                        <input type="text" id="novo-teste-s3" placeholder="Saída 3 (ex: 'Olá, Mundo')">
+
+                        <input type="text" id="novo-teste-p4" placeholder="Parâmetros 4 (ex: true, false)">
+                        <input type="text" id="novo-teste-s4" placeholder="Saída 4 (ex: true)">
+
+                        <input type="text" id="novo-teste-p5" placeholder="Parâmetros 5 (ex: null)">
+                        <input type="text" id="novo-teste-s5" placeholder="Saída 5 (ex: null)">
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 8px;">
+                        * O preenchimento não é obrigatório para as 5 linhas. Use aspas para textos: "Exemplo".
+                    </small>
+                </div>
+
+                <div class="item-controle">
+                    <label>Instruções da Missão:</label>
+                    <textarea id="novo-missao" rows="10" style="width: 100%; margin-bottom: 15px;"></textarea>
+                </div>
+
+                <div class="item-controle">
+                    <label>Código Original (Sujo):</label>
+                    <textarea id="novo-sujo" class="code-area" rows="15"
+                        style="width: 100%; margin-bottom: 15px;"></textarea>
+                </div>
+
+                <div class="item-controle">
+                    <label>Gabarito (Código Limpo):</label>
+                    <textarea id="novo-limpo" class="code-area" rows="15"
+                        style="width: 100%; margin-bottom: 15px;"></textarea>
+                </div>
+
+                <div class="acoes-card">
+                    <button onclick="salvarQuestaoNova()" class="btn-salvar">Salvar no Banco</button>
+                    <button onclick="toggleFormularioManual()" class="btn-sair">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="filtros-busca" style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="busca-texto" placeholder="Filtrar por título..." oninput="mudarPagina(1)" style="flex: 2; min-width: 200px;">
+                
+                <select id="filtro-tipo" onchange="mudarPagina(1)" style="flex: 1; min-width: 150px;">
+                    <option value="todos">Todos os Tipos</option>
+                    <option value="correcao">Correção de Bugs</option>
+                    <option value="refatoracao">Refatoração</option>
+                </select>
+
+                <select id="filtro-nivel" onchange="mudarPagina(1)" style="flex: 1; min-width: 150px;">
+                    <option value="todos">Todos os Níveis</option>
+                    <option value="1">Nível 1</option>
+                    <option value="2">Nível 2</option>
+                    <option value="3">Nível 3</option>
+                    <option value="4">Nível 4</option>
+                    <option value="5">Nível 5</option>
+                </select>
+
+                <div class="paginacao-controles" style="display: flex; align-items: center; gap: 5px;">
+                    <span>Exibir:</span>
+                    <select id="itens-por-pagina" onchange="mudarPagina(1)">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="lista-desafios" class="grid-desafios-coluna"></div>
+            <div id="navegacao-paginas" class="botoes-paginacao"></div>
         </section>
-        
     </main>
 
     <script src="admin-logic.js"></script>
 </body>
+
 </html>

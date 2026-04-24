@@ -55,10 +55,11 @@ async function gerarNovoDesafio(tipoDeExercicio, nivelDificuldade) {
             "dificuldade": ${nivelDificuldade},
             "nomeDaFuncao": "nome_exato_da_funcao",
             "testes": [
-                { "parametros": "[1, 2]", "saidaEsperada": 3 },
-                { "parametros": "[5, 5]", "saidaEsperada": 10 }
+                { "parametros": "1, 2", "saidaEsperada": 3 },
+                { "parametros": "[10, 20, 30]", "saidaEsperada": 60 }
             ]
         }
+        REGRA DOS TESTES: O valor de 'parametros' deve ser uma string com o conteúdo EXATO que vai dentro dos parênteses da função. Não envolva números soltos em colchetes.
     `;
 
     // --- LÓGICA DE RECUO EXPONENCIAL (EXPONENTIAL BACKOFF) ---

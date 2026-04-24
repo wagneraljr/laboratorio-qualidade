@@ -3,65 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <title>Área do Aluno - Treinamento</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <link rel="stylesheet" href="estilo.css">
+    <style>
+        /* Estilos específicos do novo painel */
+        .abas-modo { display: flex; gap: 5px; margin-bottom: 20px; }
+        .aba { flex: 1; padding: 10px; text-align: center; background: #eee; cursor: pointer; border-radius: 5px; font-weight: bold; border: 1px solid #ccc;}
+        .aba.ativa { background: var(--if-verde); color: white; border-color: var(--if-verde-escuro); }
+        .painel-config { display: none; background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px; }
+        .painel-config.ativo { display: block; }
+        .acoes-editor { display: flex; gap: 10px; margin-top: 15px; }
+        .acoes-editor button { flex: 1; font-size: 1.1em; padding: 10px; }
+        
+        /* Modal de Insígnia */
+        .modal-insignia { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+        .conteudo-insignia { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 500px; width: 90%; }
+        .icone-insignia { font-size: 80px; margin-bottom: 20px; }
+    </style>
 </head>
 <body>
     <nav class="barra-admin">
-        <img src="logo_if.png" alt="Logo IF Sudeste MG" style="max-width: 200px; margin-bottom: 20px;">
+        <img src="logo_if.png" alt="Logo IF Sudeste MG" style="max-width: 250px;">
         <h1>Laboratório do Aluno</h1>
         <div class="acoes-nav">
-            <button onclick="window.location.href='index.html'" class="btn-sair">Voltar ao Início</button>
+            <button onclick="irParaModoProfessor()" class="btn-modo-aluno">Modo Professor 👨‍🏫</button>
+            <button onclick="window.location.href='index.html'" class="btn-sair">Sair</button>
         </div>
     </nav>
 
     <main class="container-admin" style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-        
+
         <aside class="painel-jogador">
-            <h2>Selecione o Treinamento</h2>
-            
-            <div class="controles-geracao" style="margin-bottom: 20px;">
-                <select id="tipo-aluno">
+            <div class="abas-modo">
+                <div id="aba-livre" class="aba ativa" onclick="selecionarModo('livre')">Modo Livre 🕊️</div>
+                <div id="aba-comp" class="aba" onclick="selecionarModo('competitivo')">Modo Competitivo 🏆</div>
+            </div>
+
+            <div id="config-livre" class="painel-config ativo">
+                <label>Tipo:</label>
+                <select id="tipo-livre" style="width: 100%; margin-bottom: 10px;">
                     <option value="correcao">Correção de Bugs</option>
                     <option value="refatoracao">Refatoração</option>
                 </select>
-                
-                <select id="dif-aluno">
+                <label>Dificuldade:</label>
+                <select id="dif-livre" style="width: 100%; margin-bottom: 10px;">
                     <option value="1">Nível 1 (Básico)</option>
                     <option value="2">Nível 2</option>
                     <option value="3">Nível 3</option>
                     <option value="4">Nível 4</option>
                     <option value="5">Nível 5 (Avançado)</option>
                 </select>
+                <button onclick="buscarQuestaoLivre()" style="width: 100%;">Buscar Questão (Treino)</button>
+            </div>
+
+            <div id="config-comp" class="painel-config">
+                <p style="font-size: 0.85em; color: #666; margin-top: 0;">Apenas Correção de Bugs. Erros reduzem sua pontuação.</p>
+                <label>Quantidade de Questões:</label>
+                <input type="number" id="comp-qtd" value="3" min="1" max="20" style="width: 100%; margin-bottom: 10px;">
                 
-                <button id="btn-pedir-estoque" style="width: 100%; margin-top: 10px;">Buscar Questão</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <div style="flex: 1;">
+                        <label>Nível Mín:</label>
+                        <input type="number" id="comp-min" value="1" min="1" max="5" style="width: 100%;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Nível Máx:</label>
+                        <input type="number" id="comp-max" value="5" min="1" max="5" style="width: 100%;">
+                    </div>
+                </div>
+                
+                <button onclick="iniciarCompeticao()" style="width: 100%; background-color: var(--if-verde-escuro);">Iniciar Competição</button>
             </div>
 
             <hr>
-            
-            <div class="detalhes-missao">
-                <h3 id="titulo-missao">Aguardando seleção...</h3>
-                <p id="descricao-missao">Escolha o tipo e a dificuldade acima e busque uma questão.</p>
-            </div>
 
-            <hr>
-
-            <div class="status-jogador">
-                <p>⚡ Energia: <span id="energia">5</span></p>
-                <p>🏆 <span id="barra-xp">0 XP</span></p>
+            <div class="status-jogador" style="text-align: center; background: #fff; padding: 15px; border-radius: 8px; border: 2px solid var(--if-verde);">
+                <h3 id="display-modo" style="margin-top: 0; color: var(--if-verde-escuro);">Treinamento Livre</h3>
+                
+                <div id="display-competitivo" style="display: none;">
+                    <p style="font-size: 1.2em; margin: 10px 0;">Progresso: <strong id="comp-progresso">0/0</strong></p>
+                    <p style="font-size: 1.5em; margin: 10px 0;">Pontos: <strong id="comp-pontos" style="color: #f39c12;">0</strong></p>
+                    <p style="font-size: 0.9em; color: #666;">Tentativas na questão atual: <span id="comp-tentativas">0</span></p>
+                </div>
             </div>
         </aside>
 
         <section class="area-trabalho">
-            <textarea id="editor-aluno"></textarea>
-            <button id="btn-avaliar" style="margin-top: 15px; width: 100%; font-size: 1.1em;">Testar Código</button>
-        </section>
+            <div class="detalhes-missao" style="margin-bottom: 15px;">
+                <h3 id="titulo-missao">Aguardando seleção...</h3>
+                <p id="missao-texto">Escolha o modo ao lado para começar.</p>
+            </div>
 
+            <textarea id="editor-codigo"></textarea>
+            
+            <div class="acoes-editor">
+                <button id="btn-gabarito" onclick="mostrarGabarito()" class="btn-sair" style="background-color: #34495e;">Ver Gabarito 👁️</button>
+                <button id="btn-pular" onclick="pularQuestao()" class="btn-sair" style="background-color: #e74c3c; display: none;">Pular Questão ⏭️</button>
+                <button id="btn-avaliar" onclick="enviarCodigo()" style="background-color: var(--if-verde);">Executar Código ▶️</button>
+            </div>
+
+            <div id="terminal-aluno" class="terminal" style="margin-top: 20px;">
+                Aguardando execução...
+            </div>
+        </section>
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="cliente.js"></script>
+    <div id="modal-resultado" class="modal-insignia">
+        <div class="conteudo-insignia">
+            <div id="insignia-icone" class="icone-insignia">🏆</div>
+            <h2 id="insignia-titulo">Competição Encerrada!</h2>
+            <p id="insignia-desc" style="font-size: 1.2em; margin: 20px 0;"></p>
+            <button onclick="fecharModalResultado()" class="btn-salvar">Voltar aos Treinos</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+    <script src="aluno-logic.js"></script>
 </body>
 </html>
