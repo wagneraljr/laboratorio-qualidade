@@ -379,7 +379,6 @@
     ],
     "id": 1777034397227
   },
-  
   {
     "id": 1714000000001,
     "titulo": "A Máquina de Somar Quebrada",
@@ -403,11 +402,11 @@
   {
     "id": 1714000000002,
     "titulo": "O Identificador de Pares",
-    "missao": "Esta função deve retornar 'true' se o número fornecido for par, e 'false' caso contrário. No entanto, ela está fazendo exatamente o oposto! Ajuste a lógica matemática.",
-    "codigoSujo": "function verificarPar(num) {\n    // Dica: O operador módulo (%) pega o resto da divisão\n    return num % 2 === 1;\n}",
-    "codigoLimpo": "function verificarPar(num) {\n    return num % 2 === 0;\n}",
     "tipo": "correcao",
     "dificuldade": 1,
+    "missao": "Esta função deve retornar 'true' se o número fornecido for par, e 'false' caso contrário. No entanto, ela está fazendo exatamente o oposto! Ajuste a lógica matemática.",
+    "codigoSujo": "function verificarPar(num) {\n    return num % 2 === 1;\n}",
+    "codigoLimpo": "function verificarPar(num) {\n    return num % 2 === 0;\n}",
     "nomeDaFuncao": "verificarPar",
     "testes": [
       {
@@ -492,7 +491,11 @@
     "testes": [
       {
         "parametros": "[1, 2, 3, 4, 5, 6]",
-        "saidaEsperada": [2, 4, 6]
+        "saidaEsperada": [
+          2,
+          4,
+          6
+        ]
       },
       {
         "parametros": "[7, 9, 11]",
@@ -532,11 +535,18 @@
     "testes": [
       {
         "parametros": "[1, 1, 2, 3, 3]",
-        "saidaEsperada": [1, 2, 3]
+        "saidaEsperada": [
+          1,
+          2,
+          3
+        ]
       },
       {
         "parametros": "[\"a\", \"b\", \"a\"]",
-        "saidaEsperada": ["a", "b"]
+        "saidaEsperada": [
+          "a",
+          "b"
+        ]
       }
     ]
   },
@@ -552,11 +562,19 @@
     "testes": [
       {
         "parametros": "5",
-        "saidaEsperada": [0, 1, 1, 2, 3]
+        "saidaEsperada": [
+          0,
+          1,
+          1,
+          2,
+          3
+        ]
       },
       {
         "parametros": "1",
-        "saidaEsperada": [0]
+        "saidaEsperada": [
+          0
+        ]
       }
     ]
   },
@@ -572,24 +590,29 @@
     "testes": [
       {
         "parametros": "[3, 2, 4], 6",
-        "saidaEsperada": [1, 2]
+        "saidaEsperada": [
+          1,
+          2
+        ]
       },
       {
         "parametros": "[1, 5, 8, 10], 15",
-        "saidaEsperada": [1, 3]
+        "saidaEsperada": [
+          1,
+          3
+        ]
       }
     ]
   },
-  
   {
     "id": 1714000000011,
     "titulo": "Nomenclatura Obscura",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
     "missao": "O código funciona, mas os nomes das variáveis não significam nada. Refatore a função alterando APENAS o nome da função e das variáveis para algo descritivo e profissional.",
     "codigoSujo": "function calc(x, y) {\n    let z = x * y;\n    return z;\n}",
     "codigoLimpo": "function calcularAreaRetangulo(base, altura) {\n    let area = base * altura;\n    return area;\n}",
-    "tipo": "refatoracao",
-    "dificuldade": 1,
-    "nomeDaFuncao": "calc",
+    "nomeDaFuncao": "calcularAreaRetangulo",
     "testes": [
       {
         "parametros": "5, 10",
@@ -780,8 +803,825 @@
         "saidaEsperada": "Olá Ana, sua fatura de R$ 50 vence no dia 01/12. Evite multas!"
       }
     ]
+  },
+  {
+    "titulo": "Processamento Incorreto de Notas de Alunos",
+    "missao": "Você foi encarregado de revisar e corrigir um trecho de código JavaScript responsável por processar as notas de alunos, calcular médias, atribuir conceitos e determinar o status de aprovação. O código atual contém erros sutis de lógica e potencialmente de sintaxe que levam a resultados incorretos. Sua tarefa é identificar e corrigir esses bugs para que o programa funcione conforme as seguintes regras:\n\n1.  **Cálculo da Média:** A média de um aluno é a soma de suas notas dividida pelo número de notas.\n2.  **Atribuição de Conceito:**\n    *   Média >= 9.0: Conceito 'A'\n    *   Média >= 7.0 e < 9.0: Conceito 'B'\n    *   Média >= 5.0 e < 7.0: Conceito 'C'\n    *   Média >= 3.0 e < 5.0: Conceito 'D'\n    *   Média < 3.0: Conceito 'F'\n3.  **Status de Aprovação:**\n    *   Média >= 7.0: 'Aprovado'\n    *   Média < 7.0: 'Reprovado'\n\nCertifique-se de que o código corrigido esteja limpo, legível e siga as boas práticas de programação. As funções devem ser declaradas da forma tradicional ('function') e os laços de repetição devem usar a estrutura clássica 'for'.",
+    "codigoSujo": "function processarNotasAlunos(alunos) {\n    var resultados = [];\n\n    for (var i = 1; i < alunos.length; i++) {\n        var aluno = alunos[i];\n        var somaNotas = 0;\n\n        for (var j = 0; j < aluno.notas.length; j++) {\n            somaNotas += aluno.notas[j];\n        }\n\n        var media = somaNotas / aluno.notas.length;\n        var conceito;\n        var statusAprovacao;\n\n        if (media > 9) {\n            conceito = \"A\";\n        } else if (media >= 7 && media < 9) {\n            conceito = \"B\";\n        } else if (media >= 5 && media < 7) {\n            conceito = \"C\";\n        } else if (media >= 3 && media < 5) {\n            conceito = \"F\";\n        } else {\n            conceito = \"F\";\n        }\n\n        if (media >= 6) {\n            statusAprovacao = \"Aprovado\";\n        } else {\n            statusAprovacao = \"Reprovado\";\n        }\n        \n        resultados.push({\n            nome: aluno.nome,\n            media: media,\n            conceito: conceito,\n            statusAprovacao: statusAprovacao\n        });\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function processarNotasAlunos(alunos) {\n    var resultados = [];\n\n    for (var i = 0; i < alunos.length; i++) {\n        var aluno = alunos[i];\n        var somaNotas = 0;\n\n        if (aluno.notas && aluno.notas.length > 0) {\n            for (var j = 0; j < aluno.notas.length; j++) {\n                somaNotas += aluno.notas[j];\n            }\n            var media = somaNotas / aluno.notas.length;\n        } else {\n            var media = 0; // Atribui 0 de média se não houver notas\n        }\n        \n        var conceito;\n        var statusAprovacao;\n\n        if (media >= 9) {\n            conceito = \"A\";\n        } else if (media >= 7) {\n            conceito = \"B\";\n        } else if (media >= 5) {\n            conceito = \"C\";\n        } else if (media >= 3) {\n            conceito = \"D\";\n        } else {\n            conceito = \"F\";\n        }\n\n        if (media >= 7) {\n            statusAprovacao = \"Aprovado\";\n        } else {\n            statusAprovacao = \"Reprovado\";\n        }\n        \n        resultados.push({\n            nome: aluno.nome,\n            media: media,\n            conceito: conceito,\n            statusAprovacao: statusAprovacao\n        });\n    }\n\n    return resultados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "processarNotasAlunos",
+    "testes": [
+      {
+        "parametros": "[{ \"nome\": \"Ana\", \"notas\": [9.0, 9.0, 9.0] }]",
+        "saidaEsperada": "[{\"nome\":\"Ana\",\"media\":9,\"conceito\":\"A\",\"statusAprovacao\":\"Aprovado\"}]"
+      },
+      {
+        "parametros": "[{ \"nome\": \"Aluno Ignorado\", \"notas\": [1.0, 1.0, 1.0] }, { \"nome\": \"Carlos S\", \"notas\": [9.0, 9.0, 9.0] }, { \"nome\": \"Maria T\", \"notas\": [6.0, 6.0, 6.0] }, { \"nome\": \"Pedro V\", \"notas\": [3.0, 3.0, 3.0] }]",
+        "saidaEsperada": "[{\"nome\":\"Aluno Ignorado\",\"media\":1,\"conceito\":\"F\",\"statusAprovacao\":\"Reprovado\"},{\"nome\":\"Carlos S\",\"media\":9,\"conceito\":\"A\",\"statusAprovacao\":\"Aprovado\"},{\"nome\":\"Maria T\",\"media\":6,\"conceito\":\"C\",\"statusAprovacao\":\"Reprovado\"},{\"nome\":\"Pedro V\",\"media\":3,\"conceito\":\"D\",\"statusAprovacao\":\"Reprovado\"}]"
+      }
+    ],
+    "id": 1777137882567
+  },
+  {
+    "titulo": "Corrigindo o Termostato Digital",
+    "missao": "Você foi encarregado de revisar e corrigir um módulo de software que processa leituras de temperatura em Celsius, converte para Fahrenheit e calcula médias. No entanto, o código atual apresenta alguns erros lógicos e de sintaxe que estão levando a resultados incorretos. Sua tarefa é encontrar e corrigir todos os bugs para que a função opere de acordo com os seguintes requisitos:\n\n1.  **Iteração Correta**: A função deve percorrer corretamente todas as temperaturas fornecidas no array, sem pular ou acessar elementos inválidos (como `undefined`).\n2.  **Filtragem de Temperatura**: Apenas temperaturas **estritamente acima** do `limiteMinimoCelsius` devem ser processadas e convertidas para Fahrenheit. Temperaturas iguais ou abaixo do limite devem ser contabilizadas como descartadas.\n3.  **Conversão Precisa**: A fórmula de conversão de Celsius para Fahrenheit deve ser a padrão: `(Temperatura em Celsius * 9/5) + 32`.\n4.  **Cálculo da Média**: A média das temperaturas convertidas para Fahrenheit deve ser calculada apenas sobre as temperaturas que foram de fato convertidas, e não sobre o total de entradas. Se nenhuma temperatura for convertida, a média deve ser 0.",
+    "codigoSujo": "function processarTemperaturasCelsius(temperaturas, limiteMinimoCelsius) {\n    let temperaturasFahrenheit = [];\n    let somaFahrenheit = 0;\n    let contadorConversoes = 0;\n    let temperaturasDescartadas = 0;\n\n    for (let i = 0; i <= temperaturas.length; i++) {\n        let tempCelsius = temperaturas[i];\n\n        if (tempCelsius < limiteMinimoCelsius) {\n            temperaturasDescartadas++;\n            continue;\n        }\n\n        let tempFahrenheit = (tempCelsius + 32) * 9 / 5;\n\n        temperaturasFahrenheit.push(tempFahrenheit);\n        somaFahrenheit += tempFahrenheit;\n        contadorConversoes++;\n    }\n\n    let mediaFahrenheit;\n    if (contadorConversoes === 0) {\n        mediaFahrenheit = 0;\n    } else {\n        mediaFahrenheit = somaFahrenheit / temperaturas.length;\n    }\n\n    return {\n        temperaturasFahrenheit: temperaturasFahrenheit,\n        mediaFahrenheit: mediaFahrenheit,\n        temperaturasDescartadas: temperaturasDescartadas\n    };\n}",
+    "codigoLimpo": "function processarTemperaturasCelsius(temperaturas, limiteMinimoCelsius) {\n    let temperaturasFahrenheit = [];\n    let somaFahrenheit = 0;\n    let contadorConversoes = 0;\n    let temperaturasDescartadas = 0;\n\n    for (let i = 0; i < temperaturas.length; i++) {\n        let tempCelsius = temperaturas[i];\n\n        if (tempCelsius > limiteMinimoCelsius) {\n            let tempFahrenheit = (tempCelsius * 9 / 5) + 32;\n\n            temperaturasFahrenheit.push(tempFahrenheit);\n            somaFahrenheit += tempFahrenheit;\n            contadorConversoes++;\n        } else {\n            temperaturasDescartadas++;\n        }\n    }\n\n    let mediaFahrenheit;\n    if (contadorConversoes === 0) {\n        mediaFahrenheit = 0;\n    } else {\n        mediaFahrenheit = somaFahrenheit / contadorConversoes;\n    }\n\n    return {\n        temperaturasFahrenheit: temperaturasFahrenheit,\n        mediaFahrenheit: mediaFahrenheit,\n        temperaturasDescartadas: temperaturasDescartadas\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "processarTemperaturasCelsius",
+    "testes": [
+      {
+        "parametros": "[10, 20, 30, 40], 15",
+        "saidaEsperada": {
+          "temperaturasFahrenheit": [
+            68,
+            86,
+            104
+          ],
+          "mediaFahrenheit": 86,
+          "temperaturasDescartadas": 1
+        }
+      },
+      {
+        "parametros": "[0, 5, 10], 10",
+        "saidaEsperada": {
+          "temperaturasFahrenheit": [],
+          "mediaFahrenheit": 0,
+          "temperaturasDescartadas": 3
+        }
+      },
+      {
+        "parametros": "[-5, 0, 15, 25], 0",
+        "saidaEsperada": {
+          "temperaturasFahrenheit": [
+            59,
+            77
+          ],
+          "mediaFahrenheit": 68,
+          "temperaturasDescartadas": 2
+        }
+      }
+    ],
+    "id": 1777137924658
+  },
+  {
+    "titulo": "Calculadora de Carrinho de Compras com Ajustes Fiscais e Descontos",
+    "missao": "Você foi encarregado de revisar e corrigir uma função JavaScript existente que simula o cálculo do valor final de um carrinho de compras. Esta função deve calcular o subtotal dos itens, aplicar um desconto percentual (onde, por exemplo, '10' significa 10%), adicionar um imposto fixo de 5% sobre o valor já com desconto, e por fim, somar uma taxa de envio. Foram inseridos alguns bugs sutis, de lógica e de cálculo. Seu objetivo é identificar e corrigir todos os erros para que a função opere de forma precisa em todas as condições.",
+    "codigoSujo": "function calcularValorFinalCarrinho(carrinho, descontoPercentual, taxaEnvio) {\n    var subtotalBruto = 0;\n\n    for (var i = 0; i < carrinho.length - 1; i++) {\n        var item = carrinho[i];\n        subtotalBruto += item.preco * item.quantidade;\n    }\n\n    var valorComDesconto = subtotalBruto;\n    if (descontoPercentual > 0) {\n        valorComDesconto -= descontoPercentual * valorComDesconto;\n    }\n\n    var impostoPercentual = 0.05;\n    var valorComImposto = subtotalBruto * (1 + impostoPercentual);\n\n    var totalFinal = 0;\n    totalFinal = valorComImposto + taxaEnvio;\n\n    return totalFinal;\n}",
+    "codigoLimpo": "function calcularValorFinalCarrinho(carrinho, descontoPercentual, taxaEnvio) {\n    var subtotalBruto = 0;\n\n    // Bug 1: O loop deve percorrer todos os itens do carrinho, até o último índice.\n    for (var i = 0; i < carrinho.length; i++) {\n        var item = carrinho[i];\n        subtotalBruto += item.preco * item.quantidade;\n    }\n\n    var valorAposDesconto = subtotalBruto;\n    // Bug 2: O desconto percentual deve ser aplicado dividindo o percentual por 100.\n    // Ex: 10% é 0.10. O cálculo estava subtraindo 10x o valor para 10%.\n    if (descontoPercentual > 0) {\n        valorAposDesconto = subtotalBruto * (1 - (descontoPercentual / 100));\n    }\n\n    var impostoPercentual = 0.05; // Imposto fixo de 5%\n    // Bug 3: O imposto deve ser aplicado sobre o 'valorAposDesconto', não sobre o 'subtotalBruto',\n    // garantindo que o desconto seja considerado antes do imposto.\n    var valorFinalComImposto = valorAposDesconto * (1 + impostoPercentual);\n\n    // Bug 4: O 'totalFinal' deve somar o valor já com imposto e a taxa de envio.\n    // A versão anterior não usava o valor corrigido após desconto e imposto de forma consistente.\n    var totalFinal = valorFinalComImposto + taxaEnvio;\n\n    return totalFinal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "calcularValorFinalCarrinho",
+    "testes": [
+      {
+        "parametros": "[{ \"preco\": 100, \"quantidade\": 1 }], 0, 0",
+        "saidaEsperada": 105
+      },
+      {
+        "parametros": "[{ \"preco\": 50, \"quantidade\": 2 }, { \"preco\": 100, \"quantidade\": 1 }], 10, 15",
+        "saidaEsperada": 204
+      },
+      {
+        "parametros": "[], 5, 20",
+        "saidaEsperada": 20
+      }
+    ],
+    "id": 1777137961523
+  },
+  {
+    "titulo": "Análise de Desempenho Acadêmico: Corrigindo o Sistema de Notas",
+    "missao": "Prezado(a) aluno(a),\n\nVocê recebeu um código JavaScript que foi desenvolvido para processar notas de alunos, com o objetivo de calcular a média final, determinar o status de aprovação e atribuir um conceito acadêmico. No entanto, testes preliminares indicaram que o código contém alguns 'bugs' sutis (erros lógicos ou de sintaxe menor) que estão levando a resultados incorretos em diversas situações. Sua tarefa é atuar como um engenheiro de software de controle de qualidade: identifique e corrija todos os erros presentes na função 'processarNotasAlunos' para que ela retorne os resultados esperados de forma precisa e robusta.\n\n**Critérios de Avaliação a serem implementados:**\n*   **Status de Aprovação:** O aluno será 'Aprovado' se a Média Final for igual ou superior a 70. Caso contrário, será 'Reprovado'.\n*   **Tabela de Conceitos:**\n    *   90 a 100: Conceito 'A'\n    *   80 a 89: Conceito 'B'\n    *   70 a 79: Conceito 'C'\n    *   50 a 69: Conceito 'D'\n    *   Abaixo de 50: Conceito 'F'\n\nAlém disso, o código deve lidar corretamente com um array de notas vazio, retornando um objeto indicando a ausência de notas.\n\nAnalise o 'codigoSujo' atentamente, identifique as falhas e reescreva-o no 'codigoLimpo' seguindo as boas práticas de programação e os requisitos acima. Teste seu código com diferentes cenários para garantir sua correção.",
+    "codigoSujo": "function processarNotasAlunos(notas) {\n    var somaNotas = 1;\n    var media;\n    var statusAprovacao;\n    var conceito;\n\n    for (var i = 0; i < notas.length - 1; i++) {\n        somaNotas += notas[i];\n    }\n\n    media = somaNotas / notas.length;\n\n    if (media >= 65) {\n        statusAprovacao = \"Aprovado\";\n    } else {\n        statusAprovacao = \"Reprovado\";\n    }\n\n    if (media > 90) {\n        conceito = \"A\";\n    } else if (media >= 80) {\n        conceito = \"B\";\n    } else if (media > 70) {\n        conceito = \"C\";\n    } else if (media > 50) {\n        conceito = \"D\";\n    } else {\n        conceito = \"F\";\n    }\n\n    return {\n        media: media,\n        statusAprovacao: statusAprovacao,\n        conceito: conceito\n    };\n}",
+    "codigoLimpo": "function processarNotasAlunos(notas) {\n    let somaNotas = 0;\n\n    if (notas.length === 0) {\n        return {\n            media: 0,\n            statusAprovacao: \"Sem notas\",\n            conceito: \"N/A\"\n        };\n    }\n\n    for (let i = 0; i < notas.length; i++) {\n        somaNotas += notas[i];\n    }\n\n    let media = somaNotas / notas.length;\n    let statusAprovacao;\n    let conceito;\n\n    if (media >= 70) {\n        statusAprovacao = \"Aprovado\";\n    } else {\n        statusAprovacao = \"Reprovado\";\n    }\n\n    if (media >= 90) {\n        conceito = \"A\";\n    } else if (media >= 80) {\n        conceito = \"B\";\n    } else if (media >= 70) {\n        conceito = \"C\";\n    } else if (media >= 50) {\n        conceito = \"D\";\n    } else {\n        conceito = \"F\";\n    }\n\n    return {\n        media: parseFloat(media.toFixed(2)),\n        statusAprovacao: statusAprovacao,\n        conceito: conceito\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "processarNotasAlunos",
+    "testes": [
+      {
+        "parametros": "[70, 80, 90]",
+        "saidaEsperada": {
+          "media": 80,
+          "statusAprovacao": "Aprovado",
+          "conceito": "B"
+        }
+      },
+      {
+        "parametros": "[30, 40, 50]",
+        "saidaEsperada": {
+          "media": 40,
+          "statusAprovacao": "Reprovado",
+          "conceito": "F"
+        }
+      },
+      {
+        "parametros": "[65, 70, 75]",
+        "saidaEsperada": {
+          "media": 70,
+          "statusAprovacao": "Aprovado",
+          "conceito": "C"
+        }
+      },
+      {
+        "parametros": "[45, 50, 55]",
+        "saidaEsperada": {
+          "media": 50,
+          "statusAprovacao": "Reprovado",
+          "conceito": "D"
+        }
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": {
+          "media": 0,
+          "statusAprovacao": "Sem notas",
+          "conceito": "N/A"
+        }
+      },
+      {
+        "parametros": "[95]",
+        "saidaEsperada": {
+          "media": 95,
+          "statusAprovacao": "Aprovado",
+          "conceito": "A"
+        }
+      },
+      {
+        "parametros": "[79.9, 80.1]",
+        "saidaEsperada": {
+          "media": 80,
+          "statusAprovacao": "Aprovado",
+          "conceito": "B"
+        }
+      }
+    ],
+    "id": 1777138002805
+  },
+  {
+    "titulo": "Calculadora de Valor Total do Inventário com Bugs",
+    "missao": "Sua missão é atuar como um engenheiro de software júnior, recebendo um módulo crucial para o sistema de inventário. O código fornecido, que deveria calcular o valor total dos produtos em estoque, apresenta erros de lógica e sintaxe que impedem seu funcionamento correto. Identifique e corrija todos os bugs na função `calcularValorTotalInventario` para que ela retorne o valor monetário total preciso de todos os itens do inventário, considerando que cada item possui as propriedades `precoUnitario` e `quantidadeEstoque`.",
+    "codigoSujo": "function calcularValorTotalInventario(itensInventario) {\n    var totalGeral = 1;\n\n    for (var i = 0; i <= itensInventario.length; i++) {\n        var item = itensInventario[i];\n        totalGeral = totalGeral + (item.preco * item.quantidade);\n    }\n\n    return totalGeral;\n}",
+    "codigoLimpo": "function calcularValorTotalInventario(itensInventario) {\n    var totalGeral = 0;\n\n    for (var i = 0; i < itensInventario.length; i++) {\n        var item = itensInventario[i];\n        totalGeral = totalGeral + (item.precoUnitario * item.quantidadeEstoque);\n    }\n\n    return totalGeral;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "calcularValorTotalInventario",
+    "testes": [
+      {
+        "parametros": "[{ id: 1, nome: \"Teclado Gamer\", precoUnitario: 250.00, quantidadeEstoque: 10 }, { id: 2, nome: \"Mouse Óptico\", precoUnitario: 120.00, quantidadeEstoque: 15 }]",
+        "saidaEsperada": 4300
+      },
+      {
+        "parametros": "[{ id: 3, nome: \"Monitor LED\", precoUnitario: 1500.00, quantidadeEstoque: 5 }, { id: 4, nome: \"Webcam Full HD\", precoUnitario: 300.00, quantidadeEstoque: 8 }, { id: 5, nome: \"Fone de Ouvido\", precoUnitario: 180.00, quantidadeEstoque: 20 }]",
+        "saidaEsperada": 13500
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": 0
+      }
+    ],
+    "id": 1777138030837
+  },
+  {
+    "titulo": "Bugfix: Conversor Universal de Unidades",
+    "missao": "Você foi designado para revisar e corrigir um módulo crucial de conversão de unidades que está apresentando resultados inconsistentes. Sua missão é atuar como um engenheiro de software júnior, encontrando e corrigindo todos os bugs lógicos e de sintaxe (sutis) no código JavaScript fornecido. Garanta que todas as conversões de temperatura (Celsius/Fahrenheit) e medidas de comprimento (Metro/Centímetro) funcionem perfeitamente, e que o sistema lide apropriadamente com requisições de unidades não suportadas.",
+    "codigoSujo": "function processarConversoesDeUnidades(conversoes) {\n    let resultados = [];\n\n    for (let i = 0; i < conversoes.length; i++) {\n        let requisicao = conversoes[i];\n        let valor = requisicao.valor;\n        let origem = requisicao.unidadeOrigem;\n        let destino = requisicao.unidadeDestino;\n        let valorConvertido;\n\n        if (origem === \"c\" && destino === \"F\") {\n            valorConvertido = (valor * 9 / 5) + 32;\n        } else if (origem === \"F\" && destino === \"C\") {\n            valorConvertido = (valor - 32) * 9 / 5;\n        } else if (origem === \"M\" && destino === \"CM\") {\n            valorConvertido = valor / 100;\n        } else if (origem === \"CM\" && destino === \"M\") {\n            valorConvertido = valor * 100;\n        } else {\n            valorConvertido = valor;\n        }\n        resultados.push(valorConvertido);\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function processarConversoesDeUnidades(conversoes) {\n    let resultados = [];\n\n    for (let i = 0; i < conversoes.length; i++) {\n        let requisicao = conversoes[i];\n        let valor = requisicao.valor;\n        let origem = requisicao.unidadeOrigem;\n        let destino = requisicao.unidadeDestino;\n        let valorConvertido = null;\n\n        if (origem === \"C\" && destino === \"F\") {\n            valorConvertido = (valor * 9 / 5) + 32;\n        } else if (origem === \"F\" && destino === \"C\") {\n            valorConvertido = (valor - 32) * 5 / 9;\n        } else if (origem === \"M\" && destino === \"CM\") {\n            valorConvertido = valor * 100;\n        } else if (origem === \"CM\" && destino === \"M\") {\n            valorConvertido = valor / 100;\n        }\n        resultados.push(valorConvertido);\n    }\n\n    return resultados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "processarConversoesDeUnidades",
+    "testes": [
+      {
+        "parametros": "[{\"valor\": 25, \"unidadeOrigem\": \"C\", \"unidadeDestino\": \"F\"}, {\"valor\": 68, \"unidadeOrigem\": \"F\", \"unidadeDestino\": \"C\"}]",
+        "saidaEsperada": [
+          77,
+          20
+        ]
+      },
+      {
+        "parametros": "[{\"valor\": 5, \"unidadeOrigem\": \"M\", \"unidadeDestino\": \"CM\"}, {\"valor\": 200, \"unidadeOrigem\": \"CM\", \"unidadeDestino\": \"M\"}, {\"valor\": 10, \"unidadeOrigem\": \"USD\", \"unidadeDestino\": \"BRL\"}]",
+        "saidaEsperada": [
+          500,
+          2,
+          null
+        ]
+      }
+    ],
+    "id": 1777138068884
+  },
+  {
+    "titulo": "Análise de Boletins Escolares",
+    "missao": "Você foi encarregado de corrigir o sistema de processamento de notas da nossa escola. O código atual possui erros sutis que impedem o cálculo correto da média, a atribuição do conceito e a determinação da aprovação dos alunos. Sua tarefa é identificar e corrigir todos os bugs para que o sistema funcione perfeitamente, seguindo as seguintes regras:\n\nRegras de Avaliação:\n- Média para Conceito 'A': Igual ou superior a 9.0\n- Média para Conceito 'B': Igual ou superior a 7.0 e inferior a 9.0\n- Média para Conceito 'C': Igual ou superior a 5.0 e inferior a 7.0\n- Média para Conceito 'D': Inferior a 5.0\n- Aprovação: Média igual ou superior a 6.0\n\nCertifique-se de que os cálculos de média sejam precisos (duas casas decimais) e que todos os alunos sejam processados corretamente.",
+    "codigoSujo": "function processarBoletins(alunos) {\n    let somaNotas = 0;\n    let resultados = [];\n\n    for (let i = 0; i < alunos.length; i++) {\n        let alunoAtual = alunos[i];\n        let media = 0;\n        let conceito = \"\";\n        let aprovado = false;\n\n        for (let j = 0; j <= alunoAtual.notas.length; j++) {\n            somaNotas += alunoAtual.notas[j];\n        }\n\n        media = somaNotas / alunoAtual.notas.length;\n\n        if (media > 9.0) {\n            conceito = \"A\";\n        } else if (media > 7.0) {\n            conceito = \"B\";\n        } else if (media >= 5.0) {\n            conceito = \"C\";\n        } else {\n            conceito = \"D\";\n        }\n\n        if (media >= 5.0) {\n            aprovado = true;\n        } else {\n            aprovado = false;\n        }\n\n        let alunoProcessado = {\n            nome: alunoAtual.nome,\n            media: parseFloat(media.toFixed(2)),\n            conceito: conceito,\n            aprovado: aprovado\n        };\n\n        resultados = alunoProcessado;\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function processarBoletins(alunos) {\n    let resultados = [];\n\n    for (let i = 0; i < alunos.length; i++) {\n        let alunoAtual = alunos[i];\n        let somaNotas = 0; // BUG 1 FIX: Inicializa somaNotas para cada aluno\n        let media = 0;\n        let conceito = \"\";\n        let aprovado = false;\n\n        if (alunoAtual.notas.length > 0) {\n            // BUG 2 FIX: Loop para notas deve ir até < length para evitar 'undefined'\n            for (let j = 0; j < alunoAtual.notas.length; j++) {\n                somaNotas += alunoAtual.notas[j];\n            }\n            media = somaNotas / alunoAtual.notas.length;\n        } else {\n            media = 0; // Aluno sem notas, média 0 para fins de cálculo\n        }\n\n        // BUG 3 FIX: Condições de conceito devem usar '>=' (maior ou igual) e não apenas '>' (maior)\n        if (media >= 9.0) {\n            conceito = \"A\";\n        } else if (media >= 7.0) {\n            conceito = \"B\";\n        } else if (media >= 5.0) {\n            conceito = \"C\";\n        } else {\n            conceito = \"D\";\n        }\n\n        // BUG 4 FIX: Critério de aprovação correto é média >= 6.0\n        if (media >= 6.0) {\n            aprovado = true;\n        } else {\n            aprovado = false;\n        }\n\n        let alunoProcessado = {\n            nome: alunoAtual.nome,\n            media: parseFloat(media.toFixed(2)),\n            conceito: conceito,\n            aprovado: aprovado\n        };\n\n        // BUG 5 FIX: Adiciona o aluno processado ao array de resultados, em vez de sobrescrevê-lo\n        resultados.push(alunoProcessado);\n    }\n\n    return resultados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "processarBoletins",
+    "testes": [
+      {
+        "parametros": "[{ \"nome\": \"Alice\", \"notas\": [8.5, 9.0, 7.5] }, { \"nome\": \"Bob\", \"notas\": [4.0, 5.0, 3.0] }]",
+        "saidaEsperada": "[ { \"nome\": \"Alice\", \"media\": 8.33, \"conceito\": \"B\", \"aprovado\": true }, { \"nome\": \"Bob\", \"media\": 4.00, \"conceito\": \"D\", \"aprovado\": false } ]"
+      },
+      {
+        "parametros": "[{ \"nome\": \"Charlie\", \"notas\": [9.5, 9.0, 10.0] }, { \"nome\": \"Diana\", \"notas\": [] }]",
+        "saidaEsperada": "[ { \"nome\": \"Charlie\", \"media\": 9.50, \"conceito\": \"A\", \"aprovado\": true }, { \"nome\": \"Diana\", \"media\": 0.00, \"conceito\": \"D\", \"aprovado\": false } ]"
+      },
+      {
+        "parametros": "[{ \"nome\": \"Eduardo\", \"notas\": [6.0, 5.5, 6.5] }, { \"nome\": \"Fernanda\", \"notas\": [7.0, 6.0] }]",
+        "saidaEsperada": "[ { \"nome\": \"Eduardo\", \"media\": 6.00, \"conceito\": \"C\", \"aprovado\": true }, { \"nome\": \"Fernanda\", \"media\": 6.50, \"conceito\": \"C\", \"aprovado\": true } ]"
+      }
+    ],
+    "id": 1777138109410
+  },
+  {
+    "titulo": "Correção de Lógica - Análise de Desempenho Acadêmico",
+    "missao": "Você foi designado para revisar e corrigir uma função JavaScript responsável por analisar o desempenho acadêmico de um aluno. A função `analisarDesempenhoAcademico` recebe um array de notas e deve retornar um objeto contendo a média calculada, o conceito (A, B, C ou D) e o status de aprovação.\n\nOs requisitos para a função são:\n*   **Média**: A soma de todas as notas dividida pelo número total de notas. Deve ser arredondada para duas casas decimais.\n*   **Conceito**:\n    *   'A': Média maior ou igual a 9.0\n    *   'B': Média maior ou igual a 7.0 e menor que 9.0\n    *   'C': Média maior ou igual a 5.0 e menor que 7.0\n    *   'D': Média menor que 5.0\n*   **Aprovação**: `true` se a média for maior ou igual a 7.0; caso contrário, `false`.\n*   **Casos especiais**: Se o array de notas estiver vazio, a média deve ser 0, o conceito \"N/A\" e o status de aprovação `false`.\n\nO código fornecido possui diversos erros sutis de lógica e sintaxe que impedem o correto funcionamento de acordo com as especificações. Sua tarefa é encontrar e corrigir esses bugs, garantindo que a função opere perfeitamente para todos os casos.",
+    "codigoSujo": "function analisarDesempenhoAcademico(notas) {\n    var totalNotas = notas.length;\n    var somaNotas = 0;\n\n    for (var i = 0; i < totalNotas - 1; i++) {\n        somaNotas += notas[i];\n    }\n\n    var media;\n    if (totalNotas === 0) {\n        media = 0;\n    } else {\n        media = somaNotas / totalNotas;\n    }\n\n    var conceito;\n    if (media < 5) {\n        conceito = \"D\";\n    } else if (media >= 5) {\n        conceito = \"C\";\n    } else if (media >= 7) {\n        conceito = \"B\";\n    } else if (media >= 9) {\n        conceito = \"A\";\n    } else {\n        conceito = \"Indefinido\";\n    }\n\n    var aprovado;\n    if (media > 7) {\n        aprovado = true;\n    } else {\n        aprovado = false;\n    }\n\n    return {\n        media: parseFloat(media.toFixed(2)),\n        conceito: conceito,\n        aprovado: aprovado\n    };\n}",
+    "codigoLimpo": "function analisarDesempenhoAcademico(notas) {\n    var totalNotas = notas.length;\n    var somaNotas = 0;\n\n    if (totalNotas === 0) {\n        return {\n            media: 0,\n            conceito: \"N/A\",\n            aprovado: false\n        };\n    }\n\n    for (var i = 0; i < totalNotas; i++) {\n        somaNotas += notas[i];\n    }\n\n    var media = somaNotas / totalNotas;\n\n    var conceito;\n    if (media >= 9) {\n        conceito = \"A\";\n    } else if (media >= 7) {\n        conceito = \"B\";\n    } else if (media >= 5) {\n        conceito = \"C\";\n    } else { \n        conceito = \"D\";\n    }\n\n    var aprovado;\n    if (media >= 7) {\n        aprovado = true;\n    } else {\n        aprovado = false;\n    }\n\n    return {\n        media: parseFloat(media.toFixed(2)),\n        conceito: conceito,\n        aprovado: aprovado\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "analisarDesempenhoAcademico",
+    "testes": [
+      {
+        "parametros": "[9.5, 10, 9]",
+        "saidaEsperada": {
+          "media": 9.5,
+          "conceito": "A",
+          "aprovado": true
+        }
+      },
+      {
+        "parametros": "[7, 8, 7.5]",
+        "saidaEsperada": {
+          "media": 7.5,
+          "conceito": "B",
+          "aprovado": true
+        }
+      },
+      {
+        "parametros": "[6.9, 7.1, 7]",
+        "saidaEsperada": {
+          "media": 7,
+          "conceito": "B",
+          "aprovado": true
+        }
+      },
+      {
+        "parametros": "[5, 6, 6.5]",
+        "saidaEsperada": {
+          "media": 5.83,
+          "conceito": "C",
+          "aprovado": false
+        }
+      },
+      {
+        "parametros": "[3, 4, 2]",
+        "saidaEsperada": {
+          "media": 3,
+          "conceito": "D",
+          "aprovado": false
+        }
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": {
+          "media": 0,
+          "conceito": "N/A",
+          "aprovado": false
+        }
+      },
+      {
+        "parametros": "[9.2]",
+        "saidaEsperada": {
+          "media": 9.2,
+          "conceito": "A",
+          "aprovado": true
+        }
+      },
+      {
+        "parametros": "[4.9]",
+        "saidaEsperada": {
+          "media": 4.9,
+          "conceito": "D",
+          "aprovado": false
+        }
+      }
+    ],
+    "id": 1777138150137
+  },
+  {
+    "titulo": "Desafio: Fatoriais de Primos",
+    "missao": "Você foi encarregado de desenvolver uma função que calcula a soma dos fatoriais de todos os números primos até um determinado limite. O código inicial foi fornecido por um colega, mas ele contém alguns erros lógicos e de implementação que precisam ser corrigidos. Seu objetivo é analisar o código `calcularSomaFatoriaisPrimos` e suas funções auxiliares (`ehPrimo`, `calcularFatorial`), identificar os bugs e corrigi-los para que a função principal retorne o resultado correto, de acordo com as especificações matemáticas.",
+    "codigoSujo": "function ehPrimo(numero) {\n    if (numero < 2) return false;\n    if (numero % 2 === 0) return false;\n    for (let i = 3; i * i <= numero; i += 2) {\n        if (numero % i === 0) return false;\n    }\n    return true;\n}\n\nfunction calcularFatorial(num) {\n    if (num < 0) return -1;\n    if (num === 0) return 0;\n    let resultado = 1;\n    for (let i = 1; i <= num; i++) {\n        resultado *= i;\n    }\n    return resultado;\n}\n\nfunction calcularSomaFatoriaisPrimos(limite) {\n    let somaTotal = 0;\n    for (let i = 1; i <= limite; i++) {\n        if (ehPrimo(i)) {\n            somaTotal += i;\n        }\n    }\n    return somaTotal;\n}",
+    "codigoLimpo": "function ehPrimo(numero) {\n    if (numero < 2) {\n        return false;\n    }\n    if (numero === 2) {\n        return true;\n    }\n    if (numero % 2 === 0) {\n        return false;\n    }\n    for (let i = 3; i * i <= numero; i += 2) {\n        if (numero % i === 0) {\n            return false;\n        }\n    }\n    return true;\n}\n\nfunction calcularFatorial(num) {\n    if (num < 0) {\n        return -1;\n    }\n    if (num === 0) {\n        return 1;\n    }\n    let resultado = 1;\n    for (let i = 1; i <= num; i++) {\n        resultado *= i;\n    }\n    return resultado;\n}\n\nfunction calcularSomaFatoriaisPrimos(limite) {\n    let somaTotal = 0;\n    for (let i = 2; i <= limite; i++) {\n        if (ehPrimo(i)) {\n            somaTotal += calcularFatorial(i);\n        }\n    }\n    return somaTotal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "calcularSomaFatoriaisPrimos",
+    "testes": [
+      {
+        "parametros": "2",
+        "saidaEsperada": 2
+      },
+      {
+        "parametros": "5",
+        "saidaEsperada": 128
+      },
+      {
+        "parametros": "10",
+        "saidaEsperada": 5168
+      }
+    ],
+    "id": 1777138183948
+  },
+  {
+    "titulo": "Corrigindo o Conversor de Unidades Inteligente",
+    "missao": "Você foi designado para revisar e corrigir a função 'converteUnidadeInteligente', que deve ser capaz de converter valores entre diferentes unidades de temperatura, comprimento e moeda. No entanto, o código atual contém alguns bugs sutis, tanto de lógica quanto de sintaxe, que impedem que as conversões funcionem corretamente em todos os casos. Seu objetivo é identificar e corrigir esses bugs para que a função opere de forma precisa e robusta, de acordo com as conversões esperadas e as boas práticas de programação. Mantenha a estrutura de `if/else if` e o uso exclusivo de funções tradicionais.",
+    "codigoSujo": "function converteUnidadeInteligente(valor, unidadeOrigem, unidadeDestino) {\n    let resultado;\n\n    if (unidadeOrigem === \"celsius\" && unidadeDestino === \"fahrenheit\") {\n        resultado = (valor * 5 / 9) + 32;\n    } else if (unidadeOrigem === \"fahrenheit\" && unidadeDestino === \"celsius\") {\n        resultado = (valor - 32) * 5 / 9;\n    } else if (unidadeOrigem === \"celsius\" && unidadeDestin === \"kelvin\") {\n        resultado = valor + 273.15;\n    } else if (unidadeOrigem === \"quilometros\" && unidadeDestino === \"milhas\") {\n        resultado = valor * 1.60934;\n    } else if (unidadeOrigem === \"milhas\" && unidadeDestino === \"quilometros\") {\n        resultado = valor * 1.60934;\n    } else if (unidadeOrigem === \"metros\" && unidadeDestino === \"quilometros\") {\n        resultado = valor / 1000;\n    } else if (unidadeOrigem === \"usd\" && unidadeDestino === \"brl\") {\n        let taxa = 4.90;\n        resultado = valor * taxa;\n    } else if (unidadeOrigem === \"brl\" && unidadeDestino === \"usd\") {\n        resultado = valor / 5.10;\n    } else if (unidadeOrigem === unidadeDestino) {\n        resultado = valor;\n    } else {\n        resultado = \"Unidade de conversão não suportada.\";\n    }\n\n    return resultado;\n}",
+    "codigoLimpo": "function converteUnidadeInteligente(valor, unidadeOrigem, unidadeDestino) {\n    let resultado;\n\n    if (unidadeOrigem === \"celsius\" && unidadeDestino === \"fahrenheit\") {\n        resultado = (valor * 9 / 5) + 32;\n    } else if (unidadeOrigem === \"fahrenheit\" && unidadeDestino === \"celsius\") {\n        resultado = (valor - 32) * 5 / 9;\n    } else if (unidadeOrigem === \"celsius\" && unidadeDestino === \"kelvin\") {\n        resultado = valor + 273.15;\n    } else if (unidadeOrigem === \"quilometros\" && unidadeDestino === \"milhas\") {\n        resultado = valor / 1.60934;\n    } else if (unidadeOrigem === \"milhas\" && unidadeDestino === \"quilometros\") {\n        resultado = valor * 1.60934;\n    } else if (unidadeOrigem === \"metros\" && unidadeDestino === \"quilometros\") {\n        resultado = valor / 1000;\n    } else if (unidadeOrigem === \"usd\" && unidadeDestino === \"brl\") {\n        let taxa = 5.0;\n        resultado = valor * taxa;\n    } else if (unidadeOrigem === \"brl\" && unidadeDestino === \"usd\") {\n        resultado = valor / 5.0;\n    } else if (unidadeOrigem === unidadeDestino) {\n        resultado = valor;\n    } else {\n        resultado = \"Erro: Conversão não suportada ou inválida.\";\n    }\n\n    return resultado;\n}",
+    "tipo": "correcao",
+    "dificuldade": 3,
+    "nomeDaFuncao": "converteUnidadeInteligente",
+    "testes": [
+      {
+        "parametros": "25, \"celsius\", \"fahrenheit\"",
+        "saidaEsperada": 77
+      },
+      {
+        "parametros": "0, \"celsius\", \"kelvin\"",
+        "saidaEsperada": 273.15
+      },
+      {
+        "parametros": "100, \"quilometros\", \"milhas\"",
+        "saidaEsperada": 62.13711922373339
+      },
+      {
+        "parametros": "50, \"usd\", \"brl\"",
+        "saidaEsperada": 250
+      },
+      {
+        "parametros": "500, \"brl\", \"usd\"",
+        "saidaEsperada": 100
+      },
+      {
+        "parametros": "10, \"litros\", \"mililitros\"",
+        "saidaEsperada": "Erro: Conversão não suportada ou inválida."
+      }
+    ],
+    "id": 1777138261434
+  },
+  {
+    "titulo": "Refatorando o Sistema de Avaliação de Alunos",
+    "missao": "Você foi designado para refatorar um trecho de código JavaScript responsável por processar as notas de alunos. O código atual funciona, mas possui nomes de variáveis e propriedades de retorno pouco claros, além de uma estrutura que pode ser melhorada para facilitar a leitura e manutenção. Seu objetivo é tornar o código mais limpo, legível e robusto, sem alterar seu comportamento funcional.\n\nSuas tarefas incluem:\n1. Renomear variáveis e parâmetros para que sejam descritivos e claros.\n2. Melhorar a clareza das condições lógicas para determinação da situação e conceito do aluno.\n3. Utilizar constantes nomeadas para os valores de limiar (notas de corte) para facilitar futuras modificações.\n4. Renomear as chaves do objeto de retorno para que sejam mais expressivas.",
+    "codigoSujo": "function processarDadosNotas(ns) {\n    let total = 0;\n    if (ns.length === 0) {\n        return { valMedia: 0, resSituacao: \"Sem Notas\", defConceito: \"N/A\" };\n    }\n    for (let i = 0; i < ns.length; i++) {\n        total += ns[i];\n    }\n\n    let m = total / ns.length;\n\n    let s2 = \"\";\n    if (m >= 7) {\n        s2 = \"Aprovado\";\n    } else if (m >= 5) {\n        s2 = \"Recuperacao\";\n    } else {\n        s2 = \"Reprovado\";\n    }\n\n    let cpt = \"\";\n    if (m >= 9) {\n        cpt = \"Excelente\";\n    } else if (m >= 7) {\n        cpt = \"Bom\";\n    } else if (m >= 5) {\n        cpt = \"Suficiente\";\n    } else {\n        cpt = \"Insuficiente\";\n    }\n\n    return { valMedia: m, resSituacao: s2, defConceito: cpt };\n}",
+    "codigoLimpo": "function processarDadosNotas(grades) {\n    const MIN_APROVACAO = 7;\n    const MIN_RECUPERACAO = 5;\n    const MIN_EXCELENTE = 9;\n    const MIN_BOM = 7;\n    const MIN_SUFICIENTE = 5;\n\n    if (grades.length === 0) {\n        return {\n            mediaFinal: 0,\n            situacaoAluno: \"Sem Notas\",\n            conceitoAtribuido: \"N/A\"\n        };\n    }\n\n    let sumOfGrades = 0;\n    for (let i = 0; i < grades.length; i++) {\n        sumOfGrades += grades[i];\n    }\n\n    const averageGrade = sumOfGrades / grades.length;\n\n    let studentStatus = \"\";\n    if (averageGrade >= MIN_APROVACAO) {\n        studentStatus = \"Aprovado\";\n    } else if (averageGrade >= MIN_RECUPERACAO) {\n        studentStatus = \"Recuperacao\";\n    } else {\n        studentStatus = \"Reprovado\";\n    }\n\n    let studentConcept = \"\";\n    if (averageGrade >= MIN_EXCELENTE) {\n        studentConcept = \"Excelente\";\n    } else if (averageGrade >= MIN_BOM) {\n        studentConcept = \"Bom\";\n    } else if (averageGrade >= MIN_SUFICIENTE) {\n        studentConcept = \"Suficiente\";\n    } else {\n        studentConcept = \"Insuficiente\";\n    }\n\n    return {\n        mediaFinal: averageGrade,\n        situacaoAluno: studentStatus,\n        conceitoAtribuido: studentConcept\n    };\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarDadosNotas",
+    "testes": [
+      {
+        "parametros": "[8, 8, 8]",
+        "saidaEsperada": {
+          "mediaFinal": 8,
+          "situacaoAluno": "Aprovado",
+          "conceitoAtribuido": "Bom"
+        }
+      },
+      {
+        "parametros": "[3, 4, 2]",
+        "saidaEsperada": {
+          "mediaFinal": 3,
+          "situacaoAluno": "Reprovado",
+          "conceitoAtribuido": "Insuficiente"
+        }
+      },
+      {
+        "parametros": "[5, 6, 6]",
+        "saidaEsperada": {
+          "mediaFinal": 5.666666666666667,
+          "situacaoAluno": "Recuperacao",
+          "conceitoAtribuido": "Suficiente"
+        }
+      },
+      {
+        "parametros": "[9, 10, 9]",
+        "saidaEsperada": {
+          "mediaFinal": 9.333333333333334,
+          "situacaoAluno": "Aprovado",
+          "conceitoAtribuido": "Excelente"
+        }
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": {
+          "mediaFinal": 0,
+          "situacaoAluno": "Sem Notas",
+          "conceitoAtribuido": "N/A"
+        }
+      }
+    ],
+    "id": 1777138337280
+  },
+  {
+    "titulo": "Refatoração de Validação de Dados Cadastrais",
+    "missao": "Sua tarefa é refatorar o código JavaScript fornecido na função `processarValidacoesDiversas`. O código atual funciona, mas é difícil de ler e manter devido a nomes de variáveis ruins, lógica repetitiva e estruturas aninhadas complexas. Você deve aplicar princípios de código limpo, modularizando as validações em funções separadas (ex: uma função para validar CPF, outra para e-mail, outra para data), usando nomes significativos e simplificando a lógica. Lembre-se das restrições de sintaxe de funções (apenas 'function' tradicional) e laços de repetição (apenas 'for' clássico). O objetivo final é ter um código mais legível, reutilizável e de fácil manutenção.",
+    "codigoSujo": "function processarValidacoesDiversas(dados) {\n    var resultados = {};\n\n    // Validação CPF (formato simples: 11 dígitos e não todos iguais)\n    var infoCpf = dados.identificadorPessoal;\n    if (infoCpf && typeof infoCpf === 'string') {\n        if (infoCpf.length === 11) {\n            var allSame = true;\n            for (var i = 1; i < infoCpf.length; i++) {\n                if (infoCpf[i] !== infoCpf[0]) {\n                    allSame = false;\n                    break;\n                }\n            }\n            if (!allSame) {\n                resultados.validoCpf = true;\n            } else {\n                resultados.validoCpf = false;\n            }\n        } else {\n            resultados.validoCpf = false;\n        }\n    } else {\n        resultados.validoCpf = false;\n    }\n\n    // Validação Email (formato simples: contém '@' e '.' depois do '@')\n    var infoMail = dados.contatoPrincipal;\n    if (infoMail && typeof infoMail === 'string') {\n        if (infoMail.indexOf('@') > 0 && infoMail.indexOf('.') > infoMail.indexOf('@') + 1) {\n            if (infoMail.length > 5) { // Ex: a@b.c\n                 resultados.validoEmail = true;\n            } else {\n                 resultados.validoEmail = false;\n            }\n        } else {\n            resultados.validoEmail = false;\n        }\n    } else {\n        resultados.validoEmail = false;\n    }\n\n    // Validação Data (formato DD/MM/YYYY e data válida)\n    var infoDt = dados.dataDeRegistro;\n    if (infoDt && typeof infoDt === 'string') {\n        var partes = infoDt.split('/');\n        if (partes.length === 3) {\n            var dia = parseInt(partes[0]);\n            var mes = parseInt(partes[1]);\n            var ano = parseInt(partes[2]);\n\n            if (!isNaN(dia) && !isNaN(mes) && !isNaN(ano)) {\n                if (dia > 0 && dia <= 31 && mes > 0 && mes <= 12 && ano >= 1900 && ano <= 2100) {\n                    var mes31 = [1, 3, 5, 7, 8, 10, 12];\n                    var mes30 = [4, 6, 9, 11];\n                    var validoDiaMes = false;\n\n                    for (var k = 0; k < mes31.length; k++) {\n                        if (mes === mes31[k] && dia <= 31) {\n                            validoDiaMes = true;\n                            break;\n                        }\n                    }\n                    if (!validoDiaMes) {\n                        for (var l = 0; l < mes30.length; l++) {\n                            if (mes === mes30[l] && dia <= 30) {\n                                validoDiaMes = true;\n                                break;\n                            }\n                        }\n                    }\n                    if (!validoDiaMes && mes === 2) { // Fevereiro\n                        var bissexto = (ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0);\n                        if ((bissexto && dia <= 29) || (!bissexto && dia <= 28)) {\n                            validoDiaMes = true;\n                        }\n                    }\n\n                    if (validoDiaMes) {\n                        resultados.validoData = true;\n                    } else {\n                        resultados.validoData = false;\n                    }\n                } else {\n                    resultados.validoData = false;\n                }\n            } else {\n                resultados.validoData = false;\n            }\n        } else {\n            resultados.validoData = false;\n        }\n    } else {\n        resultados.validoData = false;\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function validarCpfSimples(cpf) {\n    if (typeof cpf !== 'string' || cpf.length !== 11) {\n        return false;\n    }\n    var primeiroDigito = cpf[0];\n    for (var i = 1; i < cpf.length; i++) {\n        if (cpf[i] !== primeiroDigito) {\n            return true; // Não tem todos os dígitos iguais\n        }\n    }\n    return false; // Tem todos os dígitos iguais (considerado inválido para este exercício)\n}\n\nfunction validarEmailSimples(email) {\n    if (typeof email !== 'string' || email.length < 5) { // min length for x@y.z\n        return false;\n    }\n    var atIndex = email.indexOf('@');\n    var dotIndex = email.indexOf('.', atIndex); // Procura o primeiro ponto após o '@'\n    return atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < email.length - 1;\n}\n\nfunction ehAnoBissexto(ano) {\n    return (ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0);\n}\n\nfunction validarDataFormato(dataString) {\n    if (typeof dataString !== 'string' || dataString.length !== 10) { // Formato esperado DD/MM/YYYY\n        return false;\n    }\n    var partes = dataString.split('/');\n    if (partes.length !== 3) {\n        return false;\n    }\n\n    var dia = parseInt(partes[0]);\n    var mes = parseInt(partes[1]);\n    var ano = parseInt(partes[2]);\n\n    if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n        return false;\n    }\n\n    if (ano < 1900 || ano > 2100) return false;\n    if (mes < 1 || mes > 12) return false;\n    if (dia < 1 || dia > 31) return false;\n\n    var diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n    if (ehAnoBissexto(ano)) {\n        diasNoMes[2] = 29; // Fevereiro em ano bissexto\n    }\n\n    return dia <= diasNoMes[mes];\n}\n\nfunction processarValidacoesDiversas(dados) {\n    var resultadosValidacao = {};\n\n    resultadosValidacao.cpfValido = validarCpfSimples(dados.cpfUsuario);\n    resultadosValidacao.emailValido = validarEmailSimples(dados.emailContato);\n    resultadosValidacao.dataValida = validarDataFormato(dados.dataCadastro);\n\n    return resultadosValidacao;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarValidacoesDiversas",
+    "testes": [
+      {
+        "parametros": "{ \"identificadorPessoal\": \"12345678901\", \"contatoPrincipal\": \"teste@exemplo.com\", \"dataDeRegistro\": \"15/03/2023\" }",
+        "saidaEsperada": {
+          "validoCpf": true,
+          "validoEmail": true,
+          "validoData": true
+        }
+      },
+      {
+        "parametros": "{ \"identificadorPessoal\": \"11111111111\", \"contatoPrincipal\": \"invalido.com\", \"dataDeRegistro\": \"32/01/2023\" }",
+        "saidaEsperada": {
+          "validoCpf": false,
+          "validoEmail": false,
+          "validoData": false
+        }
+      },
+      {
+        "parametros": "{ \"identificadorPessoal\": \"98765432109\", \"contatoPrincipal\": \"usuario@\", \"dataDeRegistro\": \"29/02/2023\" }",
+        "saidaEsperada": {
+          "validoCpf": true,
+          "validoEmail": false,
+          "validoData": false
+        }
+      },
+      {
+        "parametros": "{ \"identificadorPessoal\": \"123\", \"contatoPrincipal\": \"outro@teste.br\", \"dataDeRegistro\": \"10/10/2020\" }",
+        "saidaEsperada": {
+          "validoCpf": false,
+          "validoEmail": true,
+          "validoData": true
+        }
+      }
+    ],
+    "id": 1777138372554
+  },
+  {
+    "titulo": "Refatoração de Validação de Dados Simplificada",
+    "missao": "Você foi encarregado de refatorar um trecho de código JavaScript responsável por validar diferentes tipos de dados de entrada: CPFs fictícios, e-mails e datas. O código atual funciona, mas está 'sujo' - possui nomes de variáveis e funções confusos, repetição desnecessária de lógica e uma estrutura complexa que dificulta a leitura e manutenção. Seu objetivo é torná-lo mais limpo, modular e fácil de entender, sem alterar seu comportamento original. Lembre-se de seguir as regras de sintaxe de funções e laços de repetição especificadas.",
+    "codigoSujo": "function analisarDadosComplexos(arrEntrada) {\n    var res = [];\n    for (var i = 0; i < arrEntrada.length; i++) {\n        var itemAtual = arrEntrada[i];\n        var tipoX = itemAtual.tipo;\n        var valX = itemAtual.dado;\n        var ok = false;\n\n        if (tipoX === 'cpf') {\n            var stringLimpaCpf = \"\";\n            for (var idxCpf = 0; idxCpf < valX.length; idxCpf++) {\n                var charCpf = valX[idxCpf];\n                if (charCpf >= '0' && charCpf <= '9') {\n                    stringLimpaCpf += charCpf;\n                }\n            }\n            if (stringLimpaCpf.length === 11) {\n                var primeiroC = stringLimpaCpf[0];\n                var todosIguaisC = true;\n                for (var idxCpf2 = 1; idxCpf2 < stringLimpaCpf.length; idxCpf2++) {\n                    if (stringLimpaCpf[idxCpf2] !== primeiroC) {\n                        todosIguaisC = false;\n                        break;\n                    }\n                }\n                if (!todosIguaisC) {\n                    ok = true;\n                }\n            }\n        } else if (tipoX === 'email') {\n            var atPos = valX.indexOf('@');\n            var dotPos = valX.indexOf('.', atPos);\n            var ultimoDotPos = valX.lastIndexOf('.');\n\n            var condicaoBasica = (atPos > 0 && dotPos > atPos + 1 && ultimoDotPos < valX.length - 1);\n\n            if (valX.length > 5 && valX[0] !== '@' && valX[valX.length - 1] !== '.' && valX.indexOf(' ') === -1) {\n                if (condicaoBasica) {\n                    var prefixo = valX.substring(0, atPos);\n                    var dominio = valX.substring(atPos + 1, ultimoDotPos);\n                    var extensao = valX.substring(ultimoDotPos + 1);\n\n                    if (prefixo.length > 0 && dominio.length > 0 && extensao.length > 1 && extensao.length < 5) {\n                        ok = true;\n                    }\n                }\n            } else {\n                ok = false;\n            }\n\n        } else if (tipoX === 'data') {\n            if (valX.length === 10 && valX[2] === '/' && valX[5] === '/') {\n                var partes = valX.split('/');\n                if (partes.length === 3) {\n                    var d = parseInt(partes[0]);\n                    var m = parseInt(partes[1]);\n                    var a = parseInt(partes[2]);\n\n                    if (!isNaN(d) && !isNaN(m) && !isNaN(a)) {\n                        if (d >= 1 && d <= 31 && m >= 1 && m <= 12 && a >= 1900 && a <= 2100) {\n                            if (m === 2) {\n                                if (d <= 29) { \n                                    ok = true;\n                                }\n                            } else if (m === 4 || m === 6 || m === 9 || m === 11) {\n                                if (d <= 30) {\n                                    ok = true;\n                                }\n                            } else {\n                                if (d <= 31) {\n                                    ok = true;\n                                }\n                            }\n                        }\n                    }\n                }\n            }\n        }\n        res.push({\n            dado: valX,\n            valido: ok,\n            tipo: tipoX\n        });\n    }\n    return res;\n}",
+    "codigoLimpo": "function extrairApenasNumeros(texto) {\n    var apenasNumeros = \"\";\n    for (var i = 0; i < texto.length; i++) {\n        var charAtual = texto[i];\n        if (charAtual >= '0' && charAtual <= '9') {\n            apenasNumeros += charAtual;\n        }\n    }\n    return apenasNumeros;\n}\n\nfunction verificarTodosDigitosIguais(numeros) {\n    if (numeros.length === 0) return false;\n    var primeiroDigito = numeros[0];\n    for (var i = 1; i < numeros.length; i++) {\n        if (numeros[i] !== primeiroDigito) {\n            return false;\n        }\n    }\n    return true;\n}\n\nfunction validarCpfFicticio(cpf) {\n    var cpfNumerico = extrairApenasNumeros(cpf);\n    if (cpfNumerico.length !== 11) {\n        return false;\n    }\n    if (verificarTodosDigitosIguais(cpfNumerico)) {\n        return false;\n    }\n    return true;\n}\n\nfunction validarEmailSimples(email) {\n    if (email.length < 6) return false; // Ex: a@b.co\n    if (email.indexOf(' ') !== -1) return false;\n    if (email[0] === '@' || email[email.length - 1] === '.') return false;\n\n    var atPos = email.indexOf('@');\n    var lastDotPos = email.lastIndexOf('.');\n\n    if (atPos === -1 || lastDotPos === -1) return false;\n    if (atPos === 0 || lastDotPos < atPos + 2 || lastDotPos === email.length - 1) return false; // Ex: @a.com, a@.com, a@b.c\n\n    var prefixo = email.substring(0, atPos);\n    var dominio = email.substring(atPos + 1, lastDotPos);\n    var extensao = email.substring(lastDotPos + 1);\n\n    if (prefixo.length === 0 || dominio.length === 0 || extensao.length < 2 || extensao.length > 4) return false; // Ex: @d.com, a@.com, a@d.c, a@d.commm\n\n    return true;\n}\n\nfunction validarDataFormato(dataStr) {\n    if (dataStr.length !== 10 || dataStr[2] !== '/' || dataStr[5] !== '/') {\n        return false;\n    }\n\n    var partes = dataStr.split('/');\n    if (partes.length !== 3) return false;\n\n    var dia = parseInt(partes[0]);\n    var mes = parseInt(partes[1]);\n    var ano = parseInt(partes[2]);\n\n    if (isNaN(dia) || isNaN(mes) || isNaN(ano)) return false;\n    if (ano < 1900 || ano > 2100) return false;\n    if (mes < 1 || mes > 12) return false;\n    if (dia < 1 || dia > 31) return false;\n\n    var diasNoMes = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; // Fev com 29 para simplificar, sem verificar bissexto\n    if (dia > diasNoMes[mes]) {\n        return false;\n    }\n\n    return true;\n}\n\nfunction analisarDadosComplexos(arrEntrada) {\n    var resultados = [];\n    for (var i = 0; i < arrEntrada.length; i++) {\n        var item = arrEntrada[i];\n        var tipo = item.tipo;\n        var valor = item.dado;\n        var ehValido = false;\n\n        if (tipo === 'cpf') {\n            ehValido = validarCpfFicticio(valor);\n        } else if (tipo === 'email') {\n            ehValido = validarEmailSimples(valor);\n        } else if (tipo === 'data') {\n            ehValido = validarDataFormato(valor);\n        }\n\n        resultados.push({\n            dado: valor,\n            valido: ehValido,\n            tipo: tipo\n        });\n    }\n    return resultados;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "analisarDadosComplexos",
+    "testes": [
+      {
+        "parametros": "[{ \"tipo\": \"cpf\", \"dado\": \"123.456.789-00\" }, { \"tipo\": \"cpf\", \"dado\": \"111.111.111-11\" }, { \"tipo\": \"cpf\", \"dado\": \"12345678900\" }, { \"tipo\": \"email\", \"dado\": \"aluno@exemplo.com\" }, { \"tipo\": \"email\", \"dado\": \"invalido@.com\" }, { \"tipo\": \"email\", \"dado\": \"teste@site\" }, { \"tipo\": \"data\", \"dado\": \"15/03/2023\" }, { \"tipo\": \"data\", \"dado\": \"30/02/2023\" }, { \"tipo\": \"data\", \"dado\": \"32/01/2023\" }, { \"tipo\": \"data\", \"dado\": \"01/01/1899\" }]",
+        "saidaEsperada": [
+          {
+            "dado": "123.456.789-00",
+            "valido": true,
+            "tipo": "cpf"
+          },
+          {
+            "dado": "111.111.111-11",
+            "valido": false,
+            "tipo": "cpf"
+          },
+          {
+            "dado": "12345678900",
+            "valido": true,
+            "tipo": "cpf"
+          },
+          {
+            "dado": "aluno@exemplo.com",
+            "valido": true,
+            "tipo": "email"
+          },
+          {
+            "dado": "invalido@.com",
+            "valido": false,
+            "tipo": "email"
+          },
+          {
+            "dado": "teste@site",
+            "valido": false,
+            "tipo": "email"
+          },
+          {
+            "dado": "15/03/2023",
+            "valido": true,
+            "tipo": "data"
+          },
+          {
+            "dado": "30/02/2023",
+            "valido": false,
+            "tipo": "data"
+          },
+          {
+            "dado": "32/01/2023",
+            "valido": false,
+            "tipo": "data"
+          },
+          {
+            "dado": "01/01/1899",
+            "valido": false,
+            "tipo": "data"
+          }
+        ]
+      },
+      {
+        "parametros": "[{ \"tipo\": \"cpf\", \"dado\": \"000.000.000-00\" }, { \"tipo\": \"email\", \"dado\": \"usuario@dominio.org\" }, { \"tipo\": \"data\", \"dado\": \"29/02/2024\" }]",
+        "saidaEsperada": [
+          {
+            "dado": "000.000.000-00",
+            "valido": false,
+            "tipo": "cpf"
+          },
+          {
+            "dado": "usuario@dominio.org",
+            "valido": true,
+            "tipo": "email"
+          },
+          {
+            "dado": "29/02/2024",
+            "valido": true,
+            "tipo": "data"
+          }
+        ]
+      },
+      {
+        "parametros": "[{ \"tipo\": \"email\", \"dado\": \"_@_._\" }, { \"tipo\": \"data\", \"dado\": \"01-01-2000\" }]",
+        "saidaEsperada": [
+          {
+            "dado": "_@_._",
+            "valido": false,
+            "tipo": "email"
+          },
+          {
+            "dado": "01-01-2000",
+            "valido": false,
+            "tipo": "data"
+          }
+        ]
+      }
+    ],
+    "id": 1777138422486
+  },
+  {
+    "titulo": "Análise de Desempenho do Aluno",
+    "missao": "Você foi encarregado de refatorar um trecho de código JavaScript que processa as notas de um aluno. O código atual funciona, mas possui nomes de variáveis e estruturas que dificultam a leitura e manutenção. Sua tarefa é melhorar a clareza, a legibilidade e a organização do código, mantendo sua funcionalidade original. Atenção especial à clareza dos nomes, à definição de constantes para valores importantes e à estrutura lógica, sem alterar o algoritmo fundamental. Lembre-se das regras de sintaxe para funções e laços de repetição (apenas declaração tradicional de funções e 'for' clássico).",
+    "codigoSujo": "function processarNotasAluno(arr) {\n    let s = 0;\n    let c = 0;\n    for (let i = 0; i < arr.length; i++) {\n        s = s + arr[i];\n        c++;\n    }\n\n    let m = s / c;\n\n    let r = \"\";\n    if (m >= 9) {\n        r = \"A\";\n    } else if (m >= 7) {\n        r = \"B\";\n    } else if (m >= 5) {\n        r = \"C\";\n    } else {\n        r = \"D\";\n    }\n\n    let st = \"\";\n    if (m >= 7) {\n        st = \"Aprovado\";\n    } else {\n        st = \"Reprovado\";\n    }\n\n    return { media: m, conceito: r, status: st };\n}",
+    "codigoLimpo": "function processarNotasAluno(notas) {\n    const NOTA_MINIMA_APROVACAO = 7;\n    const NOTA_MINIMA_CONCEITO_A = 9;\n    const NOTA_MINIMA_CONCEITO_B = 7;\n    const NOTA_MINIMA_CONCEITO_C = 5;\n\n    let somaDasNotas = 0;\n    let quantidadeDeNotas = notas.length;\n\n    for (let i = 0; i < quantidadeDeNotas; i++) {\n        somaDasNotas = somaDasNotas + notas[i];\n    }\n\n    let media = somaDasNotas / quantidadeDeNotas;\n    let conceito = \"\";\n\n    if (media >= NOTA_MINIMA_CONCEITO_A) {\n        conceito = \"A\";\n    } else if (media >= NOTA_MINIMA_CONCEITO_B) {\n        conceito = \"B\";\n    } else if (media >= NOTA_MINIMA_CONCEITO_C) {\n        conceito = \"C\";\n    } else {\n        conceito = \"D\";\n    }\n\n    let situacaoFinal = \"\";\n    if (media >= NOTA_MINIMA_APROVACAO) {\n        situacaoFinal = \"Aprovado\";\n    } else {\n        situacaoFinal = \"Reprovado\";\n    }\n\n    return { media: media, conceito: conceito, status: situacaoFinal };\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarNotasAluno",
+    "testes": [
+      {
+        "parametros": "[8, 7, 9]",
+        "saidaEsperada": {
+          "media": 8,
+          "conceito": "B",
+          "status": "Aprovado"
+        }
+      },
+      {
+        "parametros": "[9, 10, 8]",
+        "saidaEsperada": {
+          "media": 9,
+          "conceito": "A",
+          "status": "Aprovado"
+        }
+      },
+      {
+        "parametros": "[5, 6, 7]",
+        "saidaEsperada": {
+          "media": 6,
+          "conceito": "C",
+          "status": "Reprovado"
+        }
+      },
+      {
+        "parametros": "[3, 4, 5]",
+        "saidaEsperada": {
+          "media": 4,
+          "conceito": "D",
+          "status": "Reprovado"
+        }
+      }
+    ],
+    "id": 1777138453222
+  },
+  {
+    "titulo": "Calculando o Valor Total do Inventário",
+    "missao": "Você recebeu um código que calcula o valor total de todos os produtos em estoque. No entanto, o código utiliza nomes de variáveis confusos, tem uma lógica ligeiramente redundante e pode ser mais claro. Sua tarefa é refatorar o código para torná-lo mais legível, mantendo sua funcionalidade original. Lembre-se de usar apenas declarações de função tradicionais ('function') e laços 'for' clássicos.",
+    "codigoSujo": "function processarDadosEstoque(itens) {\n    let s = 0;\n    for (let idx = 0; idx < itens.length; idx++) {\n        let item = itens[idx];\n        let v = item.preco;\n        let q = item.unidades;\n        let t = 0;\n        if (v > 0) {\n            t = v * q;\n        } else {\n            t = 0;\n        }\n        s = s + t;\n    }\n    return s;\n}",
+    "codigoLimpo": "function processarDadosEstoque(produtos) {\n    let valorTotalInventario = 0;\n    for (let i = 0; i < produtos.length; i++) {\n        let produto = produtos[i];\n        let precoUnitario = produto.preco;\n        let quantidadeEmEstoque = produto.unidades;\n        let valorDoItem = precoUnitario * quantidadeEmEstoque;\n        valorTotalInventario += valorDoItem;\n    }\n    return valorTotalInventario;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarDadosEstoque",
+    "testes": [
+      {
+        "parametros": "[{\"preco\": 10, \"unidades\": 5}, {\"preco\": 20, \"unidades\": 3}]",
+        "saidaEsperada": 110
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "[{\"preco\": 50, \"unidades\": 2}]",
+        "saidaEsperada": 100
+      },
+      {
+        "parametros": "[{\"preco\": 1, \"unidades\": 1}, {\"preco\": 2, \"unidades\": 2}, {\"preco\": 3, \"unidades\": 3}]",
+        "saidaEsperada": 14
+      }
+    ],
+    "id": 1777138480553
+  },
+  {
+    "titulo": "Refatorando o Processamento de Notas de Alunos",
+    "missao": "Você foi contratado como estagiário em uma escola e a primeira tarefa é melhorar o código legado que processa as notas dos alunos. O código atual funciona, mas possui nomes de variáveis e funções confusos, repetição desnecessária e uma estrutura que dificulta a leitura e manutenção. Sua missão é refatorar o código JavaScript fornecido, tornando-o mais limpo, modular e fácil de entender, sem alterar seu comportamento final.",
+    "codigoSujo": "function processarCoisa(arr) {\n    let soma = 0;\n    for (let i = 0; i < arr.length; i++) {\n        soma = soma + arr[i];\n    }\n\n    let r = soma / arr.length;\n\n    let c = \"\";\n    if (r >= 7) {\n        c = \"Aprovado\";\n    } else {\n        if (r >= 5 && r < 7) {\n            c = \"Recuperacao\";\n        } else {\n            c = \"Reprovado\";\n        }\n    }\n    return \"A media foi: \" + r.toFixed(2) + \". O status do aluno eh: \" + c + \".\";\n}",
+    "codigoLimpo": "function calcularSomaDasNotas(notas) {\n    let somaTotal = 0;\n    for (let i = 0; i < notas.length; i++) {\n        somaTotal = somaTotal + notas[i];\n    }\n    return somaTotal;\n}\n\nfunction calcularMedia(notas) {\n    if (notas.length === 0) {\n        return 0;\n    }\n    let soma = calcularSomaDasNotas(notas);\n    return soma / notas.length;\n}\n\nfunction determinarStatusAluno(media) {\n    const LIMITE_APROVACAO = 7;\n    const LIMITE_RECUPERACAO = 5;\n\n    if (media >= LIMITE_APROVACAO) {\n        return \"Aprovado\";\n    } else if (media >= LIMITE_RECUPERACAO) {\n        return \"Recuperacao\";\n    } else {\n        return \"Reprovado\";\n    }\n}\n\nfunction gerarRelatorioDeNotas(notas) {\n    let mediaFinal = calcularMedia(notas);\n    let statusFinal = determinarStatusAluno(mediaFinal);\n    return \"A media foi: \" + mediaFinal.toFixed(2) + \". O status do aluno eh: \" + statusFinal + \".\";\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarCoisa",
+    "testes": [
+      {
+        "parametros": "[8, 7, 9]",
+        "saidaEsperada": "A media foi: 8.00. O status do aluno eh: Aprovado."
+      },
+      {
+        "parametros": "[6, 5, 6]",
+        "saidaEsperada": "A media foi: 5.67. O status do aluno eh: Recuperacao."
+      },
+      {
+        "parametros": "[3, 4, 2]",
+        "saidaEsperada": "A media foi: 3.00. O status do aluno eh: Reprovado."
+      },
+      {
+        "parametros": "[7, 7, 7]",
+        "saidaEsperada": "A media foi: 7.00. O status do aluno eh: Aprovado."
+      },
+      {
+        "parametros": "[5, 5, 5]",
+        "saidaEsperada": "A media foi: 5.00. O status do aluno eh: Recuperacao."
+      }
+    ],
+    "id": 1777138510063
+  },
+  {
+    "titulo": "Refatoração Essencial: Validação de Dados de Usuário",
+    "missao": "Você é um estudante de curso técnico e recebeu um código JavaScript de um desenvolvedor júnior para validar dados de usuário. O código funciona, mas está confuso, tem nomes de variáveis ruins, repetição desnecessária e aninhamento complexo de lógicas, tornando-o difícil de ler e manter. Sua tarefa é refatorar este código para que ele se torne limpo, modular, com nomes claros e que siga os princípios de DRY (Don't Repeat Yourself), sem alterar seu comportamento funcional.\n\nRegras de Refatoração:\n- Mantenha a funcionalidade exata do código original.\n- Crie funções auxiliares pequenas e focadas para cada tipo de validação (CPF, E-mail, Data).\n- Use nomes de variáveis e funções descritivos.\n- Remova a repetição de código sempre que possível.\n- Use EXCLUSIVAMENTE a declaração tradicional de funções (sintaxe 'function'). Proibido arrow functions.\n- Para laços de repetição, use EXCLUSIVAMENTE a estrutura clássica 'for' (ex: for (let i = 0; i < array.length; i++)).",
+    "codigoSujo": "function validarEntradasComplexas(objetoDeDados) {\n    var resultadoFinal = {\n        tudoOk: true,\n        mensagens: []\n    };\n\n    // CPF Validation Block\n    var cpfInput = objetoDeDados.cpf;\n    if (typeof cpfInput !== 'string' || cpfInput.length !== 11) {\n        resultadoFinal.tudoOk = false;\n        resultadoFinal.mensagens.push(\"CPF precisa ter 11 caracteres.\");\n    } else {\n        var primeiroChar = cpfInput[0];\n        var todosSaoIguais = true;\n        for (var i = 1; i < cpfInput.length; i++) {\n            if (cpfInput[i] !== primeiroChar) {\n                todosSaoIguais = false;\n                break;\n            }\n        }\n        if (todosSaoIguais) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"CPF não pode ter todos os dígitos iguais.\");\n        }\n    }\n\n    // Email Validation Block\n    var emailInput = objetoDeDados.email;\n    if (typeof emailInput !== 'string' || emailInput.length < 5) {\n        resultadoFinal.tudoOk = false;\n        resultadoFinal.mensagens.push(\"Email inválido. Precisa de no mínimo 5 caracteres.\");\n    } else {\n        var temArrobaNoEmail = false;\n        var temPontoNoEmail = false;\n        var indiceDoArroba = -1;\n        var indiceDoPonto = -1;\n\n        for (var j = 0; j < emailInput.length; j++) {\n            if (emailInput[j] === '@') {\n                temArrobaNoEmail = true;\n                indiceDoArroba = j;\n            } else if (emailInput[j] === '.') {\n                temPontoNoEmail = true;\n                indiceDoPonto = j;\n            }\n        }\n\n        if (!temArrobaNoEmail || !temPontoNoEmail) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"Email precisa conter '@' e '.'.\");\n        } else if (indiceDoArroba === 0 || indiceDoArroba === emailInput.length - 1) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"Email com '@' em posição inválida.\");\n        } else if (indiceDoPonto === 0 || indiceDoPonto === emailInput.length - 1) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"Email com '.' em posição inválida.\");\n        } else if (indiceDoPonto < indiceDoArroba) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"Email com '.' antes de '@'.\");\n        }\n    }\n\n    // Date Validation Block\n    var dataInput = objetoDeDados.dataNascimento;\n    if (typeof dataInput !== 'string' || dataInput.length !== 10 || dataInput[2] !== '/' || dataInput[5] !== '/') {\n        resultadoFinal.tudoOk = false;\n        resultadoFinal.mensagens.push(\"Data de nascimento inválida. Formato DD/MM/YYYY esperado.\");\n    } else {\n        var diaStr = dataInput.substring(0, 2);\n        var mesStr = dataInput.substring(3, 5);\n        var anoStr = dataInput.substring(6, 10);\n\n        var diaNum = parseInt(diaStr);\n        var mesNum = parseInt(mesStr);\n        var anoNum = parseInt(anoStr);\n\n        if (isNaN(diaNum) || isNaN(mesNum) || isNaN(anoNum)) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"As partes da data de nascimento devem ser números.\");\n        } else if (mesNum < 1 || mesNum > 12) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"Mês inválido. Deve estar entre 1 e 12.\");\n        } else if (anoNum < 1900 || anoNum > new Date().getFullYear()) {\n            resultadoFinal.tudoOk = false;\n            resultadoFinal.mensagens.push(\"Ano inválido. Deve estar entre 1900 e o ano atual.\");\n        } else {\n            var diasTotalMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n            var flagBissexto = false;\n            if ((anoNum % 4 === 0 && anoNum % 100 !== 0) || (anoNum % 400 === 0)) {\n                flagBissexto = true;\n            }\n            if (flagBissexto) {\n                diasTotalMes[2] = 29;\n            }\n            if (diaNum < 1 || diaNum > diasTotalMes[mesNum]) {\n                resultadoFinal.tudoOk = false;\n                resultadoFinal.mensagens.push(\"Dia inválido para o mês e ano fornecidos.\");\n            }\n        }\n    }\n\n    return resultadoFinal;\n}",
+    "codigoLimpo": "function validarCpf(cpf) {\n    if (typeof cpf !== 'string' || cpf.length !== 11) {\n        return \"CPF precisa ter 11 caracteres.\";\n    }\n\n    var primeiroDigito = cpf[0];\n    var todosDigitosIguais = true;\n    for (var i = 1; i < cpf.length; i++) {\n        if (cpf[i] !== primeiroDigito) {\n            todosDigitosIguais = false;\n            break;\n        }\n    }\n    if (todosDigitosIguais) {\n        return \"CPF não pode ter todos os dígitos iguais.\";\n    }\n\n    return null; // CPF válido\n}\n\nfunction validarEmail(email) {\n    if (typeof email !== 'string' || email.length < 5) {\n        return \"Email inválido. Precisa de no mínimo 5 caracteres.\";\n    }\n\n    var indiceArroba = -1;\n    var indicePonto = -1;\n\n    for (var i = 0; i < email.length; i++) {\n        if (email[i] === '@') {\n            indiceArroba = i;\n        } else if (email[i] === '.') {\n            indicePonto = i;\n        }\n    }\n\n    if (indiceArroba === -1 || indicePonto === -1) {\n        return \"Email precisa conter '@' e '.'.\";\n    }\n\n    if (indiceArroba === 0 || indiceArroba === email.length - 1) {\n        return \"Email com '@' em posição inválida.\";\n    }\n\n    if (indicePonto === 0 || indicePonto === email.length - 1) {\n        return \"Email com '.' em posição inválida.\";\n    }\n\n    if (indicePonto < indiceArroba) {\n        return \"Email com '.' antes de '@'.\";\n    }\n\n    return null; // Email válido\n}\n\nfunction ehAnoBissexto(ano) {\n    return (ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0);\n}\n\nfunction validarDataNascimento(dataNascimento) {\n    if (typeof dataNascimento !== 'string' || dataNascimento.length !== 10 || dataNascimento[2] !== '/' || dataNascimento[5] !== '/') {\n        return \"Data de nascimento inválida. Formato DD/MM/YYYY esperado.\";\n    }\n\n    var diaStr = dataNascimento.substring(0, 2);\n    var mesStr = dataNascimento.substring(3, 5);\n    var anoStr = dataNascimento.substring(6, 10);\n\n    var dia = parseInt(diaStr);\n    var mes = parseInt(mesStr);\n    var ano = parseInt(anoStr);\n\n    if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n        return \"As partes da data de nascimento devem ser números.\";\n    }\n\n    if (mes < 1 || mes > 12) {\n        return \"Mês inválido. Deve estar entre 1 e 12.\";\n    }\n\n    if (ano < 1900 || ano > new Date().getFullYear()) {\n        return \"Ano inválido. Deve estar entre 1900 e o ano atual.\";\n    }\n\n    var diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n    if (ehAnoBissexto(ano)) {\n        diasNoMes[2] = 29; // Fevereiro em ano bissexto\n    }\n\n    if (dia < 1 || dia > diasNoMes[mes]) {\n        return \"Dia inválido para o mês e ano fornecidos.\";\n    }\n\n    return null; // Data válida\n}\n\nfunction validarEntradasComplexas(objetoDeDados) {\n    var resultadoValidacao = {\n        tudoOk: true,\n        mensagens: []\n    };\n\n    var erroCpf = validarCpf(objetoDeDados.cpf);\n    if (erroCpf) {\n        resultadoValidacao.tudoOk = false;\n        resultadoValidacao.mensagens.push(erroCpf);\n    }\n\n    var erroEmail = validarEmail(objetoDeDados.email);\n    if (erroEmail) {\n        resultadoValidacao.tudoOk = false;\n        resultadoValidacao.mensagens.push(erroEmail);\n    }\n\n    var erroData = validarDataNascimento(objetoDeDados.dataNascimento);\n    if (erroData) {\n        resultadoValidacao.tudoOk = false;\n        resultadoValidacao.mensagens.push(erroData);\n    }\n\n    return resultadoValidacao;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "validarEntradasComplexas",
+    "testes": [
+      {
+        "parametros": "{ cpf: '12345678901', email: 'aluno@exemplo.com', dataNascimento: '15/03/1990' }",
+        "saidaEsperada": {
+          "tudoOk": true,
+          "mensagens": []
+        }
+      },
+      {
+        "parametros": "{ cpf: '11111111111', email: 'teste@domain.net', dataNascimento: '10/01/2000' }",
+        "saidaEsperada": {
+          "tudoOk": false,
+          "mensagens": [
+            "CPF não pode ter todos os dígitos iguais."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: '98765432109', email: 'semarroba.com', dataNascimento: '05/06/1985' }",
+        "saidaEsperada": {
+          "tudoOk": false,
+          "mensagens": [
+            "Email precisa conter '@' e '.'.",
+            "Email com '.' em posição inválida."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: '12345678901', email: 'usuario@exemplo.com', dataNascimento: '31/02/2000' }",
+        "saidaEsperada": {
+          "tudoOk": false,
+          "mensagens": [
+            "Dia inválido para o mês e ano fornecidos."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: '123', email: '@invalido.com', dataNascimento: '10/10/1800' }",
+        "saidaEsperada": {
+          "tudoOk": false,
+          "mensagens": [
+            "CPF precisa ter 11 caracteres.",
+            "Email com '@' em posição inválida.",
+            "Ano inválido. Deve estar entre 1900 e o ano atual."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: '00000000000', email: 'valid@example.com', dataNascimento: '29/02/2023' }",
+        "saidaEsperada": {
+          "tudoOk": false,
+          "mensagens": [
+            "CPF não pode ter todos os dígitos iguais.",
+            "Dia inválido para o mês e ano fornecidos."
+          ]
+        }
+      }
+    ],
+    "id": 1777138583525
+  },
+  {
+    "titulo": "Refatoração: Cálculo de Total de Carrinho com Descontos e Taxas",
+    "missao": "O código abaixo simula o cálculo do total de um carrinho de compras, aplicando descontos, impostos e taxas de frete. Seu objetivo é refatorá-lo para que se torne mais legível, organizado e fácil de manter. Concentre-se em melhorar a clareza dos nomes de variáveis, evitar repetições desnecessárias e tornar a lógica do fluxo mais compreensível. O código deve continuar a funcionar perfeitamente após a refatoração.",
+    "codigoSujo": "function processarCompras(itens) {\n    var a = 0;\n    for (var i = 0; i < itens.length; i++) {\n        a = a + itens[i];\n    }\n\n    var b = 0.10;\n    var c = a * b;\n    var d = a - c;\n\n    var e = 0.05;\n    var f = d * e;\n    var g = d + f;\n\n    var h = 5.00;\n    var finalResult = g + h;\n\n    return finalResult;\n}",
+    "codigoLimpo": "function calcularTotalCarrinho(itensDoCarrinho) {\n    const PERCENTUAL_DESCONTO = 0.10; // 10%\n    const PERCENTUAL_IMPOSTO = 0.05;  // 5%\n    const VALOR_FRETE = 5.00;         // R$ 5.00\n\n    let subtotalItens = 0;\n    for (let i = 0; i < itensDoCarrinho.length; i++) {\n        subtotalItens = subtotalItens + itensDoCarrinho[i];\n    }\n\n    const valorDesconto = subtotalItens * PERCENTUAL_DESCONTO;\n    const totalAposDesconto = subtotalItens - valorDesconto;\n\n    const valorImposto = totalAposDesconto * PERCENTUAL_IMPOSTO;\n    const totalComImposto = totalAposDesconto + valorImposto;\n\n    const totalFinal = totalComImposto + VALOR_FRETE;\n\n    return totalFinal;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "processarCompras",
+    "testes": [
+      {
+        "parametros": "[100, 50]",
+        "saidaEsperada": 146.75
+      },
+      {
+        "parametros": "[20]",
+        "saidaEsperada": 23.9
+      },
+      {
+        "parametros": "[200, 100, 50]",
+        "saidaEsperada": 331.25
+      }
+    ],
+    "id": 1777138606630
+  },
+  {
+    "titulo": "Refatorando Calculadora Obscura de Fibonacci",
+    "missao": "Olá, turma! Vocês receberam um trecho de código JavaScript que, apesar de funcionar corretamente, está difícil de ler e entender. A função calcula o N-ésimo termo da famosa Sequência de Fibonacci. Sua missão é refatorar este código para que ele se torne claro, autoexplicativo e fácil de manter, mantendo sua funcionalidade exata. Foque em:\n\n1.  **Nomes de Variáveis e Parâmetros:** Renomeie todas as variáveis e parâmetros para algo que descreva claramente seu propósito dentro do cálculo da sequência.\n2.  **Nome da Função:** Dê um nome mais descritivo à função, refletindo sua verdadeira responsabilidade.",
+    "codigoSujo": "function calculaValorEstranho(param) {\n    if (param === 0) {\n        return 0;\n    }\n    if (param === 1) {\n        return 1;\n    }\n\n    let a = 0;\n    let b = 1;\n    let c = 0;\n\n    for (let x = 2; x <= param; x++) {\n        c = a + b;\n        a = b;\n        b = c;\n    }\n\n    return c;\n}",
+    "codigoLimpo": "function calcularNthFibonacci(n) {\n    if (n === 0) {\n        return 0;\n    }\n    if (n === 1) {\n        return 1;\n    }\n\n    let previousFibonacci = 0;\n    let currentFibonacci = 1;\n    let nextFibonacci = 0;\n\n    for (let i = 2; i <= n; i++) {\n        nextFibonacci = previousFibonacci + currentFibonacci;\n        previousFibonacci = currentFibonacci;\n        currentFibonacci = nextFibonacci;\n    }\n\n    return nextFibonacci;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "calculaValorEstranho",
+    "testes": [
+      {
+        "parametros": "0",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "1",
+        "saidaEsperada": 1
+      },
+      {
+        "parametros": "2",
+        "saidaEsperada": 1
+      },
+      {
+        "parametros": "5",
+        "saidaEsperada": 5
+      },
+      {
+        "parametros": "10",
+        "saidaEsperada": 55
+      }
+    ],
+    "id": 1777138636831
+  },
+  {
+    "titulo": "Refatorando o Cálculo do Valor Total do Inventário",
+    "missao": "Olá, futuro(a) técnico(a)! Você foi designado(a) para uma tarefa importante de refatoração. Temos um trecho de código JavaScript que é responsável por calcular o valor total dos produtos em um inventário. Embora funcional, o código está confuso, com nomes de variáveis ruins e passos desnecessários, o que dificulta a manutenção e a compreensão por outros desenvolvedores. Sua missão é refatorar o `codigoSujo` para torná-lo mais limpo, legível e eficiente, mantendo a sua funcionalidade original.\n\n**Pontos a refatorar:**\n1.  **Nomes de Variáveis e Parâmetros:** Renomeie-os para nomes mais descritivos e claros, que reflitam seu propósito.\n2.  **Simplificação de Expressões:** Remova variáveis intermediárias desnecessárias para tornar os cálculos mais diretos.\n\n**Restrições:**\n*   Mantenha a funcionalidade exata do código original.\n*   Utilize **EXCLUSIVAMENTE** a declaração tradicional de funções (sintaxe `function`).\n*   Utilize **EXCLUSIVAMENTE** o laço `for` clássico (ex: `for (var i = 0; i < array.length; i++)`).",
+    "codigoSujo": "function calcularValorTotalInventario(a) {\n    var t = 0;\n    for (var i = 0; i < a.length; i++) {\n        var o = a[i];\n        var val1 = o.p;\n        var val2 = o.q;\n        var res = val1 * val2;\n        t = t + res;\n    }\n    return t;\n}",
+    "codigoLimpo": "function calcularValorTotalInventario(itensInventario) {\n    var valorTotal = 0;\n    for (var i = 0; i < itensInventario.length; i++) {\n        var item = itensInventario[i];\n        valorTotal = valorTotal + (item.p * item.q);\n    }\n    return valorTotal;\n}",
+    "tipo": "refatoracao",
+    "dificuldade": 1,
+    "nomeDaFuncao": "calcularValorTotalInventario",
+    "testes": [
+      {
+        "parametros": "[{\"p\": 10, \"q\": 2}, {\"p\": 5, \"q\": 3}]",
+        "saidaEsperada": 35
+      },
+      {
+        "parametros": "[{\"p\": 100, \"q\": 1}, {\"p\": 50, \"q\": 0}, {\"p\": 20, \"q\": 5}]",
+        "saidaEsperada": 200
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "[{\"p\": 7.50, \"q\": 4}]",
+        "saidaEsperada": 30
+      }
+    ],
+    "id": 1777138663076
   }
-
 ]
-
-  

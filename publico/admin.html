@@ -5,16 +5,28 @@
     <meta charset="UTF-8">
     <title>Gestão de Conteúdo - Admin</title>
     <link rel="stylesheet" href="estilo.css">
+    
+    <style>
+        /* Esconde o HTML inteiro antes mesmo de o navegador tentar desenhar a tela */
+        body { 
+            display: none; 
+        }
+    </style>
+
     <script>
         (async function verificarAcessoImediato() {
             try {
                 const resposta = await fetch("/api/admin/questoes");
+                
                 if (!resposta.ok) {
-                    // Se o servidor não retornar 200 OK, expulsa para o login imediatamente
-                    window.location.href = "login.html";
+                    // O replace apaga o histórico, impedindo que o aluno clique em "Voltar" no navegador
+                    window.location.replace("login.html");
+                } else {
+                    // Servidor autorizou! Removemos a capa de invisibilidade e a tela aparece para o professor
+                    document.body.style.display = "block";
                 }
             } catch (erro) {
-                window.location.href = "login.html";
+                window.location.replace("login.html");
             }
         })();
     </script>

@@ -268,4 +268,47 @@ async function salvarQuestaoNova() {
     if (resposta.ok) { toggleFormularioManual(); carregarBanco(); }
 }
 
+async function gerarEmLote() {
+    let tipo = document.getElementById("tipo-gerar").value;
+    let dif = document.getElementById("dif-gerar").value;
+    let qtd = document.getElementById("qtd-gerar").value;
+    let status = document.getElementById("status-geracao");
+
+    // BLINDAGEM: Verifica se a tag existe antes de tentar mudar o texto
+    if (status !== null) {
+        status.innerText = "⏳ Gerando " + qtd + " desafio(s). Isso pode levar um minuto...";
+    } else {
+        // Se a tag não existir, avisa por popup para não travar o código
+        console.log("Iniciando geração via IA...");
+    }
+
+    try {
+        let resposta = await fetch("/api/admin/abastecer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            // Garante que os números vão como inteiros para o Node.js
+            body: JSON.stringify({ 
+                tipo: tipo, 
+                dificuldade: parseInt(dif), 
+                quantidade: parseInt(qtd) 
+            })
+        });
+
+        if (resposta.ok) {
+            if (status !== null) {
+                status.innerText = "✅ Desafios gerados com sucesso!";
+            }
+            alert("Sucesso! Os desafios foram gerados pela IA e salvos no banco.");
+            carregarBanco();
+        } else {
+            if (status !== null) status.innerText = "❌ Erro na geração.";
+            alert("Ocorreu um erro na IA. Verifique o terminal do Node.js.");
+        }
+    } catch (erro) {
+        if (status !== null) status.innerText = "❌ Erro de conexão.";
+        console.error("Erro ao chamar o servidor:", erro);
+        alert("Erro de conexão com o servidor. O Node.js está rodando?");
+    }
+}
+
 window.onload = carregarBanco;
