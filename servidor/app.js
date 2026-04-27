@@ -160,7 +160,7 @@ app.post("/api/avaliar", function(requisicao, resposta) {
 });
 
 // --- ROTA PÚBLICA: BUSCAR BANCO COMPLETO (Usada no Modo Competitivo) ---
-app.get("/api/questoes", function(req, res) {
+app.get("/api/banco-publico", function(req, res) {
     try {
         // Lê o arquivo JSON do banco de dados
         let conteudo = fs.readFileSync(caminhoBanco, "utf8");
@@ -247,6 +247,6 @@ app.post("/api/admin/sandbox/testar", verificarAutenticacao, function(req, res) 
 });
 
 // Inicia o servidor na porta 3000
-app.listen(3000, function() {
+app.listen(3000, "0.0.0.0", function() {
     console.log("Servidor rodando! Acesse: http://localhost:3000");
 });

@@ -87,23 +87,49 @@ async function iniciarCompeticao() {
     const min = parseInt(document.getElementById("comp-min").value);
     const max = parseInt(document.getElementById("comp-max").value);
 
-    // No seu sistema, buscamos o banco e filtramos localmente
-    const res = await fetch("/api/admin/questoes"); // Usando a rota de admin se disponível ou pública
-    const banco = await res.json();
+    try {
+        // CORREÇÃO: Alterado de /api/admin/questoes para /api/banco-publico
+        const res = await fetch("/api/banco-publico"); 
+        
+        if (!res.ok) {
+            alert("Erro ao carregar o banco de desafios.");
+            return;
+        }
 
-    playlistCompetitiva = banco.filter(q => q.tipo === 'correcao' && q.dificuldade >= min && q.dificuldade <= max)
-                               .sort(() => Math.random() - 0.5)
-                               .slice(0, qtd);
+        const banco = await res.json();
 
-    if(playlistCompetitiva.length === 0) {
-        alert("Nenhuma questão encontrada com esses filtros.");
-        return;
+        // Filtra apenas questões de correção dentro da faixa de dificuldade
+        playlistCompetitiva = banco.filter(function(q) {
+            return q.tipo === 'correcao' && 
+                   q.dificuldade >= min && 
+                   q.dificuldade <= max;
+        });
+
+        // Embaralha e corta para a quantidade desejada
+        playlistCompetitiva.sort(function() { return Math.random() - 0.5; });
+        playlistCompetitiva = playlistCompetitiva.slice(0, qtd);
+
+        if (playlistCompetitiva.length === 0) {
+            alert("Nenhuma questão de correção encontrada para este nível. Tente outra faixa.");
+            return;
+        }
+
+        // Reinicia o estado da maratona
+        pontosTotais = 0;
+        indiceQuestaoAtual = 0;
+        
+        // Calcula a pontuação máxima baseada na dificuldade das questões sorteadas
+        pontosMaximosPossiveis = 0;
+        for (let i = 0; i < playlistCompetitiva.length; i++) {
+            pontosMaximosPossiveis += (playlistCompetitiva[i].dificuldade * 100);
+        }
+
+        proximaQuestaoComp();
+
+    } catch (erro) {
+        console.error("Falha ao iniciar maratona:", erro);
+        alert("Erro de conexão com o servidor.");
     }
-
-    pontosTotais = 0;
-    indiceQuestaoAtual = 0;
-    pontosMaximosPossiveis = playlistCompetitiva.reduce((acc, q) => acc + (q.dificuldade * 100), 0);
-    proximaQuestaoComp();
 }
 
 function proximaQuestaoComp() {
@@ -176,14 +202,59 @@ async function enviarCodigo() {
 }
 
 function finalizarMaratona() {
-    const perc = (pontosTotais / pontosMaximosPossiveis) * 100;
-    let icone = "🥉", titulo = "Bronze", desc = "Bom começo! Continue praticando.";
-    if(perc >= 90) { icone = "🥇"; titulo = "Ouro"; desc = "Mestre da Lógica! Desempenho impecável."; }
-    else if(perc >= 60) { icone = "🥈"; titulo = "Prata"; desc = "Muito bem! Você tem uma base sólida."; }
+    // 1. Cálculo da Média de Dificuldade (Determina a LIGA)
+    let somaDificuldade = 0;
+    for (let i = 0; i < playlistCompetitiva.length; i++) {
+        somaDificuldade += playlistCompetitiva[i].dificuldade;
+    }
+    const mediaDif = somaDificuldade / playlistCompetitiva.length;
+
+    // 2. Cálculo da Porcentagem de Acerto (Determina a MEDALHA)
+    const porcentagem = (pontosTotais / pontosMaximosPossiveis) * 100;
+
+    // 3. Definição da Liga
+    let liga = "Iniciante";
+    let corLiga = "#27ae60"; // Verde
+    if (mediaDif >= 4) {
+        liga = "Elite (Avançada)";
+        corLiga = "#8e44ad"; // Roxo
+    } else if (mediaDif >= 2.5) {
+        liga = "Profissional (Média)";
+        corLiga = "#2980b9"; // Azul
+    }
+
+    // 4. Definição da Medalha (Ícone e Título)
+    let medalha = "Bronze";
+    let icone = "🥉";
+    if (porcentagem >= 90) {
+        medalha = "Ouro";
+        icone = "🥇";
+    } else if (porcentagem >= 60) {
+        medalha = "Prata";
+        icone = "🥈";
+    }
+
+    // 5. Interface e Feedback
+    const tituloFinal = `Medalha de ${medalha} - Liga ${liga}`;
     
     document.getElementById("insignia-icone").innerText = icone;
-    document.getElementById("insignia-titulo").innerText = titulo;
-    document.getElementById("insignia-desc").innerText = `${desc}\nVocê fez ${pontosTotais} de ${pontosMaximosPossiveis} pontos.`;
+    document.getElementById("insignia-titulo").innerText = tituloFinal;
+    document.getElementById("insignia-titulo").style.color = corLiga;
+    
+    let mensagemEstilo = "";
+    if (liga === "Iniciante" && medalha === "Ouro") {
+        mensagemEstilo = "Domínio total do básico! Que tal subir para a Liga Profissional?";
+    } else if (liga === "Elite (Avançada)") {
+        mensagemEstilo = "Você enfrentou os maiores desafios do laboratório. Respeito máximo!";
+    } else {
+        mensagemEstilo = "Ótimo esforço. Continue praticando para subir de liga.";
+    }
+
+    document.getElementById("insignia-desc").innerText = 
+        `${mensagemEstilo}\n\n` +
+        `Pontos: ${pontosTotais} de ${pontosMaximosPossiveis}\n` +
+        `Precisão: ${porcentagem.toFixed(1)}% | Dificuldade Média: ${mediaDif.toFixed(1)}`;
+
     document.getElementById("modal-resultado").style.display = "flex";
 }
 

@@ -526,11 +526,11 @@
   {
     "id": 1714000000008,
     "titulo": "Limpador de Duplicatas",
+    "tipo": "correcao",
+    "dificuldade": 1,
     "missao": "A função deve receber um array e retornar um novo array sem nenhum elemento repetido. O desenvolvedor se confundiu com a função indexOf(). Atualmente ela adiciona APENAS elementos repetidos.",
     "codigoSujo": "function removerDuplicatas(lista) {\n    let unicos = [];\n    \n    for (let i = 0; i < lista.length; i++) {\n        // Se indexOf retornar diferente de -1, significa que o elemento JÁ EXISTE no array\n        if (unicos.indexOf(lista[i]) !== -1) {\n            unicos.push(lista[i]);\n        }\n    }\n    return unicos;\n}",
     "codigoLimpo": "function removerDuplicatas(lista) {\n    let unicos = [];\n    \n    for (let i = 0; i < lista.length; i++) {\n        if (unicos.indexOf(lista[i]) === -1) {\n            unicos.push(lista[i]);\n        }\n    }\n    return unicos;\n}",
-    "tipo": "correcao",
-    "dificuldade": 4,
     "nomeDaFuncao": "removerDuplicatas",
     "testes": [
       {
@@ -1623,5 +1623,726 @@
       }
     ],
     "id": 1777138663076
+  },
+  {
+    "titulo": "Auditoria de Lógica Matemática: Identificação e Correção",
+    "missao": "Você foi encarregado de realizar uma auditoria crítica em um módulo de cálculo matemático. O objetivo é que a função principal 'calculadoraMatematicaAvancada' aceite um número inteiro não negativo 'numero' e opere da seguinte forma:\n\n1.  **Validação de Entrada:** A função deve rejeitar entradas que não sejam números inteiros não negativos, retornando a mensagem apropriada.\n2.  **Verificação de Primalidade:** Utilizar uma função auxiliar para determinar se 'numero' é primo. Lembre-se que, por definição matemática, 1 não é um número primo.\n3.  **Cálculo Condicional:**\n    *   Se 'numero' for primo, a função deve retornar o seu fatorial.\n    *   Se 'numero' NÃO for primo, a função deve retornar o 'numero'-ésimo termo da sequência de Fibonacci. A sequência de Fibonacci deve ser considerada como F(0)=0, F(1)=1, F(2)=1, F(3)=2, F(4)=3, e assim por diante.\n\nAtualmente, o 'codigoSujo' apresenta comportamentos inesperados para diversos valores de entrada. Sua tarefa é analisar o código fornecido, identificar todos os erros de lógica e sintaxe (se houver) e corrigi-los para que a implementação reflita perfeitamente as regras descritas acima. Concentre-se em garantir a correção matemática e a eficiência dentro das regras de codificação.",
+    "codigoSujo": "function ehPrimo(num) {\n    if (num < 1) return false;\n    for (let i = 2; i * i <= num; i++) {\n        if (num % i === 0) return false;\n    }\n    return true;\n}\n\nfunction calcularFatorial(num) {\n    if (num < 0) return NaN;\n    if (num === 0) return 1;\n    let resultado = 1;\n    for (let i = 1; i < num; i++) {\n        resultado = resultado * i;\n    }\n    return resultado;\n}\n\nfunction calcularFibonacci(posicao) {\n    if (posicao <= 0) return 0;\n    if (posicao === 1) return 1;\n    let a = 1;\n    let b = 1;\n    for (let i = 2; i <= posicao; i++) {\n        let temp = a + b;\n        a = b;\n        b = temp;\n    }\n    return b;\n}\n\nfunction calculadoraMatematicaAvancada(numero) {\n    if (typeof numero !== 'number' || !Number.isInteger(numero) || numero < 0) {\n        return \"Entrada inválida. Forneça um número inteiro não negativo.\";\n    }\n\n    if (!ehPrimo(numero)) {\n        return calcularFatorial(numero);\n    }\n    else {\n        return calcularFibonacci(numero);\n    }\n}",
+    "codigoLimpo": "function ehPrimo(num) {\n    if (num <= 1) return false;\n    for (let i = 2; i * i <= num; i++) {\n        if (num % i === 0) return false;\n    }\n    return true;\n}\n\nfunction calcularFatorial(num) {\n    if (num < 0) return NaN;\n    if (num === 0 || num === 1) return 1;\n    let resultado = 1;\n    for (let i = 2; i <= num; i++) {\n        resultado = resultado * i;\n    }\n    return resultado;\n}\n\nfunction calcularFibonacci(posicao) {\n    if (posicao <= 0) return 0;\n    if (posicao === 1) return 1;\n    let a = 0;\n    let b = 1;\n    for (let i = 2; i <= posicao; i++) {\n        let temp = a + b;\n        a = b;\n        b = temp;\n    }\n    return b;\n}\n\nfunction calculadoraMatematicaAvancada(numero) {\n    if (typeof numero !== 'number' || !Number.isInteger(numero) || numero < 0) {\n        return \"Entrada inválida. Forneça um número inteiro não negativo.\";\n    }\n\n    if (ehPrimo(numero)) {\n        return calcularFatorial(numero);\n    }\n    else {\n        return calcularFibonacci(numero);\n    }\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "calculadoraMatematicaAvancada",
+    "testes": [
+      {
+        "parametros": "4",
+        "saidaEsperada": 3
+      },
+      {
+        "parametros": "5",
+        "saidaEsperada": 120
+      }
+    ],
+    "id": 1777223010682
+  },
+  {
+    "titulo": "Análise de Desempenho Acadêmico: Encontrando Falhas na Avaliação de Notas",
+    "missao": "Você foi incumbido de revisar um módulo essencial para o processamento de notas de alunos. A função `avaliarDesempenhoAcademico` é responsável por calcular a média final, atribuir um conceito acadêmico e determinar o status de aprovação. No entanto, o código atual apresenta **erros lógicos sutis** que estão causando avaliações incorretas. Sua tarefa é identificar e corrigir esses bugs para que a função opere de acordo com as seguintes especificações:\n\n*   **Cálculo da Média:** Deve somar todas as notas fornecidas e dividir pelo número total de notas. Se nenhuma nota for fornecida, a média deve ser 0 (zero), o conceito 'N/A' e o status 'Inválido'.\n*   **Atribuição de Conceito:**\n    *   Média >= 9.0: 'A'\n    *   Média >= 7.0 e < 9.0: 'B'\n    *   Média >= 5.0 e < 7.0: 'C'\n    *   Média >= 3.0 e < 5.0: 'D'\n    *   Média < 3.0: 'F'\n*   **Status de Aprovação:**\n    *   Média >= 7.0: 'Aprovado'\n    *   Média >= 5.0 e < 7.0: 'Recuperacao'\n    *   Média < 5.0: 'Reprovado'\n\nSeu objetivo é garantir que o sistema de avaliação seja justo e preciso.",
+    "codigoSujo": "function avaliarDesempenhoAcademico(notas) {\n    var soma = 1.0; \n    var media = 0;\n    var conceito = '';\n    var aprovado = '';\n\n    for (var i = 0; i < notas.length; i++) {\n        soma += notas[i];\n    }\n\n    if (notas.length > 0) {\n        media = soma / notas.length;\n    } else {\n        media = 0; \n    }\n\n    if (media >= 9.0) {\n        conceito = 'A';\n    } else if (media > 7.0) {\n        conceito = 'B';\n    } else if (media > 5.0) {\n        conceito = 'C';\n    } else if (media > 3.0) {\n        conceito = 'D';\n    } else {\n        conceito = 'F';\n    }\n\n    if (media >= 7.0) {\n        aprovado = 'Aprovado';\n    } else if (media >= 4.0) {\n        aprovado = 'Recuperacao';\n    } else {\n        aprovado = 'Reprovado';\n    }\n\n    return {\n        media: parseFloat(media.toFixed(2)),\n        conceito: conceito,\n        aprovado: aprovado\n    };\n}",
+    "codigoLimpo": "function avaliarDesempenhoAcademico(notas) {\n    var soma = 0;\n    var media = 0;\n    var conceito = '';\n    var aprovado = '';\n\n    if (notas.length === 0) {\n        return {\n            media: 0,\n            conceito: 'N/A',\n            aprovado: 'Inválido'\n        };\n    }\n\n    for (var i = 0; i < notas.length; i++) {\n        soma += notas[i];\n    }\n\n    media = soma / notas.length;\n\n    if (media >= 9.0) {\n        conceito = 'A';\n    } else if (media >= 7.0) {\n        conceito = 'B';\n    } else if (media >= 5.0) {\n        conceito = 'C';\n    } else if (media >= 3.0) {\n        conceito = 'D';\n    } else {\n        conceito = 'F';\n    }\n\n    if (media >= 7.0) {\n        aprovado = 'Aprovado';\n    } else if (media >= 5.0) {\n        aprovado = 'Recuperacao';\n    } else {\n        aprovado = 'Reprovado';\n    }\n\n    return {\n        media: parseFloat(media.toFixed(2)),\n        conceito: conceito,\n        aprovado: aprovado\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "avaliarDesempenhoAcademico",
+    "testes": [
+      {
+        "parametros": "[8.5, 7.0, 9.0]",
+        "saidaEsperada": {
+          "media": 8.17,
+          "conceito": "B",
+          "aprovado": "Aprovado"
+        }
+      },
+      {
+        "parametros": "[6.0, 4.0, 5.0]",
+        "saidaEsperada": {
+          "media": 5,
+          "conceito": "C",
+          "aprovado": "Recuperacao"
+        }
+      },
+      {
+        "parametros": "[2.0, 1.0, 3.0]",
+        "saidaEsperada": {
+          "media": 2,
+          "conceito": "F",
+          "aprovado": "Reprovado"
+        }
+      },
+      {
+        "parametros": "[7.0]",
+        "saidaEsperada": {
+          "media": 7,
+          "conceito": "B",
+          "aprovado": "Aprovado"
+        }
+      },
+      {
+        "parametros": "[9.5]",
+        "saidaEsperada": {
+          "media": 9.5,
+          "conceito": "A",
+          "aprovado": "Aprovado"
+        }
+      },
+      {
+        "parametros": "[3.0]",
+        "saidaEsperada": {
+          "media": 3,
+          "conceito": "D",
+          "aprovado": "Reprovado"
+        }
+      },
+      {
+        "parametros": "[]",
+        "saidaEsperada": {
+          "media": 0,
+          "conceito": "N/A",
+          "aprovado": "Inválido"
+        }
+      }
+    ],
+    "id": 1777223056349
+  },
+  {
+    "titulo": "Cálculo de Carrinho: Desafios de Lógica e Arredondamento",
+    "missao": "Você foi encarregado de revisar e corrigir uma função JavaScript que calcula o valor total de um carrinho de compras. A função deve aplicar descontos, impostos e determinar o valor do frete, considerando a possibilidade de frete grátis. Seu objetivo é identificar e corrigir todos os bugs de lógica e sintaxe para que a função opere de acordo com os requisitos:\n- O cálculo do subtotal deve incluir todos os produtos e suas quantidades.\n- O desconto percentual deve ser aplicado corretamente sobre o subtotal, considerando um valor mínimo para sua aplicação.\n- O imposto deve ser calculado uma única vez sobre o total após o desconto.\n- O frete deve ser adicionado apenas se o total final (após descontos e impostos) for menor que o limite para frete grátis.\n- O valor final deve ser um número arredondado para duas casas decimais.",
+    "codigoSujo": "function processarCarrinhoDeCompras(produtos, percentualDesconto, valorFrete) {\n    var subtotal = 0;\n    var impostoBase = 0.05; \n    var limiteParaFreteGratis = 200; \n\n    for (var i = 1; i < produtos.length; i++) {\n        var produtoAtual = produtos[i];\n        subtotal += produtoAtual.preco * produtoAtual.quantidade;\n    }\n\n    var totalAposDesconto = subtotal;\n    if (percentualDesconto > 0 && subtotal > 50) {\n        totalAposDesconto -= subtotal * percentualDesconto;\n    }\n\n    var impostoTotal = 0;\n    for (var j = 0; j < produtos.length; j++) {\n        impostoTotal += produtos[j].preco * impostoBase;\n    }\n    totalAposDesconto += impostoTotal;\n\n    var totalFinalComFrete = totalAposDesconto;\n    if (totalFinalComFrete > limiteParaFreteGratis) {\n        totalFinalComFrete += valorFrete;\n    }\n\n    return totalFinalComFrete.toFixed(2);\n}",
+    "codigoLimpo": "function processarCarrinhoDeCompras(produtos, percentualDesconto, valorFrete) {\n    var subtotalBruto = 0;\n    var impostoPercentual = 0.05;\n    var minimoParaDesconto = 100;\n    var limiteParaFreteGratis = 200;\n\n    for (var i = 0; i < produtos.length; i++) {\n        var produtoAtual = produtos[i];\n        subtotalBruto += produtoAtual.preco * produtoAtual.quantidade;\n    }\n\n    var totalComDesconto = subtotalBruto;\n\n    if (percentualDesconto > 0 && subtotalBruto >= minimoParaDesconto) {\n        totalComDesconto -= subtotalBruto * (percentualDesconto / 100);\n    }\n\n    var impostoCalculado = totalComDesconto * impostoPercentual;\n    totalComDesconto += impostoCalculado;\n\n    var totalFinal = totalComDesconto;\n    if (totalFinal < limiteParaFreteGratis) {\n        totalFinal += valorFrete;\n    }\n\n    return parseFloat(totalFinal.toFixed(2));\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "processarCarrinhoDeCompras",
+    "testes": [
+      {
+        "parametros": "[{ nome: \"Camisa\", preco: 50.00, quantidade: 2 }, { nome: \"Calça\", preco: 100.00, quantidade: 1 }], 10, 15",
+        "saidaEsperada": 204
+      },
+      {
+        "parametros": "[{ nome: \"Monitor\", preco: 500.00, quantidade: 1 }], 5, 20",
+        "saidaEsperada": 498.75
+      }
+    ],
+    "id": 1777223101544
+  },
+  {
+    "titulo": "Auditoria de Validação de Dados Críticos",
+    "missao": "Você foi encarregado de revisar um módulo de validação de dados para garantir a integridade das informações de usuários. O código atual possui falhas lógicas e de sintaxe sutis que permitem a passagem de dados inválidos ou geram erros em determinadas condições. Sua tarefa é encontrar e corrigir todos os bugs no código fornecido para que ele valide corretamente CPFs fictícios, e-mails e datas de nascimento no formato DD/MM/YYYY, conforme as regras estabelecidas.",
+    "codigoSujo": "function validarEntradasComplexas(dados) {\n    let resultados = {\n        cpfValido: false,\n        emailValido: false,\n        dataNascimentoValida: false,\n        mensagens: []\n    };\n\n    // Validação de CPF fictício (11 dígitos, apenas números, não todos iguais)\n    let cpf = dados.cpf;\n    if (typeof cpf !== 'string' || cpf.length !== 11) {\n        resultados.mensagens.push(\"CPF deve ser uma string de 11 dígitos numéricos.\");\n    } else {\n        let todosIguais = true;\n        for (let i = 0; i < cpf.length - 1; i++) {\n            if (cpf.charAt(i) != cpf.charAt(i + 1)) {\n                todosIguais = false;\n                break;\n            }\n        }\n        if (todosIguais) {\n            resultados.mensagens.push(\"CPF não pode ter todos os dígitos iguais.\");\n        }\n\n        let apenasDigitos = true;\n        // Bug: Só verifica o primeiro caractere\n        if (isNaN(parseInt(cpf.charAt(0)))) {\n            apenasDigitos = false;\n        }\n\n        if (!apenasDigitos) {\n            resultados.mensagens.push(\"CPF deve conter apenas dígitos.\");\n        }\n\n        // Bug: Lógica de atribuição de cpfValido incompleta\n        if (apenasDigitos && !todosIguais) {\n            resultados.cpfValido = true;\n        }\n    }\n\n    // Validação de Email\n    let email = dados.email;\n    if (typeof email !== 'string' || email.length === 0) {\n        resultados.mensagens.push(\"Email não pode ser vazio.\");\n    } else {\n        let atPos = email.indexOf('@');\n        let lastAtPos = email.lastIndexOf('@');\n\n        // Bug: Condição para '@' está parcialmente correta, mas a ordem importa e não considera o ponto\n        if (atPos <= 0 || atPos >= email.length - 1 || atPos !== lastAtPos) {\n            resultados.mensagens.push(\"Formato de email inválido: Posição do '@' ou múltiplos '@'.\");\n        } else {\n            let dotPos = email.lastIndexOf('.');\n\n            // Bug: Permite '@.' (nenhum caractere entre '@' e '.') e TLD de 1 caractere (.c)\n            if (dotPos < atPos + 1 || dotPos >= email.length - 2) {\n                resultados.mensagens.push(\"Formato de email inválido: Posição do '.' ou TLD inválido.\");\n            }\n             else {\n                let espacos = false;\n                for (let i = 0; i < email.length; i++) {\n                    if (email.charAt(i) === ' ') {\n                        espacos = true;\n                        break;\n                    }\n                }\n                if (espacos) {\n                    resultados.mensagens.push(\"Email não pode conter espaços.\");\n                } else {\n                    resultados.emailValido = true; // Bug: Atribuição de emailValido muito precoce\n                }\n            }\n        }\n    }\n\n    // Validação de Data (DD/MM/YYYY)\n    let dataNascimento = dados.dataNascimento;\n    if (typeof dataNascimento !== 'string' || dataNascimento.length !== 10) { // Bug: Apenas verifica comprimento, não o formato DD/MM/YYYY\n        resultados.mensagens.push(\"Data de nascimento deve ter 10 caracteres.\");\n    } else {\n        let partes = dataNascimento.split('/');\n        if (partes.length !== 3) {\n            resultados.mensagens.push(\"Data de nascimento deve estar no formato DD/MM/YYYY.\");\n        } else {\n            let dia = parseInt(partes[0]);\n            let mes = parseInt(partes[1]);\n            let ano = parseInt(partes[2]);\n\n            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n                 resultados.mensagens.push(\"Data de nascimento contém valores não numéricos.\");\n            } else if (dataNascimento.charAt(2) !== '/' && dataNascimento.charAt(5) !== '/') { // Bug: Operador lógico incorreto\n                 resultados.mensagens.push(\"Formato de data DD/MM/YYYY inválido: Barras ausentes ou mal posicionadas.\");\n            } else if (ano < 1950 || ano > 2005) { // Bug: Intervalo de ano restrito (1950-2005)\n                resultados.mensagens.push(\"Ano de nascimento fora do intervalo permitido (1950-2005).\");\n            } else if (mes < 1 || mes > 13) { // Bug: Permite mês 13\n                resultados.mensagens.push(\"Mês de nascimento inválido.\");\n            } else {\n                let diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n                // Bug: Lógica de ano bissexto incorreta para anos de século não divisíveis por 400\n                if (ano % 4 === 0 || ano % 400 === 0) {\n                    diasNoMes[2] = 29;\n                }\n                if (dia < 1 || dia > diasNoMes[mes] + 1) { // Bug: Permite um dia extra\n                    resultados.mensagens.push(\"Dia de nascimento inválido para o mês/ano fornecido.\");\n                } else {\n                    resultados.dataNascimentoValida = true;\n                }\n            }\n        }\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function validarEntradasComplexas(dados) {\n    let resultados = {\n        cpfValido: false,\n        emailValido: false,\n        dataNascimentoValida: false,\n        mensagens: []\n    };\n\n    // Validação de CPF fictício (11 dígitos, apenas números, não todos iguais)\n    if (typeof dados.cpf !== 'string' || dados.cpf.length !== 11) {\n        resultados.mensagens.push(\"CPF deve ser uma string de 11 dígitos.\");\n    } else {\n        let cpf = dados.cpf;\n        let apenasDigitos = true;\n        for (let i = 0; i < cpf.length; i++) {\n            if (isNaN(parseInt(cpf.charAt(i), 10))) {\n                apenasDigitos = false;\n                break;\n            }\n        }\n\n        if (!apenasDigitos) {\n            resultados.mensagens.push(\"CPF deve conter apenas dígitos.\");\n        } else {\n            let todosIguais = true;\n            for (let i = 0; i < cpf.length - 1; i++) {\n                if (cpf.charAt(i) !== cpf.charAt(i + 1)) {\n                    todosIguais = false;\n                    break;\n                }\n            }\n\n            if (todosIguais) {\n                resultados.mensagens.push(\"CPF não pode ter todos os dígitos iguais.\");\n            } else {\n                resultados.cpfValido = true;\n            }\n        }\n    }\n\n    // Validação de Email\n    if (typeof dados.email !== 'string' || dados.email.length === 0) {\n        resultados.mensagens.push(\"Email não pode ser vazio.\");\n    } else {\n        let email = dados.email;\n        let atPos = email.indexOf('@');\n        let lastAtPos = email.lastIndexOf('@');\n        let dotPos = email.lastIndexOf('.');\n\n        if (atPos <= 0 || atPos >= email.length - 1 || atPos !== lastAtPos) {\n            resultados.mensagens.push(\"Formato de email inválido: Posição do '@' ou múltiplos '@'.\");\n        } else if (dotPos < atPos + 2 || dotPos >= email.length - 2) { // O ponto deve ter pelo menos um caractere entre ele e o '@' e o TLD deve ter pelo menos 2 caracteres\n            resultados.mensagens.push(\"Formato de email inválido: Posição do '.' ou domínio/TLD inválido.\");\n        } else {\n            let espacos = false;\n            for (let i = 0; i < email.length; i++) {\n                if (email.charAt(i) === ' ') {\n                    espacos = true;\n                    break;\n                }\n            }\n            if (espacos) {\n                resultados.mensagens.push(\"Email não pode conter espaços.\");\n            } else {\n                resultados.emailValido = true;\n            }\n        }\n    }\n\n    // Validação de Data (DD/MM/YYYY)\n    if (typeof dados.dataNascimento !== 'string' || dados.dataNascimento.length !== 10) {\n        resultados.mensagens.push(\"Data de nascimento deve ter 10 caracteres no formato DD/MM/YYYY.\");\n    } else {\n        let dataNascimento = dados.dataNascimento;\n        if (dataNascimento.charAt(2) !== '/' || dataNascimento.charAt(5) !== '/') {\n            resultados.mensagens.push(\"Formato de data DD/MM/YYYY inválido: Barras ausentes ou mal posicionadas.\");\n        } else {\n            let partes = dataNascimento.split('/');\n            if (partes.length !== 3) { // Redundante se charAt verifica, mas adiciona robustez\n                resultados.mensagens.push(\"Data de nascimento deve estar no formato DD/MM/YYYY.\");\n            } else {\n                let dia = parseInt(partes[0], 10);\n                let mes = parseInt(partes[1], 10);\n                let ano = parseInt(partes[2], 10);\n\n                if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n                    resultados.mensagens.push(\"Data de nascimento contém valores não numéricos.\");\n                } else {\n                    let anoAtual = new Date().getFullYear();\n                    if (ano < 1900 || ano > anoAtual) { // Intervalo de ano mais realista\n                        resultados.mensagens.push(\"Ano de nascimento fora do intervalo permitido (1900-\" + anoAtual + \").\");\n                    } else if (mes < 1 || mes > 12) {\n                        resultados.mensagens.push(\"Mês de nascimento inválido.\");\n                    }\n                     else {\n                        let diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n                        // Lógica de ano bissexto correta\n                        if ((ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0) {\n                            diasNoMes[2] = 29;\n                        }\n\n                        if (dia < 1 || dia > diasNoMes[mes]) {\n                            resultados.mensagens.push(\"Dia de nascimento inválido para o mês/ano fornecido.\");\n                        } else {\n                            resultados.dataNascimentoValida = true;\n                        }\n                    }\n                }\n            }\n        }\n    }\n\n    return resultados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "validarEntradasComplexas",
+    "testes": [
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno.teste@exemplo.com\", dataNascimento: \"15/07/1990\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataNascimentoValida": true,
+          "mensagens": []
+        }
+      },
+      {
+        "parametros": "{ cpf: \"00000000000\", email: \"aluno@exemplo.com\", dataNascimento: \"01/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": false,
+          "emailValido": true,
+          "dataNascimentoValida": true,
+          "mensagens": [
+            "CPF não pode ter todos os dígitos iguais."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"1234567890A\", email: \"aluno@exemplo.com\", dataNascimento: \"01/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": false,
+          "emailValido": true,
+          "dataNascimentoValida": true,
+          "mensagens": [
+            "CPF deve conter apenas dígitos."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345\", email: \"aluno@exemplo.com\", dataNascimento: \"01/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": false,
+          "emailValido": true,
+          "dataNascimentoValida": true,
+          "mensagens": [
+            "CPF deve ser uma string de 11 dígitos."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno.exemplo.com\", dataNascimento: \"01/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": false,
+          "dataNascimentoValida": true,
+          "mensagens": [
+            "Formato de email inválido: Posição do '@' ou múltiplos '@'."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno@exemplo.c\", dataNascimento: \"01/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": false,
+          "dataNascimentoValida": true,
+          "mensagens": [
+            "Formato de email inválido: Posição do '.' ou domínio/TLD inválido."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno @exemplo.com\", dataNascimento: \"01/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": false,
+          "dataNascimentoValida": true,
+          "mensagens": [
+            "Email não pode conter espaços."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno@exemplo.com\", dataNascimento: \"32/01/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataNascimentoValida": false,
+          "mensagens": [
+            "Dia de nascimento inválido para o mês/ano fornecido."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno@exemplo.com\", dataNascimento: \"01/13/2000\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataNascimentoValida": false,
+          "mensagens": [
+            "Mês de nascimento inválido."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno@exemplo.com\", dataNascimento: \"29/02/2100\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataNascimentoValida": false,
+          "mensagens": [
+            "Dia de nascimento inválido para o mês/ano fornecido."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno@exemplo.com\", dataNascimento: \"01-01-2000\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataNascimentoValida": false,
+          "mensagens": [
+            "Formato de data DD/MM/YYYY inválido: Barras ausentes ou mal posicionadas."
+          ]
+        }
+      },
+      {
+        "parametros": "{ cpf: \"12345678901\", email: \"aluno@exemplo.com\", dataNascimento: \"01/01/1899\" }",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataNascimentoValida": false,
+          "mensagens": [
+            "Ano de nascimento fora do intervalo permitido (1900-2024)."
+          ]
+        }
+      }
+    ],
+    "id": 1777223184713
+  },
+  {
+    "titulo": "Análise de Sequência Fibonacci e Primos",
+    "missao": "Você foi encarregado de corrigir um código JavaScript que deveria gerar a sequência de Fibonacci até um determinado número de termos e, em seguida, calcular o produto de todos os números primos encontrados nessa sequência. O código atual apresenta falhas lógicas e de eficiência que precisam ser identificadas e corrigidas. Sua tarefa é analisar o 'codigoSujo', encontrar todos os bugs (sejam de lógica, sintaxe ou eficiência crítica) e refatorá-lo para que o 'codigoLimpo' cumpra os requisitos corretamente, seguindo as boas práticas de programação e as regras de sintaxe exigidas. A sequência de Fibonacci deve começar com 0, 1, 1, 2, 3...",
+    "codigoSujo": "function verificaPrimo(numero) {\n    if (numero <= 2) return true; \n    for (let k = 2; k < numero; k++) {\n        if (numero % k === 0) {\n            return false;\n        }\n    }\n    return true;\n}\n\nfunction analisarSequenciaNumerica(limite) {\n    if (limite <= 0) return 0;\n\n    let fibSequence = [];\n    let a = 0;\n    let b = 1;\n\n    for (let i = 0; i <= limite; i++) {\n        fibSequence.push(a);\n        let temp = a + b;\n        a = b;\n        b = temp;\n    }\n\n    let produtoPrimos = 0;\n    for (let j = 0; j < fibSequence.length; j++) {\n        if (verificaPrimo(fibSequence[j])) {\n            produtoPrimos += fibSequence[j];\n        }\n    }\n\n    return produtoPrimos;\n}",
+    "codigoLimpo": "function verificarPrimoCorreto(numero) {\n    if (numero <= 1) return false;\n    if (numero === 2) return true;\n    if (numero % 2 === 0) return false;\n\n    for (let i = 3; i * i <= numero; i += 2) {\n        if (numero % i === 0) {\n            return false;\n        }\n    }\n    return true;\n}\n\nfunction analisarSequenciaNumerica(limite) {\n    if (limite <= 0) return 1;\n\n    let fibSequence = [];\n    let a = 0;\n    let b = 1;\n\n    for (let i = 0; i < limite; i++) {\n        fibSequence.push(a);\n        let temp = a + b;\n        a = b;\n        b = temp;\n    }\n\n    let produtoPrimos = 1;\n    for (let j = 0; j < fibSequence.length; j++) {\n        if (verificarPrimoCorreto(fibSequence[j])) {\n            produtoPrimos *= fibSequence[j];\n        }\n    }\n\n    return produtoPrimos;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "analisarSequenciaNumerica",
+    "testes": [
+      {
+        "parametros": "0",
+        "saidaEsperada": 1
+      },
+      {
+        "parametros": "1",
+        "saidaEsperada": 1
+      },
+      {
+        "parametros": "4",
+        "saidaEsperada": 2
+      },
+      {
+        "parametros": "6",
+        "saidaEsperada": 30
+      },
+      {
+        "parametros": "8",
+        "saidaEsperada": 390
+      }
+    ],
+    "id": 1777223232114
+  },
+  {
+    "titulo": "Caçando Inconsistências Matemáticas",
+    "missao": "Você foi designado para revisar e corrigir um módulo JavaScript responsável por classificar e processar números com base em propriedades matemáticas como serem primos, números de Fibonacci ou calcular seus fatoriais. O código atual contém falhas sutis de lógica e de implementação que resultam em saídas incorretas para determinados valores de entrada. Sua missão é identificar e corrigir todos os bugs, garantindo que a função `processaNumeroMatematico` e suas funções auxiliares operem perfeitamente de acordo com as seguintes regras:\n\n1.  **Prioridade de Classificação**: Um número deve ser verificado primeiro se é **primo**. Se for primo, retorne seu **fatorial**.\n2.  **Números de Fibonacci (Não Primos)**: Se o número não for primo, mas for um **número de Fibonacci**, retorne a **soma de seus dígitos**.\n3.  **Outros Números**: Se o número não se encaixar nas categorias acima (não é primo, não é Fibonacci), retorne o **próprio número**.\n4.  **Casos Específicos para Fatorial**: O fatorial de 0 e 1 é 1. Para números negativos, retorne -1.\n5.  **Definição de Primo**: Números menores ou iguais a 1 não são primos.",
+    "codigoSujo": "function processaNumeroMatematico(numero) {\n\n    function calcularFatorial(num) {\n        if (num < 0) return 0;\n        if (num === 0) return 0;\n        let resultado = 1;\n        for (let i = 1; i < num; i++) {\n            resultado *= i;\n        }\n        return resultado;\n    }\n\n    function ehNumeroPrimo(num) {\n        if (num <= 1) return true;\n        if (num <= 3) return true;\n        if (num % 2 === 0 || num % 3 === 0) return false;\n        for (let i = 5; i * i < num; i = i + 6) {\n            if (num % i === 0 || num % (i + 2) === 0) return false;\n        }\n        return true;\n    }\n\n    function ehNumeroFibonacci(num) {\n        if (num < 0) return false;\n        if (num === 0 || num === 1) return true;\n        let a = 0;\n        let b = 1;\n        while (b < num) {\n            let temp = b;\n            b = a + b;\n            a = temp;\n        }\n        return b === num;\n    }\n\n    function somarDigitos(n) {\n        let soma = 0;\n        let strNum = String(n);\n        for (let i = 0; i <= strNum.length; i++) {\n            soma += strNum[i];\n        }\n        return soma;\n    }\n\n    if (ehNumeroFibonacci(numero)) {\n        return somarDigitos(numero);\n    } else if (ehNumeroPrimo(numero)) {\n        return calcularFatorial(numero);\n    } else {\n        return numero;\n    }\n}",
+    "codigoLimpo": "function processaNumeroMatematico(numero) {\n\n    function calcularFatorial(num) {\n        if (num < 0) return -1;\n        if (num === 0 || num === 1) return 1;\n        let resultado = 1;\n        for (let i = 2; i <= num; i++) {\n            resultado *= i;\n        }\n        return resultado;\n    }\n\n    function ehNumeroPrimo(num) {\n        if (num <= 1) return false;\n        if (num <= 3) return true;\n        if (num % 2 === 0 || num % 3 === 0) return false;\n        for (let i = 5; i * i <= num; i = i + 6) {\n            if (num % i === 0 || num % (i + 2) === 0) return false;\n        }\n        return true;\n    }\n\n    function ehNumeroFibonacci(num) {\n        if (num < 0) return false;\n        if (num === 0 || num === 1) return true;\n        let a = 0;\n        let b = 1;\n        while (b < num) {\n            let temp = b;\n            b = a + b;\n            a = temp;\n        }\n        return b === num;\n    }\n\n    function somarDigitos(n) {\n        let soma = 0;\n        let strNum = String(n);\n        for (let i = 0; i < strNum.length; i++) {\n            soma += parseInt(strNum[i]);\n        }\n        return soma;\n    }\n\n    if (ehNumeroPrimo(numero)) {\n        return calcularFatorial(numero);\n    } else if (ehNumeroFibonacci(numero)) {\n        return somarDigitos(numero);\n    } else {\n        return numero;\n    }\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "processaNumeroMatematico",
+    "testes": [
+      {
+        "parametros": "0",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "2",
+        "saidaEsperada": 2
+      },
+      {
+        "parametros": "4",
+        "saidaEsperada": 4
+      },
+      {
+        "parametros": "5",
+        "saidaEsperada": 120
+      },
+      {
+        "parametros": "8",
+        "saidaEsperada": 8
+      },
+      {
+        "parametros": "13",
+        "saidaEsperada": 6227020800
+      },
+      {
+        "parametros": "-5",
+        "saidaEsperada": -1
+      },
+      {
+        "parametros": "144",
+        "saidaEsperada": 9
+      }
+    ],
+    "id": 1777223287177
+  },
+  {
+    "titulo": "Calculadora de Checkout de Carrinho com Desafios",
+    "missao": "Você foi encarregado de revisar e corrigir uma função JavaScript existente que calcula o valor total de um carrinho de compras. O código atual contém diversas inconsistências lógicas, erros na ordem de aplicação de descontos e impostos, e problemas de precisão, além de usar 'magic numbers' em vez de constantes claras. Seu objetivo é identificar e corrigir todos esses bugs, garantindo que o cálculo do valor final seja preciso e siga a lógica padrão de processamento de um carrinho: calcular subtotal, aplicar descontos sobre o subtotal, calcular impostos sobre o subtotal com desconto, adicionar taxas de entrega (com frete grátis para compras maiores), e por último adicionar quaisquer taxas adicionais (como urgência).\n\n**Pontos a serem corrigidos:**\n1.  **Ordem de Operações:** O imposto deve ser calculado após o desconto ser aplicado ao subtotal. O código atual pode aplicar o imposto antes do desconto, ou o desconto sobre um valor já com imposto.\n2.  **Lógica do Desconto:** O cupom de desconto 'PROMO10' deve oferecer 10% de desconto se o *subtotal dos itens* (antes de impostos e outras taxas) for igual ou superior a R$ 1000. O código atual pode verificar a condição de forma incorreta ou aplicar o desconto no valor errado.\n3.  **Lógica da Taxa de Entrega:** A taxa de entrega padrão é R$ 25, mas é gratuita se o *subtotal após desconto* for superior a R$ 2000. O código atual pode usar o subtotal original ou outro valor incorreto para essa verificação.\n4.  **Taxa de Urgência:** A taxa de urgência (R$ 50) deve ser adicionada apenas se `aplicarTaxaUrgencia` for `true`, e deve ser o último componente a ser adicionado ao total. No código atual, ela pode ser adicionada em um estágio muito inicial, influenciando outros cálculos.\n5.  **Precisão Monetária:** Garantir que todos os cálculos monetários resultem em duas casas decimais, evitando problemas de ponto flutuante.\n6.  **Legibilidade e Manutenibilidade:** Substitua todos os 'magic numbers' por constantes bem nomeadas.",
+    "codigoSujo": "function processarCheckoutCarrinho(itensCarrinho, cupom, aplicarTaxaUrgencia) {\n    var subtotal = 0;\n    var i;\n\n    if (aplicarTaxaUrgencia === true) {\n        subtotal = subtotal + 50.00;\n    }\n\n    for (i = 0; i < itensCarrinho.length; i++) {\n        subtotal = subtotal + (itensCarrinho[i].preco * itensCarrinho[i].quantidade);\n    }\n\n    var imposto = subtotal * 0.18;\n    subtotal = subtotal + imposto;\n\n    if (cupom === 'PROMO10' && (subtotal - imposto) >= 1000.00) {\n        subtotal = subtotal - (subtotal * 0.10);\n    }\n\n    var taxaEntrega = 25.00;\n    if ((subtotal - imposto) > 2000.00) {\n        taxaEntrega = 0;\n    }\n    \n    var totalFinal = subtotal + taxaEntrega;\n\n    return totalFinal;\n}",
+    "codigoLimpo": "function processarCheckoutCarrinho(itensCarrinho, cupom, aplicarTaxaUrgencia) {\n    var subtotal = 0;\n    var taxaImpostoPercentual = 0.18; // 18%\n    var taxaEntregaPadrao = 25.00;\n    var limiteFreteGratis = 2000.00;\n    var taxaUrgenciaValor = 50.00;\n    var cupomPromoNome = 'PROMO10';\n    var cupomPromoPercentual = 0.10; // 10%\n    var cupomPromoMinimo = 1000.00;\n\n    var i;\n    for (i = 0; i < itensCarrinho.length; i++) {\n        subtotal = subtotal + (itensCarrinho[i].preco * itensCarrinho[i].quantidade);\n    }\n\n    var subtotalAposDesconto = subtotal;\n\n    // Aplicar desconto se o cupom for válido e o subtotal atingir o mínimo\n    if (cupom === cupomPromoNome && subtotal >= cupomPromoMinimo) {\n        subtotalAposDesconto = subtotalAposDesconto - (subtotalAposDesconto * cupomPromoPercentual);\n    }\n\n    // Calcular imposto sobre o subtotal após desconto\n    var imposto = subtotalAposDesconto * taxaImpostoPercentual;\n\n    // Calcular taxa de entrega\n    var taxaEntrega = taxaEntregaPadrao;\n    if (subtotalAposDesconto > limiteFreteGratis) {\n        taxaEntrega = 0;\n    }\n\n    // Somar todos os componentes para o total final\n    var totalFinal = subtotalAposDesconto + imposto + taxaEntrega;\n    \n    // Adicionar taxa de urgência se aplicável (último componente)\n    if (aplicarTaxaUrgencia === true) {\n        totalFinal = totalFinal + taxaUrgenciaValor;\n    }\n\n    // Arredondar para duas casas decimais para precisão monetária\n    return parseFloat(totalFinal.toFixed(2));\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "processarCheckoutCarrinho",
+    "testes": [
+      {
+        "parametros": "[{\"nome\":\"Caneta\",\"preco\":5,\"quantidade\":10}], \"PROMO10\", false",
+        "saidaEsperada": 84
+      },
+      {
+        "parametros": "[{\"nome\":\"Monitor\",\"preco\":1000,\"quantidade\":1}, {\"nome\":\"Teclado\",\"preco\":200,\"quantidade\":1}], \"PROMO10\", true",
+        "saidaEsperada": 1352.5
+      },
+      {
+        "parametros": "[{\"nome\":\"Laptop\",\"preco\":3000,\"quantidade\":1}], null, false",
+        "saidaEsperada": 3540
+      }
+    ],
+    "id": 1777223337736
+  },
+  {
+    "titulo": "Validação Robusta de Entrada de Dados",
+    "missao": "Você foi encarregado de revisar e corrigir uma função JavaScript responsável por validar dados de entrada (CPF, E-mail, Data) para um sistema. O código existente contém erros sutis de lógica e de manipulação de strings que comprometem a robustez e a precisão das validações. Sua tarefa é encontrar e corrigir todos os bugs para que a função opere de forma perfeita, seguindo rigorosamente as especificações abaixo:\n\n**Especificações para Validação:**\n\n1.  **CPF (fictício):**\n    *   Deve ser uma string e não vazia.\n    *   Formato esperado: `DDD.DDD.DDD-DD` (onde D é um dígito).\n    *   Deve conter exatamente 11 dígitos após a remoção de caracteres não numéricos.\n    *   Não pode ter todos os 11 dígitos iguais (ex: \"000.000.000-00\").\n    *   Não é necessário implementar o algoritmo completo de validação de dígitos verificadores do CPF, apenas as regras acima.\n\n2.  **E-mail:**\n    *   Deve ser uma string e não vazia.\n    *   Deve ser limpo de espaços em branco no início e no fim.\n    *   Deve conter um `@` e pelo menos um `.` após o `@`.\n    *   O `@` não pode ser o primeiro caractere.\n    *   Deve haver pelo menos um caractere entre o `@` e o primeiro `.` após ele.\n    *   Deve haver pelo menos um caractere após o último `.`.\n    *   Não pode conter espaços em branco em seu interior.\n\n3.  **Data:**\n    *   Deve ser uma string e não vazia.\n    *   Formato esperado: `DD/MM/YYYY`.\n    *   Dia, Mês e Ano devem ser valores numéricos válidos.\n    *   Mês deve estar entre 1 e 12.\n    *   Ano deve estar no intervalo entre 1900 e 2100.\n    *   O dia deve ser válido para o mês e ano especificados (considerando anos bissextos para fevereiro).\n\nSua solução deve manter a estrutura de função tradicional e utilizar apenas laços 'for' clássicos, conforme as regras do projeto.",
+    "codigoSujo": "function validarEntradasSistema(dados) {\n    var resultados = {\n        cpfValido: false,\n        emailValido: false,\n        dataValida: false,\n        erros: []\n    };\n\n    // --- Validação de CPF ---\n    if (!dados.cpf || typeof dados.cpf !== 'string') {\n        resultados.erros.push(\"CPF não fornecido ou em formato inválido.\");\n    } else {\n        var cpfLimpo = dados.cpf.replace(/\\D/g, '');\n        if (cpfLimpo.length !== 10) { \n            resultados.erros.push(\"CPF deve conter 11 dígitos.\");\n        } else {\n            var todosIguais = (cpfLimpo.length > 1 && cpfLimpo[0] === cpfLimpo[1]);\n            \n            if (todosIguais) {\n                resultados.erros.push(\"CPF não pode ter todos os dígitos iguais.\");\n            } else {\n                var regexCpf = /^\\d{3}\\d{3}\\.\\d{3}-\\d{2}$\\/; \n                if (!regexCpf.test(dados.cpf)) {\n                    resultados.erros.push(\"CPF deve estar no formato DDD.DDD.DDD-DD.\");\n                } else {\n                    resultados.cpfValido = true;\n                }\n            }\n        }\n    }\n\n\n    // --- Validação de E-mail ---\n    if (!dados.email || typeof dados.email !== 'string') {\n        resultados.erros.push(\"Email não fornecido ou em formato inválido.\");\n    } else {\n        var email = dados.email;\n        if (email.length < 5) {\n            resultados.erros.push(\"Email muito curto.\");\n        } else {\n            var atPos = email.indexOf('@');\n            var dotPos = email.lastIndexOf('.');\n\n            if (atPos === -1 || dotPos < atPos + 1 || dotPos + 2 > email.length) {\n                resultados.erros.push(\"Formato de email inválido.\");\n            } else {\n                resultados.emailValido = true;\n            }\n        }\n    }\n\n    // --- Validação de Data ---\n    if (!dados.data || typeof dados.data !== 'string') {\n        resultados.erros.push(\"Data não fornecida ou em formato inválido.\");\n    } else {\n        var dataStr = dados.data;\n        var partes = dataStr.split('/');\n        if (partes.length !== 3) {\n            resultados.erros.push(\"Data deve estar no formato DD/MM/YYYY.\");\n        } else {\n            var dia = parseInt(partes[0]);\n            var mes = parseInt(partes[1]);\n            var ano = parseInt(partes[2]);\n\n            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n                resultados.erros.push(\"Componentes da data devem ser números.\");\n            } else if (mes < 1 || mes > 12) {\n                resultados.erros.push(\"Mês inválido (1-12).\");\n            } else if (ano < 1950 || ano > 2050) {\n                resultados.erros.push(\"Ano inválido (1950-2050).\");\n            } else {\n                var diasNoMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n                if (mes === 2 && (ano % 4 === 0)) {\n                    diasNoMes[1] = 29;\n                }\n\n                if (dia < 1 || dia > diasNoMes[mes]) {\n                    resultados.erros.push(\"Dia inválido para o mês/ano fornecido.\");\n                } else {\n                    resultados.dataValida = true;\n                }\n            }\n        }\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function validarEntradasSistema(dados) {\n    var resultados = {\n        cpfValido: false,\n        emailValido: false,\n        dataValida: false,\n        erros: []\n    };\n\n    // --- Validação de CPF ---\n    if (!dados.cpf || typeof dados.cpf !== 'string') {\n        resultados.erros.push(\"CPF não fornecido ou em formato inválido.\");\n    } else {\n        var cpfLimpo = dados.cpf.replace(/\\D/g, '');\n        if (cpfLimpo.length !== 11) { // Corrigido: Comprimento deve ser 11\n            resultados.erros.push(\"CPF deve conter 11 dígitos.\");\n        } else {\n            var todosIguais = true;\n            for (var i = 1; i < cpfLimpo.length; i++) { // Corrigido: Loop verifica todos os dígitos\n                if (cpfLimpo[i] !== cpfLimpo[0]) {\n                    todosIguais = false;\n                    break;\n                }\n            }\n            if (todosIguais) {\n                resultados.erros.push(\"CPF não pode ter todos os dígitos iguais.\");\n            } else {\n                var regexCpf = /^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$/; // Corrigido: Regex com todos os pontos\n                if (!regexCpf.test(dados.cpf)) {\n                    resultados.erros.push(\"CPF deve estar no formato DDD.DDD.DDD-DD.\");\n                } else {\n                    resultados.cpfValido = true;\n                }\n            }\n        }\n    }\n\n\n    // --- Validação de E-mail ---\n    if (!dados.email || typeof dados.email !== 'string') {\n        resultados.erros.push(\"Email não fornecido ou em formato inválido.\");\n    } else {\n        var email = dados.email.trim(); // Corrigido: Adicionado trim()\n        if (email.length < 6) { // Corrigido: Comprimento mínimo para a@b.co é 6\n            resultados.erros.push(\"Email muito curto.\");\n        } else {\n            var atPos = email.indexOf('@');\n            var dotPos = email.lastIndexOf('.');\n\n            if (atPos < 1 || dotPos < atPos + 2 || dotPos + 2 > email.length) { // Corrigido: @ não pode ser o primeiro; 2 chars entre @ e .; 1 char após o último .\n                resultados.erros.push(\"Formato de email inválido.\");\n            } else if (email.includes(' ')) { // Corrigido: Adicionada verificação de espaços internos\n                resultados.erros.push(\"Email não pode conter espaços.\");\n            } else {\n                resultados.emailValido = true;\n            }\n        }\n    }\n\n    // --- Validação de Data ---\n    if (!dados.data || typeof dados.data !== 'string') {\n        resultados.erros.push(\"Data não fornecida ou em formato inválido.\");\n    } else {\n        var dataStr = dados.data;\n        var partes = dataStr.split('/');\n        if (partes.length !== 3) {\n            resultados.erros.push(\"Data deve estar no formato DD/MM/YYYY.\");\n        } else {\n            var dia = parseInt(partes[0], 10); // Corrigido: Adicionado radix 10\n            var mes = parseInt(partes[1], 10); // Corrigido: Adicionado radix 10\n            var ano = parseInt(partes[2], 10); // Corrigido: Adicionado radix 10\n\n            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n                resultados.erros.push(\"Componentes da data devem ser números.\");\n            } else if (mes < 1 || mes > 12) {\n                resultados.erros.push(\"Mês inválido (1-12).\");\n            } else if (ano < 1900 || ano > 2100) { // Corrigido: Range de anos adequado\n                resultados.erros.push(\"Ano inválido (1900-2100).\");\n            } else {\n                var diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; // Corrigido: Array 1-indexado\n                // Corrigido: Lógica de ano bissexto completa\n                if (mes === 2 && ((ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0)) {\n                    diasNoMes[2] = 29;\n                }\n\n                if (dia < 1 || dia > diasNoMes[mes]) { // Corrigido: Acesso correto ao array 1-indexado\n                    resultados.erros.push(\"Dia inválido para o mês/ano fornecido.\");\n                } else {\n                    resultados.dataValida = true;\n                }\n            }\n        }\n    }\n\n    return resultados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "validarEntradasSistema",
+    "testes": [
+      {
+        "parametros": "{\"cpf\": \"123.456.789-00\", \"email\": \"teste@exemplo.com\", \"data\": \"30/01/2000\"}",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataValida": true,
+          "erros": []
+        }
+      },
+      {
+        "parametros": "{\"cpf\": \"111.111.111-11\", \"email\": \"teste@exemplo.com\", \"data\": \"01/01/2000\"}",
+        "saidaEsperada": {
+          "cpfValido": false,
+          "emailValido": true,
+          "dataValida": true,
+          "erros": [
+            "CPF não pode ter todos os dígitos iguais."
+          ]
+        }
+      },
+      {
+        "parametros": "{\"cpf\": \"123.456.789-00\", \"email\": \"user@.com\", \"data\": \"01/01/2000\"}",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": false,
+          "dataValida": true,
+          "erros": [
+            "Formato de email inválido."
+          ]
+        }
+      },
+      {
+        "parametros": "{\"cpf\": \"123.456.789-00\", \"email\": \" teste@exemplo.com \", \"data\": \"01/01/2000\"}",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": false,
+          "dataValida": true,
+          "erros": [
+            "Email não pode conter espaços."
+          ]
+        }
+      },
+      {
+        "parametros": "{\"cpf\": \"123.456.789-00\", \"email\": \"teste@exemplo.com\", \"data\": \"29/02/1900\"}",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataValida": false,
+          "erros": [
+            "Dia inválido para o mês/ano fornecido."
+          ]
+        }
+      },
+      {
+        "parametros": "{\"cpf\": \"123.456.789-00\", \"email\": \"teste@exemplo.com\", \"data\": \"15/01/2080\"}",
+        "saidaEsperada": {
+          "cpfValido": true,
+          "emailValido": true,
+          "dataValida": true,
+          "erros": []
+        }
+      }
+    ],
+    "id": 1777223430438
+  },
+  {
+    "titulo": "Correção no Cálculo de Inventário por Categoria",
+    "missao": "Você foi encarregado de revisar e corrigir um módulo crucial do sistema de inventário de uma loja. A função `calcularValorTotalInventarioPorCategoria` foi projetada para calcular o valor total em estoque (preço unitário * quantidade em estoque) para todos os produtos que pertencem a uma categoria específica. No entanto, o código atual está apresentando falhas de execução (`TypeError`) e/ou resultados de cálculo incorretos em diversas situações. Sua missão é identificar e retificar todos os erros de lógica e sintaxe, garantindo que a função opere de forma robusta, precisa e que siga as boas práticas de programação em JavaScript, usando apenas as estruturas de controle e declarações de função solicitadas.",
+    "codigoSujo": "function calcularValorTotalInventarioPorCategoria(produtos, categoriaDesejada) {\n    let valorTotal = 0;\n\n    for (let i = 0; i <= produtos.length; i++) {\n        let produto = produtos[i];\n\n        if (produto.categoria == categoriaDesejada) {\n            let subtotalProduto = produto.preço * produto.estoque;\n            valorTotal += subtotalProduto;\n        }\n    }\n    return valorTotal;\n}",
+    "codigoLimpo": "function calcularValorTotalInventarioPorCategoria(produtos, categoriaDesejada) {\n    let valorTotal = 0;\n\n    for (let i = 0; i < produtos.length; i++) {\n        let produto = produtos[i];\n\n        if (produto.categoria === categoriaDesejada) {\n            let subtotalProduto = produto.preco * produto.estoque;\n            valorTotal += subtotalProduto;\n        }\n    }\n    return valorTotal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "calcularValorTotalInventarioPorCategoria",
+    "testes": [
+      {
+        "parametros": "[{\"nome\":\"Smartphone X\",\"preco\":1200,\"estoque\":10,\"categoria\":\"Eletrônicos\"},{\"nome\":\"Notebook Pro\",\"preco\":3500,\"estoque\":5,\"categoria\":\"Eletrônicos\"},{\"nome\":\"Mouse Óptico\",\"preco\":80,\"estoque\":50,\"categoria\":\"Periféricos\"},{\"nome\":\"Teclado Mecânico\",\"preco\":250,\"estoque\":20,\"categoria\":\"Periféricos\"},{\"nome\":\"Monitor Ultra\",\"preco\":1500,\"estoque\":8,\"categoria\":\"Eletrônicos\"}], \"Eletrônicos\"",
+        "saidaEsperada": 41500
+      },
+      {
+        "parametros": "[{\"nome\":\"Câmera DSLR\",\"preco\":4000,\"estoque\":3,\"categoria\":\"Fotografia\"},{\"nome\":\"Tripé\",\"preco\":150,\"estoque\":15,\"categoria\":\"Acessórios\"},{\"nome\":\"Fone Bluetooth\",\"preco\":300,\"estoque\":0,\"categoria\":\"Áudio\"}], \"Áudio\"",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "[], \"Hardware\"",
+        "saidaEsperada": 0
+      },
+      {
+        "parametros": "[{\"nome\":\"Produto A\",\"preco\":10,\"estoque\":5,\"categoria\":\"Limpeza\"},{\"nome\":\"Produto B\",\"preco\":20,\"estoque\":10,\"categoria\":\"Alimentos\"}], \"Limpeza\"",
+        "saidaEsperada": 50
+      },
+      {
+        "parametros": "[{\"nome\":\"Produto C\",\"preco\":100,\"estoque\":1,\"categoria\":\"Ferramentas\"}], \"Eletrodomésticos\"",
+        "saidaEsperada": 0
+      }
+    ],
+    "id": 1777223462235
+  },
+  {
+    "titulo": "Auditoria e Gestão de Inventário com Erros Lógicos",
+    "missao": "Você é um técnico júnior de TI encarregado de revisar e corrigir um módulo de gestão de inventário em JavaScript. O código abaixo, que visa realizar operações como calcular valor total, listar produtos com baixo estoque e atualizar produtos, contém diversos bugs sutis de lógica e sintaxe que impedem seu funcionamento correto. Sua tarefa é analisar o `codigoSujo`, identificar todos os erros e corrigi-los para que a função `analisarGerenciarInventario` retorne os resultados esperados para cada tipo de operação, conforme os casos de teste. Mantenha as restrições de estilo (funções tradicionais e loops 'for' clássicos).",
+    "codigoSujo": "function analisarGerenciarInventario(inventario, operacao) {\n    if (operacao.tipo === \"calcularValorTotal\") {\n        var total = 0;\n        for (var i = 0; i <= inventario.length; i++) {\n            var produto = inventario[i];\n            if (produto) {\n                total += produto.preco;\n            }\n        }\n        return total;\n    } else if (operacao.tipo === \"listarBaixoEstoque\") {\n        var produtosBaixoEstoque = [];\n        for (var j = 0; j < inventario.length; j++) {\n            var item = inventario[j];\n            if (item.estoque > operacao.limite) {\n                produtosBaixoEstoque.push(item.nome);\n            }\n        }\n        return produtosBaixoEstoque;\n    } else if (operacao.tipo === \"atualizarProduto\") {\n        var inventarioCopia = inventario;\n        var produtoEncontrado = false;\n        for (var k = 0; k < inventarioCopia.length; k++) {\n            if (inventarioCopia[k].nome === operacao.nomeProduto) {\n                inventarioCopia[k].preco = operacao.novaQuantidade;\n                inventarioCopia[k].estoque = operacao.novoPreco;\n                produtoEncontrado = true;\n            }\n        }\n        if (!produtoEncontrado && operacao.adicionarSeNaoEncontrado) {\n            inventarioCopia.push({\n                nome: operacao.nomeProduto,\n                preco: operacao.novoPreco,\n                quantidade: operacao.novaQuantidade\n            });\n        }\n        return inventarioCopia;\n    }\n    return null;\n}",
+    "codigoLimpo": "function analisarGerenciarInventario(inventario, operacao) {\n    if (operacao.tipo === \"calcularValorTotal\") {\n        var total = 0;\n        for (var i = 0; i < inventario.length; i++) {\n            var produto = inventario[i];\n            total += produto.preco * produto.estoque;\n        }\n        return total;\n    } else if (operacao.tipo === \"listarBaixoEstoque\") {\n        var produtosBaixoEstoque = [];\n        for (var j = 0; j < inventario.length; j++) {\n            var item = inventario[j];\n            if (item.estoque <= operacao.limite) {\n                produtosBaixoEstoque.push(item);\n            }\n        }\n        return produtosBaixoEstoque;\n    } else if (operacao.tipo === \"atualizarProduto\") {\n        // Cria uma nova array e faz cópias dos objetos, garantindo que o inventário original não seja modificado.\n        var inventarioAtualizado = [];\n        var produtoEncontrado = false;\n\n        for (var k = 0; k < inventario.length; k++) {\n            var produtoOriginal = inventario[k];\n            if (produtoOriginal.nome === operacao.nomeProduto) {\n                inventarioAtualizado.push({\n                    nome: produtoOriginal.nome,\n                    preco: operacao.novoPreco !== undefined ? operacao.novoPreco : produtoOriginal.preco,\n                    estoque: operacao.novaQuantidade !== undefined ? operacao.novaQuantidade : produtoOriginal.estoque\n                });\n                produtoEncontrado = true;\n            } else {\n                inventarioAtualizado.push(Object.assign({}, produtoOriginal));\n            }\n        }\n\n        if (!produtoEncontrado && operacao.adicionarSeNaoEncontrado) {\n            inventarioAtualizado.push({\n                nome: operacao.nomeProduto,\n                preco: operacao.novoPreco,\n                estoque: operacao.novaQuantidade\n            });\n        }\n        return inventarioAtualizado;\n    }\n    return null;\n}",
+    "tipo": "correcao",
+    "dificuldade": 4,
+    "nomeDaFuncao": "analisarGerenciarInventario",
+    "testes": [
+      {
+        "parametros": "[{\"nome\":\"Teclado\",\"preco\":150,\"estoque\":10},{\"nome\":\"Mouse\",\"preco\":80,\"estoque\":20}], {\"tipo\":\"calcularValorTotal\"}",
+        "saidaEsperada": 3100
+      },
+      {
+        "parametros": "[{\"nome\":\"Teclado\",\"preco\":150,\"estoque\":10},{\"nome\":\"Mouse\",\"preco\":80,\"estoque\":20},{\"nome\":\"Monitor\",\"preco\":700,\"estoque\":15}], {\"tipo\":\"listarBaixoEstoque\",\"limite\":15}",
+        "saidaEsperada": "[{\"nome\":\"Teclado\",\"preco\":150,\"estoque\":10},{\"nome\":\"Monitor\",\"preco\":700,\"estoque\":15}]"
+      },
+      {
+        "parametros": "[{\"nome\":\"Teclado\",\"preco\":150,\"estoque\":10}], {\"tipo\":\"atualizarProduto\",\"nomeProduto\":\"Teclado\",\"novoPreco\":160,\"novaQuantidade\":8}",
+        "saidaEsperada": "[{\"nome\":\"Teclado\",\"preco\":160,\"estoque\":8}]"
+      },
+      {
+        "parametros": "[{\"nome\":\"Teclado\",\"preco\":150,\"estoque\":10}], {\"tipo\":\"atualizarProduto\",\"nomeProduto\":\"Fone\",\"novoPreco\":100,\"novaQuantidade\":5,\"adicionarSeNaoEncontrado\":true}",
+        "saidaEsperada": "[{\"nome\":\"Teclado\",\"preco\":150,\"estoque\":10},{\"nome\":\"Fone\",\"preco\":100,\"estoque\":5}]"
+      }
+    ],
+    "id": 1777223518783
+  },
+  {
+    "titulo": "Exercício Avançado de Validação de Dados: Corrigindo Módulos de Registro",
+    "missao": "Você foi encarregado de revisar e corrigir um módulo de validação de dados JavaScript para um sistema de registro de usuários. O código atual possui erros de lógica e sintaxe sutis nos algoritmos de validação de CPF, e-mail e data de nascimento. Sua tarefa é identificar e corrigir esses bugs para que o módulo funcione perfeitamente, garantindo a integridade dos dados de entrada. Fique atento às regras de codificação e certifique-se de que a lógica de validação do CPF, e-mail e data (incluindo anos bissextos e datas futuras) esteja impecável. Seu código limpo deve seguir todas as regras de sintaxe tradicional de funções e laços 'for'.",
+    "codigoSujo": "function validarDadosCadastro(cadastro) {\n    var erros = [];\n\n    // --- Validação de CPF ---\n    var cpf = cadastro.cpf;\n    if (typeof cpf !== 'string' || cpf.length === 0) {\n        erros.push(\"CPF deve ser uma string não vazia.\");\n    } else {\n        cpf = cpf.replace(/[^\\d]/g, '');\n\n        if (cpf.length !== 11) {\n            erros.push(\"CPF deve conter 11 dígitos.\");\n        } else if (/^(\\d)\\1{10}$/.test(cpf)) {\n            erros.push(\"CPF inválido: Não pode ter todos os dígitos iguais.\");\n        } else {\n            var soma;\n            var resto;\n            var i;\n\n            // Primeiro dígito verificador\n            soma = 0;\n            for (i = 1; i <= 9; i++) {\n                soma = soma + parseInt(cpf.substring(i - 1, i)) * (11 - i);\n            }\n            resto = (soma * 10) % 11;\n            if ((resto === 10) || (resto === 11)) {\n                resto = 0;\n            }\n            if (resto != parseInt(cpf.substring(9, 10))) {\n                erros.push(\"CPF inválido: Primeiro dígito verificador incorreto.\");\n            }\n\n            // Segundo dígito verificador\n            soma = 0;\n            for (i = 1; i <= 10; i++) {\n                soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);\n            }\n            resto = (soma * 10) % 11;\n            if ((resto === 10) || (resto === 11)) {\n                resto = 0;\n            }\n            if (resto != parseInt(cpf.substring(10, 11))) {\n                erros.push(\"CPF inválido: Segundo dígito verificador incorreto.\");\n            }\n        }\n    }\n\n    // --- Validação de Email ---\n    var email = cadastro.email;\n    if (typeof email !== 'string' || email.length === 0) {\n        erros.push(\"Email deve ser uma string não vazia.\");\n    } else {\n        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\n        if (!emailRegex.test(email)) {\n            erros.push(\"Email inválido.\");\n        }\n    }\n\n    // --- Validação de Data de Nascimento (DD/MM/YYYY) ---\n    var dataNascimento = cadastro.dataNascimento;\n    if (typeof dataNascimento !== 'string' || dataNascimento.length === 0) {\n        erros.push(\"Data de Nascimento deve ser uma string não vazia.\");\n    } else {\n        var partes = dataNascimento.split('/');\n        if (partes.length !== 3) {\n            erros.push(\"Data de Nascimento deve estar no formato DD/MM/YYYY.\");\n        } else {\n            var dia = parseInt(partes[0], 10);\n            var mes = parseInt(partes[1], 10);\n            var ano = parseInt(partes[2], 10);\n\n            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n                erros.push(\"Data de Nascimento contém valores inválidos.\");\n            } else if (mes < 0 || mes > 13) {\n                erros.push(\"Mês da Data de Nascimento inválido.\");\n            } else if (dia < 1 || dia > 32) {\n                erros.push(\"Dia da Data de Nascimento inválido.\");\n            } else if (ano < 1900 || ano > 2050) {\n                 erros.push(\"Ano da Data de Nascimento fora do intervalo permitido.\");\n            } else {\n                var diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n\n                if (ano % 4 === 0 || (ano % 100 !== 0 && ano % 400 === 0)) {\n                    diasNoMes[2] = 29;\n                }\n\n                if (dia > diasNoMes[mes]) {\n                    erros.push(\"Dia inválido para o mês e ano especificados.\");\n                }\n            }\n        }\n    }\n\n    return erros;\n}",
+    "codigoLimpo": "function validarDadosCadastro(cadastro) {\n    var erros = [];\n\n    // --- Validação de CPF ---\n    var cpf = cadastro.cpf;\n    if (typeof cpf !== 'string' || cpf.length === 0) {\n        erros.push(\"CPF deve ser uma string não vazia.\");\n    } else {\n        cpf = cpf.replace(/[^\\d]/g, '');\n\n        if (cpf.length !== 11) {\n            erros.push(\"CPF deve conter 11 dígitos.\");\n        } else if (/^(\\d)\\1{10}$/.test(cpf)) {\n            erros.push(\"CPF inválido: Não pode ter todos os dígitos iguais.\");\n        } else {\n            var soma;\n            var resto;\n            var i;\n            var digito;\n\n            // Validação do primeiro dígito verificador\n            soma = 0;\n            for (i = 0; i < 9; i++) {\n                soma += parseInt(cpf.charAt(i), 10) * (10 - i);\n            }\n            resto = soma % 11;\n            if (resto < 2) {\n                digito = 0;\n            } else {\n                digito = 11 - resto;\n            }\n            if (digito !== parseInt(cpf.charAt(9), 10)) {\n                erros.push(\"CPF inválido: Primeiro dígito verificador incorreto.\");\n            }\n\n            // Validação do segundo dígito verificador (somente se o primeiro for válido para evitar duplicação de erro)\n            if (erros.length === 0) {\n                soma = 0;\n                for (i = 0; i < 10; i++) {\n                    soma += parseInt(cpf.charAt(i), 10) * (11 - i);\n                }\n                resto = soma % 11;\n                if (resto < 2) {\n                    digito = 0;\n                } else {\n                    digito = 11 - resto;\n                }\n                if (digito !== parseInt(cpf.charAt(10), 10)) {\n                    erros.push(\"CPF inválido: Segundo dígito verificador incorreto.\");\n                }\n            }\n        }\n    }\n\n    // --- Validação de Email ---\n    var email = cadastro.email;\n    if (typeof email !== 'string' || email.length === 0) {\n        erros.push(\"Email deve ser uma string não vazia.\");\n    } else {\n        // Regex robusta para validação de e-mail (RFC 5322 simplificada)\n        var emailRegex = /^(([^<>()[\\\\].,;:\\s@\\\"]+(\\.[^<>()[\\\\].,;:\\s@\\\"]+)*)|(\\\".+\\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$/;\n        if (!emailRegex.test(email)) {\n            erros.push(\"Email inválido.\");\n        }\n    }\n\n    // --- Validação de Data de Nascimento (DD/MM/YYYY) ---\n    var dataNascimento = cadastro.dataNascimento;\n    if (typeof dataNascimento !== 'string' || dataNascimento.length === 0) {\n        erros.push(\"Data de Nascimento deve ser uma string não vazia.\");\n    } else {\n        var partes = dataNascimento.split('/');\n        if (partes.length !== 3) {\n            erros.push(\"Data de Nascimento deve estar no formato DD/MM/YYYY.\");\n        } else {\n            var dia = parseInt(partes[0], 10);\n            var mes = parseInt(partes[1], 10);\n            var ano = parseInt(partes[2], 10);\n\n            if (isNaN(dia) || isNaN(mes) || isNaN(ano)) {\n                erros.push(\"Data de Nascimento contém valores inválidos.\");\n            } else if (mes < 1 || mes > 12) {\n                erros.push(\"Mês da Data de Nascimento inválido.\");\n            } else if (dia < 1 || dia > 31) {\n                erros.push(\"Dia da Data de Nascimento inválido.\");\n            } else if (ano < 1900 || ano > new Date().getFullYear()) {\n                 erros.push(\"Ano da Data de Nascimento fora do intervalo permitido.\");\n            } else {\n                var diasNoMes = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n\n                // Lógica correta de ano bissexto\n                if ((ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0) {\n                    diasNoMes[2] = 29;\n                }\n\n                if (dia > diasNoMes[mes]) {\n                    erros.push(\"Dia inválido para o mês e ano especificados.\");\n                }\n\n                // Verifica se a data está no futuro\n                var dataNascObj = new Date(ano, mes - 1, dia);\n                var dataAtual = new Date();\n                dataAtual.setHours(0,0,0,0); // Zera hora para comparação de apenas data\n                if (dataNascObj > dataAtual) {\n                     erros.push(\"Data de Nascimento não pode ser no futuro.\");\n                }\n            }\n        }\n    }\n\n    return erros;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "validarDadosCadastro",
+    "testes": [
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": []
+      },
+      {
+        "parametros": "{\"cpf\":\"111.111.111-11\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "CPF inválido: Não pode ter todos os dígitos iguais."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-19\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "CPF inválido: Primeiro dígito verificador incorreto."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-00\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "CPF inválido: Segundo dígito verificador incorreto."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"aluno@.com\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "Email inválido."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"aluno@dominio\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "Email inválido."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"01/01/2050\"}",
+        "saidaEsperada": [
+          "Data de Nascimento não pode ser no futuro."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"29/02/2023\"}",
+        "saidaEsperada": [
+          "Dia inválido para o mês e ano especificados."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/13/1990\"}",
+        "saidaEsperada": [
+          "Mês da Data de Nascimento inválido."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"31/04/1990\"}",
+        "saidaEsperada": [
+          "Dia inválido para o mês e ano especificados."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"111.111.111-11\",\"email\":\"bademail@.com\",\"dataNascimento\":\"32/01/2050\"}",
+        "saidaEsperada": [
+          "CPF inválido: Não pode ter todos os dígitos iguais.",
+          "Email inválido.",
+          "Dia da Data de Nascimento inválido.",
+          "Data de Nascimento não pode ser no futuro."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-09\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"29/02/2024\"}",
+        "saidaEsperada": []
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-0\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "CPF deve conter 11 dígitos."
+        ]
+      },
+      {
+        "parametros": "{\"cpf\":\"123.456.789-091\",\"email\":\"teste.aluno@tech.com.br\",\"dataNascimento\":\"15/05/1990\"}",
+        "saidaEsperada": [
+          "CPF deve conter 11 dígitos."
+        ]
+      }
+    ],
+    "id": 1777315033598
+  },
+  {
+    "titulo": "Auditoria Fiscal e Logística de Carrinho",
+    "missao": "Prezados alunos,\n\nVocês foram designados para uma tarefa crítica: auditar e corrigir o sistema de cálculo de carrinho de compras de uma nova startup de e-commerce. O código atual apresenta falhas sutis de lógica e sintaxe que causam discrepâncias significativas nos valores finais, resultando em perdas financeiras para a empresa ou cobranças indevidas aos clientes.\n\nSua missão é revisar a função `processarPedidoCarrinho`, identificar e corrigir todos os bugs (sejam eles de lógica, sintaxe, ordem de operações, ou manipulação de tipos). O código corrigido deve aderir estritamente às seguintes regras de negócio:\n\n1.  **Cálculo do Subtotal Bruto**: Soma de (preço unitário * quantidade) para todos os itens no carrinho.\n2.  **Aplicação de Descontos**: Os descontos são aplicados *antes* do cálculo de impostos e taxas de serviço.\n    *   Cupom 'PROMO10': Aplica 10% de desconto sobre o subtotal bruto.\n    *   Cupom 'FRETEZERO': Aplica um desconto fixo de R$ 20.00.\n    *   Apenas um cupom pode ser aplicado por vez. Se nenhum cupom válido for fornecido, não há desconto.\n3.  **Cálculo de Impostos**: Os impostos incidem sobre o valor do carrinho *após* a aplicação de qualquer desconto (subtotal com desconto).\n4.  **Cálculo da Taxa de Serviço**: A taxa de serviço incide sobre o valor do carrinho *após* a aplicação de impostos (subtotal com desconto + impostos).\n5.  **Cálculo do Total a Pagar**: É a soma do subtotal com desconto, impostos e taxa de serviço.\n6.  **Formato dos Retornos**: Todos os valores monetários no objeto de retorno devem ser números com duas casas decimais, não strings.\n\nSeu código final deve ser robusto e passar em todos os testes fornecidos, refletindo os cálculos corretos conforme as regras de negócio. Boa sorte!",
+    "codigoSujo": "function processarPedidoCarrinho(itensCarrinho, cupomAplicado, taxaImposto, taxaServico) {\n    var subTotalBruto = 0;\n    var valorDoDesconto = 0;\n    var valorDoImposto = 0;\n    var valorDaTaxaServico = 0;\n    var totalAPagarFinal = 0;\n\n    for (var i = 0; i <= itensCarrinho.length; i++) { // Bug 1: Off-by-one error, accesses undefined item\n        var item = itensCarrinho[i];\n        subTotalBruto += item.precoUnitario * item.quantidade;\n    }\n\n    if (cupomAplicado === \"PROMO10\") {\n        valorDoDesconto = subTotalBruto * 0.10;\n        subTotalBruto = subTotalBruto - valorDoDesconto; // Bug 2: Mutates subTotalBruto directly, affecting subsequent calculations if they should use the original or a consistent intermediate value.\n    } else if (cupomAplicado == \"FRETEZERO\") { // Bug 3: Loose equality (==) instead of strict equality (===)\n        valorDoDesconto = 20.00;\n        // Bug 4: Inconsistent application of discount. If PROMO10 modifies subTotalBruto, FRETEZERO should too if the intent is for taxes to be on discounted base. Or neither should.\n    }\n\n    valorDoImposto = subTotalBruto * taxaImposto; // Bug 5: Imposto calculado sobre subTotalBruto *já modificado* pelo PROMO10, mas não pelo FRETEZERO. Isso é inconsistente com a regra de desconto aplicado antes de imposto para ambos.\n\n    valorDaTaxaServico = subTotalBruto * taxaServico; // Bug 6: Taxa de serviço deveria ser sobre o valor já com impostos, mas é sobre o subTotalBruto modificado.\n\n    totalAPagarFinal = subTotalBruto + valorDoImposto + valorDaTaxaServico; // Bug 7: Se FRETEZERO foi aplicado, valorDoDesconto não foi subtraído do subTotalBruto, então não está sendo considerado no total final.\n\n    return {\n        totalBruto: subTotalBruto.toFixed(2), // Bug 8: toFixed retorna string, o requisito é número.\n        descontoAplicado: valorDoDesconto.toFixed(2),\n        impostosDevidos: valorDoImposto.toFixed(2),\n        taxaDeServico: valorDaTaxaServico.toFixed(2),\n        totalAPagar: totalAPagarFinal.toFixed(2)\n    };\n}",
+    "codigoLimpo": "function processarPedidoCarrinho(itensCarrinho, cupomAplicado, taxaImposto, taxaServico) {\n    var totalBrutoBase = 0;\n\n    // 1. Calcular total bruto base\n    for (var i = 0; i < itensCarrinho.length; i++) {\n        var item = itensCarrinho[i];\n        totalBrutoBase += item.precoUnitario * item.quantidade;\n    }\n\n    var valorDoDesconto = 0;\n    // 2. Aplicar descontos\n    if (cupomAplicado === \"PROMO10\") {\n        valorDoDesconto = totalBrutoBase * 0.10;\n    } else if (cupomAplicado === \"FRETEZERO\") {\n        valorDoDesconto = 20.00;\n    }\n\n    var subTotalAposDesconto = totalBrutoBase - valorDoDesconto;\n\n    // 3. Calcular impostos (incidem sobre o valor após desconto)\n    var valorDoImposto = subTotalAposDesconto * taxaImposto;\n\n    var subTotalComImposto = subTotalAposDesconto + valorDoImposto;\n\n    // 4. Calcular taxa de serviço (incide sobre o total com impostos)\n    var valorDaTaxaServico = subTotalComImposto * taxaServico;\n\n    // 5. Calcular total final a pagar\n    var totalAPagarFinal = subTotalComImposto + valorDaTaxaServico;\n\n    // 6. Retornar resultados como números com duas casas decimais\n    return {\n        totalBruto: Number(totalBrutoBase.toFixed(2)),\n        descontoAplicado: Number(valorDoDesconto.toFixed(2)),\n        impostosDevidos: Number(valorDoImposto.toFixed(2)),\n        taxaDeServico: Number(valorDaTaxaServico.toFixed(2)),\n        totalAPagar: Number(totalAPagarFinal.toFixed(2))\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "processarPedidoCarrinho",
+    "testes": [
+      {
+        "parametros": "[{ \"id\": 1, \"nome\": \"Livro JS\", \"precoUnitario\": 50.00, \"quantidade\": 2 }, { \"id\": 2, \"nome\": \"Caneta\", \"precoUnitario\": 5.00, \"quantidade\": 10 }], \"\", 0.10, 0.05",
+        "saidaEsperada": {
+          "totalBruto": 150,
+          "descontoAplicado": 0,
+          "impostosDevidos": 15,
+          "taxaDeServico": 8.25,
+          "totalAPagar": 173.25
+        }
+      },
+      {
+        "parametros": "[{ \"id\": 3, \"nome\": \"Monitor\", \"precoUnitario\": 300.00, \"quantidade\": 1 }], \"PROMO10\", 0.12, 0.02",
+        "saidaEsperada": {
+          "totalBruto": 300,
+          "descontoAplicado": 30,
+          "impostosDevidos": 32.4,
+          "taxaDeServico": 6.05,
+          "totalAPagar": 308.45
+        }
+      },
+      {
+        "parametros": "[{ \"id\": 4, \"nome\": \"Teclado\", \"precoUnitario\": 120.00, \"quantidade\": 1 }, { \"id\": 5, \"nome\": \"Mouse\", \"precoUnitario\": 80.00, \"quantidade\": 1 }], \"FRETEZERO\", 0.15, 0.03",
+        "saidaEsperada": {
+          "totalBruto": 200,
+          "descontoAplicado": 20,
+          "impostosDevidos": 27,
+          "taxaDeServico": 6.21,
+          "totalAPagar": 213.21
+        }
+      }
+    ],
+    "id": 1777315086970
+  },
+  {
+    "titulo": "Auditoria de Inventário: Correção de Relatório de Produtos",
+    "missao": "Olá, aluno! O professor João, responsável pela gestão de inventário da nossa empresa simulada, te pediu uma ajuda urgente. Ele te forneceu um módulo JavaScript que deveria gerar relatórios detalhados do inventário, mas descobriu que, embora o código execute sem erros, os resultados gerados estão consistentemente incorretos. Sua missão é atuar como um engenheiro de software de elite e encontrar os bugs lógicos (e de sintaxe, se houver) no código fornecido, garantindo que a função `processarDadosInventario` funcione exatamente conforme as especificações rigorosas que ele te passou.\n\n**Especificações da Função `processarDadosInventario`:**\n\nA função deve receber dois argumentos:\n1.  `inventario`: Um array de objetos, onde cada objeto representa um produto em estoque. Cada produto possui as seguintes propriedades:\n    *   `id` (Number): Identificador único do produto.\n    *   `nome` (String): Nome do produto.\n    *   `precoUnitario` (Number): Preço de venda unitário do produto.\n    *   `estoque` (Number): Quantidade disponível em estoque.\n    *   `categoria` (String): Categoria à qual o produto pertence (ex: \"Eletronicos\", \"Perifericos\").\n    *   `status` (String): Estado do produto (\"ativo\" ou \"inativo\").\n2.  `opcoesRelatorio`: Um objeto contendo os critérios de filtragem e as opções de cálculo para o relatório:\n    *   `estoqueMinimo` (Number): Um valor numérico. Apenas produtos com estoque *estritamente maior* que este valor devem ser incluídos no relatório. (Por exemplo: se `estoqueMinimo` é 10, produtos com 10 unidades em estoque ou menos devem ser excluídos do resultado final).\n    *   `categoriaFiltro` (String, opcional): Uma string que, se presente (não nula, não vazia), indica que o relatório deve incluir apenas produtos desta categoria. A comparação com a propriedade `categoria` do produto deve ser *case-insensitive*. Se esta propriedade não for fornecida ou for nula/vazia, o filtro por categoria não deve ser aplicado (todas as categorias devem ser consideradas).\n    *   `considerarSomenteAtivos` (Boolean): Se este valor for `true`, o relatório deve incluir apenas produtos cujo `status` seja \"ativo\". Se for `false`, o status do produto não deve ser um critério de filtragem.\n    *   `calcularValorTotalPorCategoria` (Boolean): Se este valor for `true`, o relatório deve incluir um objeto detalhado com o valor total de estoque para cada categoria dos produtos *já filtrados*. O valor total de uma categoria é a soma de `(precoUnitario * estoque)` para todos os produtos dessa categoria que passaram pelos filtros.\n\n**O retorno da função deve ser um objeto com as seguintes propriedades:**\n*   `produtosEncontrados`: Um array contendo todos os objetos de produto que atenderam a *todos* os critérios de filtragem.\n*   `valorTotalGeral`: Um Number que representa o valor total combinado de estoque de *todos* os produtos incluídos em `produtosEncontrados`. Este valor é calculado como a soma de `(precoUnitario * estoque)` para cada produto.\n*   `valorTotalPorCategoria`: Um objeto (Object) onde as chaves são os nomes das categorias (mantendo a capitalização original da categoria do produto) e os valores são a soma do `(precoUnitario * estoque)` para todos os produtos pertencentes àquela categoria que passaram pelos filtros. **IMPORTANTE:** Esta propriedade só deve ser incluída no objeto de retorno se `calcularValorTotalPorCategoria` for `true` nas `opcoesRelatorio`. Caso `calcularValorTotalPorCategoria` seja `false`, esta propriedade NÃO deve existir no objeto de retorno.\n\n**Regras Absolutas de Implementação:**\n*   Você DEVE usar *exclusivamente* a declaração tradicional de funções (sintaxe `function nomeDaFuncao(...)`). Arrow functions (`=>`) são proibidas.\n*   Você DEVE usar *exclusivamente* a estrutura clássica `for` para laços de repetição (ex: `for (let i = 0; i < array.length; i++)`). Métodos como `forEach`, `map`, `filter`, `reduce` são proibidos.\n\nSeu código corrigido deve ser robusto e eficiente, produzindo os resultados esperados para qualquer conjunto de dados de inventário e opções de relatório.",
+    "codigoSujo": "function processarDadosInventario(inventario, opcoesRelatorio) {\n    var resultado = {\n        produtosEncontrados: [],\n        valorTotalGeral: 0,\n        valorTotalPorCategoria: {}\n    };\n\n    var i;\n    for (i = 0; i < inventario.length; i++) {\n        var produto = inventario[i];\n\n        if (opcoesRelatorio.estoqueMinimo !== undefined && produto.estoque < opcoesRelatorio.estoqueMinimo) {\n            continue;\n        }\n\n        if (opcoesRelatorio.categoriaFiltro && produto.categoria !== opcoesRelatorio.categoriaFiltro) {\n            continue;\n        }\n\n        resultado.produtosEncontrados.push(produto);\n\n        resultado.valorTotalGeral += produto.precoUnitario;\n\n        if (opcoesRelatorio.calcularValorTotalPorCategoria) {\n            if (!resultado.valorTotalPorCategoria[produto.categoria]) {\n                resultado.valorTotalPorCategoria[produto.categoria] = produto.precoUnitario;\n            } else {\n                resultado.valorTotalPorCategoria[produto.categoria] += (produto.precoUnitario * produto.estoque);\n            }\n        }\n    }\n\n    return resultado;\n}",
+    "codigoLimpo": "function processarDadosInventario(inventario, opcoesRelatorio) {\n    var resultado = {\n        produtosEncontrados: [],\n        valorTotalGeral: 0\n    };\n\n    // Correção 5.1: Inicializa 'valorTotalPorCategoria' condicionalmente, conforme a opção.\n    if (opcoesRelatorio.calcularValorTotalPorCategoria) {\n        resultado.valorTotalPorCategoria = {};\n    }\n\n    var i;\n    for (i = 0; i < inventario.length; i++) {\n        var produto = inventario[i];\n\n        // Correção 1: Estoque mínimo deve ser 'estritamente maior'.\n        // Se estoqueMinimo é 10, produtos com 10 ou menos devem ser excluídos.\n        // O bug original incluía produtos com estoque igual ao estoqueMinimo.\n        if (opcoesRelatorio.estoqueMinimo !== undefined && produto.estoque <= opcoesRelatorio.estoqueMinimo) {\n            continue;\n        }\n\n        // Correção 2: Filtro de categoria deve ser case-insensitive.\n        // O bug original fazia uma comparação case-sensitive.\n        if (opcoesRelatorio.categoriaFiltro) {\n            if (produto.categoria.toLowerCase() !== opcoesRelatorio.categoriaFiltro.toLowerCase()) {\n                continue;\n            }\n        }\n\n        // Correção 3: Considerar somente produtos ativos se a opção estiver ativada.\n        // O bug original ignorava completamente esta opção.\n        if (opcoesRelatorio.considerarSomenteAtivos && produto.status !== \"ativo\") {\n            continue;\n        }\n\n        resultado.produtosEncontrados.push(produto);\n\n        // Calcula o valor total do produto (preço * estoque) uma vez para reuso.\n        var valorProdutoAtual = produto.precoUnitario * produto.estoque;\n\n        // Correção 4: Cálculo do valor total geral deve usar (precoUnitario * estoque).\n        // O bug original somava apenas o precoUnitario, ignorando o estoque.\n        resultado.valorTotalGeral += valorProdutoAtual;\n\n        // Correção 5.2: Inicialização e acumulação correta para valorTotalPorCategoria.\n        // O bug original inicializava com precoUnitario, em vez de 0 ou (precoUnitario * estoque).\n        if (opcoesRelatorio.calcularValorTotalPorCategoria) {\n            if (!resultado.valorTotalPorCategoria[produto.categoria]) {\n                resultado.valorTotalPorCategoria[produto.categoria] = 0; \n            }\n            resultado.valorTotalPorCategoria[produto.categoria] += valorProdutoAtual;\n        }\n    }\n\n    return resultado;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "processarDadosInventario",
+    "testes": [
+      {
+        "parametros": "[{\"id\":1,\"nome\":\"Laptop Gamer\",\"precoUnitario\":1200,\"estoque\":5,\"categoria\":\"Eletronicos\",\"status\":\"ativo\"},{\"id\":2,\"nome\":\"Mouse Óptico\",\"precoUnitario\":25,\"estoque\":20,\"categoria\":\"ELETRONICOS\",\"status\":\"ativo\"},{\"id\":3,\"nome\":\"Teclado Mecânico\",\"precoUnitario\":150,\"estoque\":10,\"categoria\":\"Eletronicos\",\"status\":\"inativo\"},{\"id\":4,\"nome\":\"Monitor Ultrawide\",\"precoUnitario\":400,\"estoque\":8,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":5,\"nome\":\"Fone Bluetooth\",\"precoUnitario\":75,\"estoque\":15,\"categoria\":\"Audio\",\"status\":\"ativo\"},{\"id\":6,\"nome\":\"Webcam Full HD\",\"precoUnitario\":50,\"estoque\":3,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":7,\"nome\":\"SSD 1TB\",\"precoUnitario\":90,\"estoque\":12,\"categoria\":\"Armazenamento\",\"status\":\"ativo\"}], {\"estoqueMinimo\":5,\"categoriaFiltro\":\"eletronicos\",\"considerarSomenteAtivos\":true,\"calcularValorTotalPorCategoria\":true}",
+        "saidaEsperada": "{\"produtosEncontrados\":[{\"id\":2,\"nome\":\"Mouse Óptico\",\"precoUnitario\":25,\"estoque\":20,\"categoria\":\"ELETRONICOS\",\"status\":\"ativo\"}],\"valorTotalGeral\":500,\"valorTotalPorCategoria\":{\"ELETRONICOS\":500}}"
+      },
+      {
+        "parametros": "[{\"id\":1,\"nome\":\"Laptop Gamer\",\"precoUnitario\":1200,\"estoque\":5,\"categoria\":\"Eletronicos\",\"status\":\"ativo\"},{\"id\":2,\"nome\":\"Mouse Óptico\",\"precoUnitario\":25,\"estoque\":20,\"categoria\":\"ELETRONICOS\",\"status\":\"ativo\"},{\"id\":3,\"nome\":\"Teclado Mecânico\",\"precoUnitario\":150,\"estoque\":10,\"categoria\":\"Eletronicos\",\"status\":\"inativo\"},{\"id\":4,\"nome\":\"Monitor Ultrawide\",\"precoUnitario\":400,\"estoque\":8,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":5,\"nome\":\"Fone Bluetooth\",\"precoUnitario\":75,\"estoque\":15,\"categoria\":\"Audio\",\"status\":\"ativo\"},{\"id\":6,\"nome\":\"Webcam Full HD\",\"precoUnitario\":50,\"estoque\":3,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":7,\"nome\":\"SSD 1TB\",\"precoUnitario\":90,\"estoque\":12,\"categoria\":\"Armazenamento\",\"status\":\"ativo\"}], {\"estoqueMinimo\":0,\"considerarSomenteAtivos\":false,\"calcularValorTotalPorCategoria\":true}",
+        "saidaEsperada": "{\"produtosEncontrados\":[{\"id\":1,\"nome\":\"Laptop Gamer\",\"precoUnitario\":1200,\"estoque\":5,\"categoria\":\"Eletronicos\",\"status\":\"ativo\"},{\"id\":2,\"nome\":\"Mouse Óptico\",\"precoUnitario\":25,\"estoque\":20,\"categoria\":\"ELETRONICOS\",\"status\":\"ativo\"},{\"id\":3,\"nome\":\"Teclado Mecânico\",\"precoUnitario\":150,\"estoque\":10,\"categoria\":\"Eletronicos\",\"status\":\"inativo\"},{\"id\":4,\"nome\":\"Monitor Ultrawide\",\"precoUnitario\":400,\"estoque\":8,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":5,\"nome\":\"Fone Bluetooth\",\"precoUnitario\":75,\"estoque\":15,\"categoria\":\"Audio\",\"status\":\"ativo\"},{\"id\":6,\"nome\":\"Webcam Full HD\",\"precoUnitario\":50,\"estoque\":3,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":7,\"nome\":\"SSD 1TB\",\"precoUnitario\":90,\"estoque\":12,\"categoria\":\"Armazenamento\",\"status\":\"ativo\"}],\"valorTotalGeral\":13555,\"valorTotalPorCategoria\":{\"Eletronicos\":7500,\"ELETRONICOS\":500,\"Perifericos\":3350,\"Audio\":1125,\"Armazenamento\":1080}}"
+      },
+      {
+        "parametros": "[{\"id\":1,\"nome\":\"Laptop Gamer\",\"precoUnitario\":1200,\"estoque\":5,\"categoria\":\"Eletronicos\",\"status\":\"ativo\"},{\"id\":2,\"nome\":\"Mouse Óptico\",\"precoUnitario\":25,\"estoque\":20,\"categoria\":\"ELETRONICOS\",\"status\":\"ativo\"},{\"id\":3,\"nome\":\"Teclado Mecânico\",\"precoUnitario\":150,\"estoque\":10,\"categoria\":\"Eletronicos\",\"status\":\"inativo\"},{\"id\":4,\"nome\":\"Monitor Ultrawide\",\"precoUnitario\":400,\"estoque\":8,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":5,\"nome\":\"Fone Bluetooth\",\"precoUnitario\":75,\"estoque\":15,\"categoria\":\"Audio\",\"status\":\"ativo\"},{\"id\":6,\"nome\":\"Webcam Full HD\",\"precoUnitario\":50,\"estoque\":3,\"categoria\":\"Perifericos\",\"status\":\"ativo\"},{\"id\":7,\"nome\":\"SSD 1TB\",\"precoUnitario\":90,\"estoque\":12,\"categoria\":\"Armazenamento\",\"status\":\"ativo\"}], {\"estoqueMinimo\":5,\"categoriaFiltro\":\"eletronicos\",\"considerarSomenteAtivos\":true,\"calcularValorTotalPorCategoria\":false}",
+        "saidaEsperada": "{\"produtosEncontrados\":[{\"id\":2,\"nome\":\"Mouse Óptico\",\"precoUnitario\":25,\"estoque\":20,\"categoria\":\"ELETRONICOS\",\"status\":\"ativo\"}],\"valorTotalGeral\":500}"
+      },
+      {
+        "parametros": "[], {\"estoqueMinimo\":0,\"considerarSomenteAtivos\":false,\"calcularValorTotalPorCategoria\":true}",
+        "saidaEsperada": "{\"produtosEncontrados\":[],\"valorTotalGeral\":0,\"valorTotalPorCategoria\":{}}"
+      },
+      {
+        "parametros": "[{\"id\":1,\"nome\":\"Produto Inativo\",\"precoUnitario\":10,\"estoque\":10,\"categoria\":\"Geral\",\"status\":\"inativo\"}], {\"estoqueMinimo\":5,\"categoriaFiltro\":\"geral\",\"considerarSomenteAtivos\":true,\"calcularValorTotalPorCategoria\":true}",
+        "saidaEsperada": "{\"produtosEncontrados\":[],\"valorTotalGeral\":0,\"valorTotalPorCategoria\":{}}"
+      }
+    ],
+    "id": 1777315176692
+  },
+  {
+    "titulo": "Auditoria de Conversões Monetárias",
+    "missao": "Você foi encarregado de revisar um sistema de processamento de transações financeiras. O código atual, 'processarOperacoesMonetarias', apresenta falhas graves de lógica e eficiência que comprometem a exatidão das conversões monetárias. Sua tarefa é identificar e corrigir todos os bugs, garantindo que as conversões sejam precisas, que as taxas de câmbio sejam aplicadas corretamente em ambas as direções (direta e inversa), que casos especiais como moedas de origem e destino idênticas sejam tratados eficientemente, e que os resultados sejam arredondados adequadamente para duas casas decimais. Além disso, melhore a performance da busca por taxas de câmbio, quando aplicável.",
+    "codigoSujo": "function processarOperacoesMonetarias(transacoes, taxasDeCambio, moedaBasePrincipal) {\n    var resultados = [];\n    var i;\n    var j;\n    var k;\n\n    for (i = 0; i <= transacoes.length; i++) {\n        var transacao = transacoes[i];\n        if (!transacao) {\n            continue;\n        }\n\n        var valorCorrente = transacao.valor;\n        var moedaOrigem = transacao.moedaOrigem;\n        var moedaDestino = transacao.moedaDestino;\n        var statusTransacao = \"Sucesso\";\n\n        var valorConvertidoParaBase = valorCorrente;\n        var taxaBaseOrigem = 0;\n        var taxaEncontradaBaseOrigem = false;\n\n        if (moedaOrigem !== moedaBasePrincipal) {\n            for (j = 0; j < taxasDeCambio.length; j++) {\n                var parAtual = taxasDeCambio[j].par;\n                var taxaAtual = taxasDeCambio[j].taxa;\n\n                if (parAtual === moedaOrigem + \"/\" + moedaBasePrincipal) {\n                    taxaBaseOrigem = taxaAtual;\n                    valorConvertidoParaBase = valorCorrente * taxaBaseOrigem;\n                    taxaEncontradaBaseOrigem = true;\n                    break;\n                } else if (parAtual === moedaBasePrincipal + \"/\" + moedaOrigem) {\n                    taxaBaseOrigem = taxaAtual;\n                    valorConvertidoParaBase = valorCorrente * taxaBaseOrigem;\n                    taxaEncontradaBaseOrigem = true;\n                    break;\n                }\n            }\n            if (!taxaEncontradaBaseOrigem) {\n                statusTransacao = \"Erro: Taxa \" + moedaOrigem + \"/\" + moedaBasePrincipal + \" não disponível.\";\n            }\n        }\n\n        var valorFinalConvertido = valorConvertidoParaBase;\n        var taxaBaseDestino = 0;\n        var taxaEncontradaBaseDestino = false;\n\n        if (statusTransacao === \"Sucesso\" && moedaDestino !== moedaBasePrincipal) {\n            for (k = 0; k < taxasDeCambio.length; k++) {\n                var parAtual = taxasDeCambio[k].par;\n                var taxaAtual = taxasDeCambio[k].taxa;\n\n                if (parAtual === moedaBasePrincipal + \"/\" + moedaDestino) {\n                    taxaBaseDestino = taxaAtual;\n                    valorFinalConvertido = valorConvertidoParaBase * taxaBaseDestino;\n                    taxaEncontradaBaseDestino = true;\n                    break;\n                } else if (parAtual === moedaDestino + \"/\" + moedaBasePrincipal) {\n                    taxaBaseDestino = taxaAtual;\n                    valorFinalConvertido = valorConvertidoParaBase * taxaBaseDestino;\n                    taxaEncontradaBaseDestino = true;\n                    break;\n                }\n            }\n            if (!taxaEncontradaBaseDestino) {\n                statusTransacao = \"Erro: Taxa \" + moedaBasePrincipal + \"/\" + moedaDestino + \" não disponível.\";\n            }\n        } else if (moedaDestino === moedaBasePrincipal && statusTransacao === \"Sucesso\") {\n            valorFinalConvertido = valorConvertidoParaBase;\n        }\n\n        resultados.push({\n            id: transacao.id,\n            valorConvertido: valorFinalConvertido,\n            moedaFinal: moedaDestino,\n            status: statusTransacao\n        });\n    }\n\n    return resultados;\n}",
+    "codigoLimpo": "function processarOperacoesMonetarias(transacoes, taxasDeCambio, moedaBasePrincipal) {\n    var resultados = [];\n    var taxasLookup = {};\n    var i;\n\n    // Pré-processar taxasDeCambio para lookup eficiente O(1) em vez de O(N) por consulta\n    for (i = 0; i < taxasDeCambio.length; i++) {\n        taxasLookup[taxasDeCambio[i].par] = taxasDeCambio[i].taxa;\n    }\n\n    // Função auxiliar para obter a taxa, tratando direções de câmbio\n    function obterTaxaDeCambio(moedaOrigem, moedaDestino) {\n        // Tenta encontrar a taxa direta: Origem/Destino (e.g., BRL/USD)\n        var parDireto = moedaOrigem + \"/\" + moedaDestino;\n        if (taxasLookup.hasOwnProperty(parDireto)) {\n            return taxasLookup[parDireto];\n        }\n        // Tenta encontrar a taxa inversa: Destino/Origem (e.g., USD/BRL para converter BRL para USD)\n        var parInverso = moedaDestino + \"/\" + moedaOrigem;\n        if (taxasLookup.hasOwnProperty(parInverso)) {\n            return 1 / taxasLookup[parInverso];\n        }\n        return null; // Taxa não encontrada\n    }\n\n    for (i = 0; i < transacoes.length; i++) { // Correção: loop deve ir até < length\n        var transacao = transacoes[i];\n        var valorOriginal = transacao.valor;\n        var moedaOrigem = transacao.moagemOrigem;\n        var moedaDestino = transacao.moedaDestino;\n        var valorFinal = valorOriginal;\n        var status = \"Sucesso\";\n\n        // Otimização: Se moeda de origem e destino são as mesmas, não há conversão\n        if (moedaOrigem === moedaDestino) {\n            resultados.push({\n                id: transacao.id,\n                valorConvertido: parseFloat(valorOriginal.toFixed(2)), // Arredondamento\n                moedaFinal: moedaDestino,\n                status: status\n            });\n            continue; // Próxima transação\n        }\n\n        var valorConvertidoParaBase = valorOriginal;\n\n        // Passo 1: Converter para a moeda base principal, se necessário\n        if (moedaOrigem !== moedaBasePrincipal) {\n            var taxaParaBase = obterTaxaDeCambio(moedaOrigem, moedaBasePrincipal);\n            if (taxaParaBase !== null) {\n                valorConvertidoParaBase = valorOriginal * taxaParaBase;\n            } else {\n                status = \"Erro: Taxa de \" + moedaOrigem + \" para \" + moedaBasePrincipal + \" não disponível.\";\n            }\n        } // else: moedaOrigem já é a moedaBasePrincipal, não precisa de conversão\n\n        // Passo 2: Converter da moeda base principal para a moeda destino, se necessário\n        if (status === \"Sucesso\" && moedaDestino !== moedaBasePrincipal) {\n            var taxaDaBase = obterTaxaDeCambio(moedaBasePrincipal, moedaDestino);\n            if (taxaDaBase !== null) {\n                valorFinal = valorConvertidoParaBase * taxaDaBase;\n            } else {\n                status = \"Erro: Taxa de \" + moedaBasePrincipal + \" para \" + moedaDestino + \" não disponível.\";\n            }\n        } else if (status === \"Sucesso\" && moedaDestino === moedaBasePrincipal) {\n            // Se o destino é a moeda base, o valor final é o que foi convertido para a base\n            valorFinal = valorConvertidoParaBase;\n        }\n\n        // Arredondamento do valor final para 2 casas decimais\n        if (status === \"Sucesso\") {\n             resultados.push({\n                id: transacao.id,\n                valorConvertido: parseFloat(valorFinal.toFixed(2)),\n                moedaFinal: moedaDestino,\n                status: status\n            });\n        } else {\n             resultados.push({\n                id: transacao.id,\n                valorConvertido: parseFloat(valorOriginal.toFixed(2)), // Retorna o valor original em caso de erro\n                moedaFinal: moedaDestino,\n                status: status\n            });\n        }\n    }\n\n    return resultados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "processarOperacoesMonetarias",
+    "testes": [
+      {
+        "parametros": "[\n    { \"id\": 1, \"valor\": 100, \"moedaOrigem\": \"USD\", \"moedaDestino\": \"BRL\" },\n    { \"id\": 2, \"valor\": 200, \"moedaOrigem\": \"BRL\", \"moedaDestino\": \"USD\" },\n    { \"id\": 3, \"valor\": 50, \"moedaOrigem\": \"AUD\", \"moedaDestino\": \"EUR\" },\n    { \"id\": 4, \"valor\": 100, \"moedaOrigem\": \"EUR\", \"moedaDestino\": \"AUD\" },\n    { \"id\": 5, \"valor\": 75, \"moedaOrigem\": \"GBP\", \"moedaDestino\": \"USD\" },\n    { \"id\": 6, \"valor\": 150, \"moedaOrigem\": \"USD\", \"moedaDestino\": \"USD\" },\n    { \"id\": 7, \"valor\": 100.1234, \"moedaOrigem\": \"USD\", \"moedaDestino\": \"BRL\" }\n],\n[\n    { \"par\": \"USD/BRL\", \"taxa\": 5.00 },\n    { \"par\": \"USD/EUR\", \"taxa\": 0.90 },\n    { \"par\": \"AUD/USD\", \"taxa\": 0.65 }\n],\n\"USD\"",
+        "saidaEsperada": "[\n    { \"id\": 1, \"valorConvertido\": 500.00, \"moedaFinal\": \"BRL\", \"status\": \"Sucesso\" },\n    { \"id\": 2, \"valorConvertido\": 40.00, \"moedaFinal\": \"USD\", \"status\": \"Sucesso\" },\n    { \"id\": 3, \"valorConvertido\": 29.25, \"moedaFinal\": \"EUR\", \"status\": \"Sucesso\" },\n    { \"id\": 4, \"valorConvertido\": 170.94, \"moedaFinal\": \"AUD\", \"status\": \"Sucesso\" },\n    { \"id\": 5, \"valorConvertido\": 75.00, \"moedaFinal\": \"USD\", \"status\": \"Erro: Taxa de GBP para USD não disponível.\" },\n    { \"id\": 6, \"valorConvertido\": 150.00, \"moedaFinal\": \"USD\", \"status\": \"Sucesso\" },\n    { \"id\": 7, \"valorConvertido\": 500.62, \"moedaFinal\": \"BRL\", \"status\": \"Sucesso\" }\n]"
+      }
+    ],
+    "id": 1777315260651
+  },
+  {
+    "titulo": "Auditoria de Boletins Acadêmicos",
+    "missao": "Você foi contratado como auditor de código para o sistema de gestão acadêmica de uma universidade. Sua tarefa é analisar a função `processarBoletins`, que é responsável por calcular médias, atribuir conceitos e determinar o status de aprovação dos alunos. O código atual contém uma série de bugs lógicos e de sintaxe sutil que estão causando resultados incorretos nos boletins.\n\nSua missão é corrigir **TODOS** os bugs para que a função opere de acordo com as seguintes regras:\n\n1.  **Cálculo da Média**: A média de cada aluno deve ser a soma de suas notas dividida pelo número de notas. Caso um aluno não possua notas registradas, sua média deve ser 0 (zero).\n2.  **Conceito**: Baseado na média final (o valor da média no objeto de saída deve ser arredondado para duas casas decimais):\n    *   Média **igual ou superior a** 9.0: 'A'\n    *   Média **igual ou superior a** 7.5: 'B'\n    *   Média **igual ou superior a** 6.0: 'C'\n    *   Média **igual ou superior a** 4.0: 'D'\n    *   Média **inferior a** 4.0: 'F'\n3.  **Status de Aprovação**: Baseado na média final:\n    *   Média **igual ou superior a** 7.0: 'Aprovado'\n    *   Média **igual ou superior a** 5.0 e **inferior a** 7.0: 'Recuperacao'\n    *   Média **inferior a** 5.0: 'Reprovado'\n\nO código corrigido deve produzir os resultados esperados nos testes fornecidos. Lembre-se de que a declaração de funções deve usar a sintaxe `function` tradicional e os laços de repetição devem usar a estrutura `for` clássica (ex: `for (let i = 0; i < array.length; i++)`). Utilize `let` ou `const` para declaração de variáveis.",
+    "codigoSujo": "function processarBoletins(alunos) {\n    var resultados = [];\n    var i;\n    \n    for (i = 0; i < alunos.length; i++) {\n        var alunoAtual = alunos[i];\n        var somaNotas = 1; \n        var mediaAluno;\n        \n        for (let j = 0; j <= alunoAtual.notas.length; j++) {\n            somaNotas += alunoAtual.notas[j];\n        }\n        \n        mediaAluno = somaNotas / (alunoAtual.notas.length - 1);\n        \n        var conceitoFinal = \"Indefinido\";\n        if (mediaAluno > 9.0) {\n            conceitoFinal = \"A\";\n        } else if (mediaAluno >= 6.0) {\n            conceitoFinal = \"C\";\n        } else if (mediaAluno >= 7.5) {\n            conceitoFinal = \"B\";\n        } else if (mediaAluno < 4.0) {\n            conceitoFinal = \"F\";\n        } else {\n            conceitoFinal = \"D\";\n        }\n\n        var statusAprovacao = \"Pendente\";\n        if (mediaAluno >= 7.0) {\n            statusAprovacao = \"Aprovado\";\n        } else if (mediaAluno > 5.0 && mediaAluno < 7.0) {\n            statusAprovacao = \"Recuperacao\";\n        } else if (mediaAluno <= 5.0) {\n            statusAprovacao = \"Reprovado\";\n        }\n        \n        resultados[i] = {\n            nome: alunoAtual.nome,\n            media: mediaAluno,\n            conceito: conceitoFinal,\n            statusAprovacao: statusAprovacao\n        };\n    }\n    \n    return resultados;\n}",
+    "codigoLimpo": "function processarBoletins(alunos) {\n    let resultadosProcessados = [];\n\n    for (let i = 0; i < alunos.length; i++) {\n        let alunoAtual = alunos[i];\n        let somaNotas = 0;\n        let mediaAluno = 0;\n        \n        if (alunoAtual.notas.length === 0) {\n            mediaAluno = 0;\n        } else {\n            for (let j = 0; j < alunoAtual.notas.length; j++) {\n                somaNotas += alunoAtual.notas[j];\n            }\n            mediaAluno = somaNotas / alunoAtual.notas.length;\n        }\n        \n        let conceitoFinal;\n        if (mediaAluno >= 9.0) {\n            conceitoFinal = \"A\";\n        } else if (mediaAluno >= 7.5) {\n            conceitoFinal = \"B\";\n        } else if (mediaAluno >= 6.0) {\n            conceitoFinal = \"C\";\n        } else if (mediaAluno >= 4.0) {\n            conceitoFinal = \"D\";\n        } else {\n            conceitoFinal = \"F\";\n        }\n\n        let statusAprovacao;\n        if (mediaAluno >= 7.0) {\n            statusAprovacao = \"Aprovado\";\n        } else if (mediaAluno >= 5.0) {\n            statusAprovacao = \"Recuperacao\";\n        } else {\n            statusAprovacao = \"Reprovado\";\n        }\n        \n        resultadosProcessados.push({\n            nome: alunoAtual.nome,\n            media: parseFloat(mediaAluno.toFixed(2)),\n            conceito: conceitoFinal,\n            statusAprovacao: statusAprovacao\n        });\n    }\n    \n    return resultadosProcessados;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "processarBoletins",
+    "testes": [
+      {
+        "parametros": "[{ nome: \"Alice\", notas: [8.5, 9.0, 7.5] }]",
+        "saidaEsperada": "[{ nome: \"Alice\", media: 8.33, conceito: \"B\", statusAprovacao: \"Aprovado\" }]"
+      },
+      {
+        "parametros": "[{ nome: \"Bob\", notas: [5.0, 6.0, 4.0] }]",
+        "saidaEsperada": "[{ nome: \"Bob\", media: 5.00, conceito: \"D\", statusAprovacao: \"Recuperacao\" }]"
+      },
+      {
+        "parametros": "[{ nome: \"Charlie\", notas: [2.0, 3.0, 1.0] }]",
+        "saidaEsperada": "[{ nome: \"Charlie\", media: 2.00, conceito: \"F\", statusAprovacao: \"Reprovado\" }]"
+      },
+      {
+        "parametros": "[{ nome: \"David\", notas: [9.0, 9.5] }, { nome: \"Eve\", notas: [] }]",
+        "saidaEsperada": "[{ nome: \"David\", media: 9.25, conceito: \"A\", statusAprovacao: \"Aprovado\" }, { nome: \"Eve\", media: 0.00, conceito: \"F\", statusAprovacao: \"Reprovado\" }]"
+      },
+      {
+        "parametros": "[{ nome: \"Frank\", notas: [7.0, 7.0, 7.0] }, { nome: \"Grace\", notas: [4.0, 4.5, 5.0] }, { nome: \"Heidi\", notas: [9.9, 10.0] }]",
+        "saidaEsperada": "[{ nome: \"Frank\", media: 7.00, conceito: \"B\", statusAprovacao: \"Aprovado\" }, { nome: \"Grace\", media: 4.50, conceito: \"D\", statusAprovacao: \"Recuperacao\" }, { nome: \"Heidi\", media: 9.95, conceito: \"A\", statusAprovacao: \"Aprovado\" }]"
+      }
+    ],
+    "id": 1777315314454
+  },
+  {
+    "titulo": "Análise de Desempenho Acadêmico V1.0",
+    "missao": "Você foi encarregado de revisar e corrigir um módulo crucial do sistema de gestão de notas da nossa instituição. O código atual, 'gerarRelatorioNotasAlunos', apresenta falhas lógicas e de tratamento de dados que comprometem a precisão dos relatórios de desempenho dos alunos. Sua missão é identificar e corrigir todos os bugs no 'codigoSujo' para que ele funcione conforme as especificações:\n\n1.  **Cálculo da Média:** Deve calcular corretamente a média aritmética das notas de cada aluno.\n2.  **Validação de Notas:** Apenas notas entre 0 e 100 (inclusive) devem ser consideradas no cálculo da média. Notas inválidas (fora do intervalo 0-100 ou não numéricas) devem ser ignoradas.\n3.  **Definição de Conceitos:** Atribuir o conceito correto baseado na média final:\n    *   'A': Média >= 90\n    *   'B': Média >= 80 e < 90\n    *   'C': Média >= 70 e < 80\n    *   'D': Média >= 60 e < 70\n    *   'F': Média < 60\n4.  **Status de Aprovação:** O aluno é 'Aprovado' se a média for igual ou superior a 70; caso contrário, é 'Reprovado'.\n5.  **Tratamento de Alunos sem Notas Válidas:** Para alunos sem notas (array vazio) ou sem notas válidas após a filtragem, a 'media', 'conceito' e 'status' devem ser exibidos como 'N/A' (Not Applicable).\n6.  **Formato da Média:** A média final deve ser um número (tipo `number` em JavaScript) com duas casas decimais, arredondado quando necessário.\n\nSeu objetivo é entregar um 'codigoLimpo' que seja robusto, preciso e siga as melhores práticas de lógica e manipulação de dados em JavaScript, usando apenas as estruturas permitidas.",
+    "codigoSujo": "function gerarRelatorioNotasAlunos(alunos) {\n    var relatorioFinal = [];\n\n    for (var i = 0; i < alunos.length; i++) {\n        var aluno = alunos[i];\n        var notasAluno = aluno.notas;\n        var mediaAluno;\n        var conceitoAluno;\n        var statusAluno;\n\n        if (notasAluno.length === 0) {\n            mediaAluno = 0;\n        } else {\n            var somaNotas = 0;\n            for (var j = 0; j <= notasAluno.length; j++) {\n                somaNotas += notasAluno[j];\n            }\n            mediaAluno = somaNotas / notasAluno.length;\n        }\n\n        if (mediaAluno >= 90) {\n            conceitoAluno = \"A\";\n        } else if (mediaAluno >= 70) {\n            conceitoAluno = \"C\";\n        } else if (mediaAluno >= 60) {\n            conceitoAluno = \"D\";\n        } else if (mediaAluno < 60) {\n            conceitoAluno = \"F\";\n        } else {\n            conceitoAluno = \"Inválido\";\n        }\n\n        if (conceitoAluno !== \"F\" || conceitoAluno !== \"D\") {\n            statusAluno = \"Aprovado\";\n        } else {\n            statusAluno = \"Reprovado\";\n        }\n\n        relatorioFinal[i] = {\n            nome: aluno.nome,\n            media: mediaAluno.toFixed(2),\n            conceito: conceitoAluno,\n            status: statusAluno\n        };\n    }\n\n    return relatorioFinal;\n}",
+    "codigoLimpo": "function gerarRelatorioNotasAlunos(alunos) {\n    var relatorioFinal = [];\n\n    for (var i = 0; i < alunos.length; i++) {\n        var aluno = alunos[i];\n        var notasAluno = aluno.notas;\n        var mediaAluno;\n        var conceitoAluno;\n        var statusAluno;\n\n        if (!notasAluno || notasAluno.length === 0) {\n            mediaAluno = \"N/A\";\n            conceitoAluno = \"N/A\";\n            statusAluno = \"N/A\";\n        } else {\n            var somaNotasValidas = 0;\n            var numNotasValidas = 0;\n            for (var j = 0; j < notasAluno.length; j++) {\n                var nota = notasAluno[j];\n                if (typeof nota === 'number' && nota >= 0 && nota <= 100) {\n                    somaNotasValidas += nota;\n                    numNotasValidas++;\n                }\n            }\n\n            if (numNotasValidas === 0) {\n                mediaAluno = \"N/A\";\n                conceitoAluno = \"N/A\";\n                statusAluno = \"N/A\";\n            } else {\n                mediaAluno = parseFloat((somaNotasValidas / numNotasValidas).toFixed(2));\n                \n                if (mediaAluno >= 90) {\n                    conceitoAluno = \"A\";\n                } else if (mediaAluno >= 80) {\n                    conceitoAluno = \"B\";\n                } else if (mediaAluno >= 70) {\n                    conceitoAluno = \"C\";\n                } else if (mediaAluno >= 60) {\n                    conceitoAluno = \"D\";\n                } else {\n                    conceitoAluno = \"F\";\n                }\n\n                if (mediaAluno >= 70) {\n                    statusAluno = \"Aprovado\";\n                } else {\n                    statusAluno = \"Reprovado\";\n                }\n            }\n        }\n\n        relatorioFinal[i] = {\n            nome: aluno.nome,\n            media: mediaAluno,\n            conceito: conceitoAluno,\n            status: statusAluno\n        };\n    }\n\n    return relatorioFinal;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "gerarRelatorioNotasAlunos",
+    "testes": [
+      {
+        "parametros": "[{ \"nome\": \"Alice\", \"notas\": [85, 90, 78] }, { \"nome\": \"Bob\", \"notas\": [60, 55, 65] }]",
+        "saidaEsperada": "[{ \"nome\": \"Alice\", \"media\": 84.33, \"conceito\": \"B\", \"status\": \"Aprovado\" }, { \"nome\": \"Bob\", \"media\": 60, \"conceito\": \"D\", \"status\": \"Reprovado\" }]"
+      },
+      {
+        "parametros": "[{ \"nome\": \"Charlie\", \"notas\": [] }, { \"nome\": \"David\", \"notas\": [100, 10, -5, 70] }, { \"nome\": \"Eva\", \"notas\": [95, 88, 105, 72] }]",
+        "saidaEsperada": "[{ \"nome\": \"Charlie\", \"media\": \"N/A\", \"conceito\": \"N/A\", \"status\": \"N/A\" }, { \"nome\": \"David\", \"media\": 60, \"conceito\": \"D\", \"status\": \"Reprovado\" }, { \"nome\": \"Eva\", \"media\": 85, \"conceito\": \"B\", \"status\": \"Aprovado\" }]"
+      }
+    ],
+    "id": 1777315442005
   }
 ]

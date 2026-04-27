@@ -17,10 +17,10 @@ async function fazerLogout() {
 async function carregarBanco() {
     try {
         let resposta = await fetch("/api/admin/questoes");
-        
+
         if (resposta.ok) {
             bancoCompleto = await resposta.json();
-            mudarPagina(1); 
+            mudarPagina(1);
         } else if (resposta.status === 401 || resposta.status === 403) {
             // Se o servidor negar o acesso durante o uso, redireciona para login
             window.location.href = "login.html";
@@ -68,34 +68,46 @@ function toggleGabarito(id) {
 function renderizarLista() {
     let container = document.getElementById("lista-desafios");
     let navContainer = document.getElementById("navegacao-paginas");
-    if (!container || !navContainer) return;
+    if (container === null || navContainer === null) return;
 
-    // 1. Captura os valores dos três filtros
-    let texto = document.getElementById("busca-texto").value.toLowerCase();
-    let tipo = document.getElementById("filtro-tipo").value;
-    let nivel = document.getElementById("filtro-nivel").value; // <-- Captura o novo filtro
-    
-    itensPorPagina = parseInt(document.getElementById("itens-por-pagina").value);
+    let textoElemento = document.getElementById("busca-texto");
+    let tipoElemento = document.getElementById("filtro-tipo");
+    let nivelElemento = document.getElementById("filtro-nivel");
+    let itensElemento = document.getElementById("itens-por-pagina");
 
-    // 2. Aplica a filtragem combinada
+    let texto = "";
+    if (textoElemento !== null) texto = textoElemento.value.toLowerCase();
+
+    let tipo = "todos";
+    if (tipoElemento !== null) tipo = tipoElemento.value;
+
+    let nivel = "todos";
+    if (nivelElemento !== null) nivel = nivelElemento.value;
+
+    itensPorPagina = 5;
+    if (itensElemento !== null) itensPorPagina = parseInt(itensElemento.value);
+
     let filtrados = [];
     for (let i = 0; i < bancoCompleto.length; i++) {
-        let item = bancoCompleto[i];
-        
-        let bateTexto = (item.titulo || "").toLowerCase().includes(texto);
-        let bateTipo = tipo === "todos" || item.tipo === tipo;
-        
-        // Verifica se o nível bate. O valor do HTML vem como texto ("1"), então convertemos para número.
-        let bateNivel = nivel === "todos" || item.dificuldade === parseInt(nivel);
+        let questao = bancoCompleto[i];
 
-        // A questão só entra na lista se passar pelos TRÊS filtros ao mesmo tempo
-        if (bateTexto && bateTipo && bateNivel) {
-            filtrados.push(item);
+        let titulo = questao.titulo || "";
+        let bateTexto = titulo.toLowerCase().includes(texto);
+
+        let bateTipo = false;
+        if (tipo === "todos" || questao.tipo === tipo) bateTipo = true;
+
+        let bateNivel = false;
+        if (nivel === "todos" || questao.dificuldade === parseInt(nivel)) bateNivel = true;
+
+        if (bateTexto === true && bateTipo === true && bateNivel === true) {
+            filtrados.push(questao);
         }
     }
 
-    // 3. Lógica de Paginação (Mantida exatamente igual)
     let totalPaginas = Math.ceil(filtrados.length / itensPorPagina);
+
+    // Trava de segurança: se a filtragem reduzir as páginas e o professor estiver numa página que não existe mais
     if (paginaAtual > totalPaginas && totalPaginas > 0) paginaAtual = totalPaginas;
     if (totalPaginas === 0) paginaAtual = 1;
 
@@ -104,22 +116,24 @@ function renderizarLista() {
 
     container.innerHTML = "";
 
-    // 4. Desenho dos Cards na tela (Mantido exatamente igual)
+    // === DESENHO DOS CARDS ===
     for (let i = 0; i < itensDaPagina.length; i++) {
         let item = itensDaPagina[i];
         let card = document.createElement("div");
 
-        if (idSendoEditado == item.id) {
+        if (idSendoEditado === item.id) {
             card.className = "card-desafio card-edicao-inline";
-            
+
             let htmlTestes = "";
             for (let t = 1; t <= 5; t++) {
-                let p_val = (item.testes && item.testes[t-1]) ? item.testes[t-1].parametros : "";
-                let s_val = (item.testes && item.testes[t-1]) ? JSON.stringify(item.testes[t-1].saidaEsperada) : "";
-                htmlTestes += `
-                    <input type="text" id="edit-tp${t}-${item.id}" value='${p_val}' placeholder="Parâm. ${t}">
-                    <input type="text" id="edit-ts${t}-${item.id}" value='${s_val}' placeholder="Saída ${t}">
-                `;
+                let p_val = "";
+                let s_val = "";
+                if (item.testes && item.testes[t - 1]) {
+                    p_val = item.testes[t - 1].parametros;
+                    s_val = JSON.stringify(item.testes[t - 1].saidaEsperada);
+                }
+                htmlTestes += `<input type="text" id="edit-tp${t}-${item.id}" value='${p_val}' placeholder="Parâm. ${t}">
+                               <input type="text" id="edit-ts${t}-${item.id}" value='${s_val}' placeholder="Saída ${t}">`;
             }
 
             card.innerHTML = `
@@ -127,24 +141,21 @@ function renderizarLista() {
                     <div class="item-controle"><label>Título:</label><input type="text" id="edit-titulo-${item.id}" value="${item.titulo}"></div>
                     <div class="item-controle"><label>Tipo:</label>
                         <select id="edit-tipo-${item.id}">
-                            <option value="correcao" ${item.tipo==='correcao'?'selected':''}>Correção</option>
-                            <option value="refatoracao" ${item.tipo==='refatoracao'?'selected':''}>Refatoração</option>
+                            <option value="correcao" ${item.tipo === 'correcao' ? 'selected' : ''}>Correção</option>
+                            <option value="refatoracao" ${item.tipo === 'refatoracao' ? 'selected' : ''}>Refatoração</option>
                         </select>
                     </div>
                     <div class="item-controle"><label>Dificuldade:</label><input type="number" id="edit-dif-${item.id}" value="${item.dificuldade}" min="1" max="5"></div>
                 </div>
-                
                 <div style="background: #eee; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                    <label>🧪 Testes (Editando os 5 primeiros):</label>
+                    <label>🧪 Testes:</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
                         ${htmlTestes}
                     </div>
                 </div>
-
                 <textarea id="edit-missao-${item.id}" rows="6" style="width: 100%; margin-bottom: 10px;">${item.missao}</textarea>
                 <textarea id="edit-sujo-${item.id}" class="code-area" rows="15" style="width: 100%; margin-bottom: 10px;">${item.codigoSujo}</textarea>
                 <textarea id="edit-limpo-${item.id}" class="code-area" rows="15" style="width: 100%; margin-bottom: 10px;">${item.codigoLimpo}</textarea>
-                
                 <div class="acoes-card">
                     <button onclick="salvarAlteracoes(${item.id})" class="btn-salvar">Confirmar</button>
                     <button onclick="cancelarEdicao()" class="btn-sair">Cancelar</button>
@@ -158,7 +169,7 @@ function renderizarLista() {
                 </div>
                 <div class="acoes-card" style="display: flex; gap: 5px;">
                     <button onclick="toggleGabarito('${item.id}')">Detalhes</button>
-                    <button onclick="window.open('sandbox.html?id=${item.id}', '_blank')" class="btn-salvar" style="background-color: #f39c12;">🧪 Laboratório</button>
+                    <button onclick="window.open('sandbox.html?id=${item.id}', '_blank')" class="btn-salvar" style="background-color: #f39c12;">🧪 Sandbox</button>
                     <button onclick="ativarEdicao(${item.id})" class="btn-modo-aluno">Editar ✏️</button>
                     <button onclick="excluirQuestao(${item.id})" class="btn-sair">Excluir 🗑️</button>
                 </div>
@@ -171,14 +182,75 @@ function renderizarLista() {
         container.appendChild(card);
     }
 
+    // === LÓGICA DE PAGINAÇÃO ESTILO E-COMMERCE ===
     navContainer.innerHTML = "";
-    for (let p = 1; p <= totalPaginas; p++) {
+    if (totalPaginas === 0) return;
+
+    // Função interna para fabricar os botões dinamicamente
+    function criarBotaoPagina(texto, paginaDestino, ativo = false, desabilitado = false) {
         let btn = document.createElement("button");
-        btn.innerText = p;
-        btn.className = (p === paginaAtual) ? "btn-pag-ativo" : "btn-pag";
-        btn.onclick = function() { mudarPagina(p); };
+        btn.innerText = texto;
+
+        if (desabilitado) {
+            btn.className = "btn-pag";
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.style.cursor = "not-allowed";
+        } else if (texto === "...") {
+            btn.className = "btn-pag";
+            btn.disabled = true;
+            btn.style.background = "transparent";
+            btn.style.border = "none";
+            btn.style.color = "#333";
+            btn.style.fontWeight = "bold";
+        } else {
+            btn.className = ativo ? "btn-pag-ativo" : "btn-pag";
+            btn.onclick = function () { mudarPagina(paginaDestino); };
+        }
         navContainer.appendChild(btn);
     }
+
+    // 1. Setas Voltar
+    criarBotaoPagina("<<", 1, false, paginaAtual === 1);
+    criarBotaoPagina("<", paginaAtual - 1, false, paginaAtual === 1);
+
+    // 2. Lógica dos Números e Reticências
+    if (totalPaginas <= 7) {
+        // Se houver 7 ou menos páginas, mostra todas (tamanho máximo do bloco garantido)
+        for (let p = 1; p <= totalPaginas; p++) {
+            criarBotaoPagina(p, p, p === paginaAtual);
+        }
+    } else {
+        // Mais de 7 páginas: Mantém EXATAMENTE 7 espaços na tela para a seta não pular.
+        // O bloco da direita sempre tem 3 números (T-2, T-1, T)
+        // O bloco da esquerda tem 3 números e vai "crescendo" e deslizando (P-1, P, P+1)
+
+        let start = Math.max(1, paginaAtual - 1);
+
+        // Se o bloco da esquerda chegar muito perto da direita, mesclamos os dois.
+        // As reticências somem e viram um número, mantendo exatamente os mesmos 7 botões.
+        if (start >= totalPaginas - 5) {
+            // Mostra as últimas 7 páginas diretas (ex: 5 6 7 8 9 10 11)
+            for (let p = totalPaginas - 6; p <= totalPaginas; p++) {
+                criarBotaoPagina(p, p, p === paginaAtual);
+            }
+        } else {
+            // Bloco da esquerda desliza, reticência no meio, direita fixa
+            for (let p = start; p <= start + 2; p++) {
+                criarBotaoPagina(p, p, p === paginaAtual);
+            }
+
+            criarBotaoPagina("...", null);
+
+            for (let p = totalPaginas - 2; p <= totalPaginas; p++) {
+                criarBotaoPagina(p, p, p === paginaAtual);
+            }
+        }
+    }
+
+    // 3. Setas Avançar
+    criarBotaoPagina(">", paginaAtual + 1, false, paginaAtual === totalPaginas);
+    criarBotaoPagina(">>", totalPaginas, false, paginaAtual === totalPaginas);
 }
 
 // --- OPERAÇÕES CRUD ---
@@ -188,17 +260,17 @@ function cancelarEdicao() { idSendoEditado = null; renderizarLista(); }
 async function salvarAlteracoes(id) {
     let questaoOriginal = bancoCompleto.find(q => q.id == id);
     let codigoLimpo = document.getElementById(`edit-limpo-${id}`).value;
-    
+
     // Coleta os 5 testes da UI
     let novosTestes = [];
     for (let t = 1; t <= 5; t++) {
         let p = document.getElementById(`edit-tp${t}-${id}`).value;
         let s = document.getElementById(`edit-ts${t}-${id}`).value;
         if (p && s) {
-            try { 
-                novosTestes.push({ parametros: p, saidaEsperada: JSON.parse(s) }); 
-            } catch(e) { 
-                novosTestes.push({ parametros: p, saidaEsperada: s }); 
+            try {
+                novosTestes.push({ parametros: p, saidaEsperada: JSON.parse(s) });
+            } catch (e) {
+                novosTestes.push({ parametros: p, saidaEsperada: s });
             }
         }
     }
@@ -234,15 +306,15 @@ async function salvarAlteracoes(id) {
 async function salvarQuestaoNova() {
     let codigoLimpo = document.getElementById("novo-limpo").value;
     let testes = [];
-    
+
     for (let t = 1; t <= 5; t++) {
         let p = document.getElementById(`novo-teste-p${t}`).value;
         let s = document.getElementById(`novo-teste-s${t}`).value;
         if (p && s) {
-            try { 
-                testes.push({ parametros: p, saidaEsperada: JSON.parse(s) }); 
-            } catch(e) { 
-                testes.push({ parametros: p, saidaEsperada: s }); 
+            try {
+                testes.push({ parametros: p, saidaEsperada: JSON.parse(s) });
+            } catch (e) {
+                testes.push({ parametros: p, saidaEsperada: s });
             }
         }
     }
@@ -287,10 +359,10 @@ async function gerarEmLote() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             // Garante que os números vão como inteiros para o Node.js
-            body: JSON.stringify({ 
-                tipo: tipo, 
-                dificuldade: parseInt(dif), 
-                quantidade: parseInt(qtd) 
+            body: JSON.stringify({
+                tipo: tipo,
+                dificuldade: parseInt(dif),
+                quantidade: parseInt(qtd)
             })
         });
 

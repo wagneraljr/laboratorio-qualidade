@@ -237,3 +237,13 @@ select, input {
     color: #ff5555;
     border-color: #ff5555;
 }
+
+/* Efeito para o título da Liga Elite */
+.liga-elite-anim {
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 5px #fff, 0 0 10px #8e44ad; }
+    to { text-shadow: 0 0 10px #fff, 0 0 20px #9b59b6; }
+}
