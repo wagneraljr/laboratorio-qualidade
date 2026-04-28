@@ -1,4 +1,3 @@
-// Importações sem desestruturação
 const express = require("express");
 const path = require("path");
 const fs = require("fs"); // Módulo para manipulação de arquivos
@@ -17,7 +16,14 @@ const atraso = function(milissegundos) {
 
 // Permite que o servidor entenda dados no formato JSON
 app.use(express.json());
-app.use(cookieParser()); // Para lidar com cookies (sessões)
+// O segredo é lido da variável de ambiente para assinar o cookie criptograficamente.
+// Defina SESSION_SECRET no seu .env (ex: SESSION_SECRET=uma_frase_longa_e_aleatoria)
+const segredoSessao = process.env.SESSION_SECRET;
+if (!segredoSessao) {
+    console.error("ERRO CRÍTICO: A variável de ambiente SESSION_SECRET não está definida. O servidor não pode iniciar com segurança.");
+    process.exit(1);
+}
+app.use(cookieParser(segredoSessao)); // Cookies assinados com o segredo
 
 // Diz ao Express para servir os arquivos da pasta "publico"
 const caminhoPublico = path.join(__dirname, "..", "publico");
@@ -26,7 +32,9 @@ const caminhoBanco = path.join(__dirname, "bancoQuestoes.json");
 app.use(express.static(caminhoPublico));
 
 function verificarAutenticacao(requisicao, resposta, proximo) {
-    let token = requisicao.cookies.auth_token;
+    // req.signedCookies só contém o valor se a assinatura criptográfica bater.
+    // Se o cookie foi criado manualmente ou adulterado, o valor será false.
+    let token = requisicao.signedCookies.auth_token;
     
     if (token === "logado") {
         return proximo(); // Autorizado: segue para a página/rota
@@ -41,7 +49,13 @@ app.post("/api/login", function(requisicao, resposta) {
 
     if (senhaDigitada === senhaCorreta) {
         // Define um cookie que expira em 1 hora
-        resposta.cookie("auth_token", "logado", { maxAge: 3600000, httpOnly: true });
+        resposta.cookie("auth_token", "logado", {
+            maxAge: 3600000,
+            httpOnly: true,    // Impede acesso pelo JavaScript do navegador (proteção contra XSS)
+            secure: true,      // Envia o cookie APENAS em conexões HTTPS
+            sameSite: "strict", // Bloqueia envio em requisições de outros sites (proteção contra CSRF)
+            signed: true       // Assina o valor com SESSION_SECRET — qualquer adulteração invalida o cookie
+        });
         resposta.json({ sucesso: true });
     } else {
         resposta.status(401).json({ sucesso: false, erro: "Senha incorreta" });
@@ -106,7 +120,6 @@ app.post("/api/missao-aleatoria", function(requisicao, resposta) {
     
     let questoesFiltradas = [];
 
-    // Filtra o banco de questões usando for...of
     for (let questao of listaDeQuestoes) {
         if (questao.tipo === tipoDesejado && questao.dificuldade === dificuldadeDesejada) {
             questoesFiltradas.push(questao);
@@ -115,7 +128,24 @@ app.post("/api/missao-aleatoria", function(requisicao, resposta) {
     
     if (questoesFiltradas.length > 0) {
         let indice = Math.floor(Math.random() * questoesFiltradas.length);
-        resposta.json({ sucesso: true, dados: questoesFiltradas[indice] });
+        let questao = questoesFiltradas[indice];
+
+        // SEGURANÇA: Envia apenas os campos que o aluno precisa ver.
+        // O gabarito (codigoLimpo) só é liberado se o aluno clicar em "Ver Gabarito" — 
+        // e mesmo assim, ele já está no front-end neste momento. 
+        // Mantemos codigoLimpo aqui pois o modo livre permite ver o gabarito.
+        // nomeDaFuncao é omitido para não facilitar trapaças via console.
+        let dadosParaAluno = {
+            id: questao.id,
+            titulo: questao.titulo,
+            missao: questao.missao,
+            tipo: questao.tipo,
+            dificuldade: questao.dificuldade,
+            codigoSujo: questao.codigoSujo,
+            codigoLimpo: questao.codigoLimpo // Permitido no modo livre
+        };
+
+        resposta.json({ sucesso: true, dados: dadosParaAluno });
     } else {
         resposta.status(404).json({ sucesso: false, erro: "Nenhuma missão com este perfil no estoque." });
     }
@@ -162,12 +192,24 @@ app.post("/api/avaliar", function(requisicao, resposta) {
 // --- ROTA PÚBLICA: BUSCAR BANCO COMPLETO (Usada no Modo Competitivo) ---
 app.get("/api/banco-publico", function(req, res) {
     try {
-        // Lê o arquivo JSON do banco de dados
         let conteudo = fs.readFileSync(caminhoBanco, "utf8");
         let listaCompleta = JSON.parse(conteudo);
         
-        // Devolve a lista para o front-end montar a competição
-        res.json(listaCompleta);
+        // SEGURANÇA: Remove campos sensíveis antes de enviar ao front-end.
+        // O aluno nunca deve receber o gabarito (codigoLimpo) pela rede.
+        let listaPublica = listaCompleta.map(function(q) {
+            return {
+                id: q.id,
+                titulo: q.titulo,
+                missao: q.missao,
+                tipo: q.tipo,
+                dificuldade: q.dificuldade,
+                codigoSujo: q.codigoSujo
+                // codigoLimpo e nomeDaFuncao são omitidos intencionalmente
+            };
+        });
+        
+        res.json(listaPublica);
     } catch (erro) {
         console.error("Erro ao ler o banco de questões:", erro);
         res.status(500).json({ erro: "Falha interna no servidor." });

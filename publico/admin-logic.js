@@ -169,7 +169,7 @@ function renderizarLista() {
                 </div>
                 <div class="acoes-card" style="display: flex; gap: 5px;">
                     <button onclick="toggleGabarito('${item.id}')">Detalhes</button>
-                    <button onclick="window.open('sandbox.html?id=${item.id}', '_blank')" class="btn-salvar" style="background-color: #f39c12;">🧪 Sandbox</button>
+                    <button onclick="window.open('sandbox.html?id=${item.id}', '_blank')" class="btn-salvar" style="background-color: #f39c12;">🧪 Laboratório</button>
                     <button onclick="ativarEdicao(${item.id})" class="btn-modo-aluno">Editar ✏️</button>
                     <button onclick="excluirQuestao(${item.id})" class="btn-sair">Excluir 🗑️</button>
                 </div>
