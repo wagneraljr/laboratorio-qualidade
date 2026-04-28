@@ -7,10 +7,18 @@ function analisarVariaveis(codigo) {
     try {
         let ast = acorn.parse(codigo, { ecmaVersion: 2020 });
         function caminhar(no) {
-            if (!no) return;
+            if (!no || typeof no !== "object") return;
+            // Se for um array (ex: corpo de um bloco), caminha sobre cada elemento
+            if (Array.isArray(no)) {
+                for (let i = 0; i < no.length; i++) caminhar(no[i]);
+                return;
+            }
             if (no.type === "Identifier") variaveis.add(no.name);
             for (let chave in no) {
-                if (typeof no[chave] === "object") caminhar(no[chave]);
+                // Pula propriedades herdadas e metadados do próprio nó (posição, etc.)
+                if (!Object.prototype.hasOwnProperty.call(no, chave)) continue;
+                if (chave === "start" || chave === "end" || chave === "type") continue;
+                caminhar(no[chave]);
             }
         }
         caminhar(ast);
@@ -27,7 +35,11 @@ function analisarCodigoLimpo(codigo) {
         let ast = acorn.parse(codigo, { ecmaVersion: 2020 });
 
         function caminhar(no) {
-            if (!no) return;
+            if (!no || typeof no !== "object") return;
+            if (Array.isArray(no)) {
+                for (let i = 0; i < no.length; i++) caminhar(no[i]);
+                return;
+            }
 
             // 1. Sintoma de SRP: Medindo a Complexidade Ciclomática
             if (no.type === "IfStatement" || no.type === "ForStatement" || no.type === "WhileStatement" || no.type === "SwitchCase") {
@@ -36,13 +48,11 @@ function analisarCodigoLimpo(codigo) {
 
             // 2. Caçador de Números Mágicos (Procura literais numéricos soltos em expressões)
             if (no.type === "BinaryExpression") {
-                // Checa o lado esquerdo da operação
                 if (no.left.type === "Literal" && typeof no.left.value === "number") {
-                    if (no.left.value !== 0 && no.left.value !== 1) { // 0 e 1 são exceções comuns em programação
+                    if (no.left.value !== 0 && no.left.value !== 1) {
                         falhasCodigoLimpo.push(`Número Mágico detectado: O valor '${no.left.value}' está solto na lógica. Atribua-o a uma variável com nome claro (ex: const TAXA = ${no.left.value}).`);
                     }
                 }
-                // Checa o lado direito da operação
                 if (no.right.type === "Literal" && typeof no.right.value === "number") {
                     if (no.right.value !== 0 && no.right.value !== 1) {
                         falhasCodigoLimpo.push(`Número Mágico detectado: O valor '${no.right.value}' está solto na lógica. Atribua-o a uma variável com nome claro.`);
@@ -51,7 +61,9 @@ function analisarCodigoLimpo(codigo) {
             }
 
             for (let chave in no) {
-                if (typeof no[chave] === "object") caminhar(no[chave]);
+                if (!Object.prototype.hasOwnProperty.call(no, chave)) continue;
+                if (chave === "start" || chave === "end" || chave === "type") continue;
+                caminhar(no[chave]);
             }
         }
 

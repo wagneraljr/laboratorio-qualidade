@@ -2344,5 +2344,154 @@
       }
     ],
     "id": 1777315442005
+  },
+  {
+    "titulo": "Auditoria e Gestão de Estoque Crítico",
+    "missao": "Você foi encarregado de revisar um módulo essencial de gerenciamento de inventário para uma grande loja de eletrônicos. O sistema atual tem apresentado inconsistências nos relatórios de valor total do estoque e na identificação de produtos com estoque baixo, além de não processar corretamente as operações de venda e reposição. Sua tarefa é encontrar e corrigir todos os bugs lógicos e de sintaxe no código fornecido. O objetivo é que a função 'gerenciarInventarioProdutos' retorne o valor total correto do estoque (preço * quantidade) após todas as operações, e uma lista precisa de produtos (objetos completos) cujo estoque esteja estritamente abaixo de 10 unidades, garantindo que vendas não resultem em estoque negativo e que a entrada de inventário original não seja modificada.",
+    "codigoSujo": "function gerenciarInventarioProdutos(inventario, operacoes) {\n    var inventarioAtual = inventario;\n    var produtoEncontrado = null;\n\n    for (var i = 0; i < operacoes.length; i++) {\n        var operacao = operacoes[i];\n        produtoEncontrado = null;\n\n        for (var j = 0; j < inventarioAtual.length; j++) {\n            if (inventarioAtual[j].id === operacao.idProduto) {\n                produtoEncontrado = inventarioAtual[j];\n                break;\n            }\n        }\n\n        if (produtoEncontrado) {\n            if (operacao.tipo === \"venda\") {\n                produtoEncontrado.estoque -= operacao.quantidade;\n            } else if (operacao.tipo === \"reposicao\") {\n                produtoEncontrado.estoque += operacao.quantidade - 1;\n            }\n        }\n    }\n\n    var valorTotalEstoque = 0;\n    var produtosBaixoEstoque = [];\n\n    for (var k = 0; k < inventarioAtual.length; k++) {\n        valorTotalEstoque += inventarioAtual[k].preco + inventarioAtual[k].estoque;\n\n        if (inventarioAtual[k].estoque <= 10) {\n            produtosBaixoEstoque.push(inventarioAtual[k].nome);\n        }\n    }\n\n    return {\n        valorTotalEstoque: valorTotalEstoque,\n        produtosBaixoEstoque: produtosBaixoEstoque\n    };\n}",
+    "codigoLimpo": "function gerenciarInventarioProdutos(inventario, operacoes) {\n    var inventarioAtual = JSON.parse(JSON.stringify(inventario));\n\n    for (var i = 0; i < operacoes.length; i++) {\n        var operacao = operacoes[i];\n        var produtoEncontrado = null;\n\n        for (var j = 0; j < inventarioAtual.length; j++) {\n            if (inventarioAtual[j].id === parseInt(operacao.idProduto, 10)) {\n                produtoEncontrado = inventarioAtual[j];\n                break;\n            }\n        }\n\n        if (produtoEncontrado) {\n            if (operacao.tipo === \"venda\") {\n                if (produtoEncontrado.estoque >= operacao.quantidade) {\n                    produtoEncontrado.estoque -= operacao.quantidade;\n                }\n            } else if (operacao.tipo === \"reposicao\") {\n                produtoEncontrado.estoque += operacao.quantidade;\n            }\n        }\n    }\n\n    var valorTotalEstoque = 0;\n    var produtosBaixoEstoque = [];\n\n    for (var k = 0; k < inventarioAtual.length; k++) {\n        valorTotalEstoque += inventarioAtual[k].preco * inventarioAtual[k].estoque;\n\n        if (inventarioAtual[k].estoque < 10) {\n            produtosBaixoEstoque.push(inventarioAtual[k]);\n        }\n    }\n\n    return {\n        valorTotalEstoque: valorTotalEstoque,\n        produtosBaixoEstoque: produtosBaixoEstoque\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "gerenciarInventarioProdutos",
+    "testes": [
+      {
+        "parametros": "[\n    { id: 1, nome: \"Laptop Gamer\", preco: 7500.00, estoque: 15 },\n    { id: 2, nome: \"Mouse Óptico\", preco: 85.00, estoque: 5 },\n    { id: 3, nome: \"Teclado Mecânico\", preco: 320.00, estoque: 25 },\n    { id: 4, nome: \"Monitor Ultrawide\", preco: 1800.00, estoque: 8 },\n    { id: 5, nome: \"Webcam HD\", preco: 150.00, estoque: 12 }\n],\n[\n    { tipo: \"venda\", idProduto: \"1\", quantidade: 3 },\n    { tipo: \"reposicao\", idProduto: \"2\", quantidade: 10 },\n    { tipo: \"venda\", idProduto: \"4\", quantidade: 5 },\n    { tipo: \"venda\", idProduto: \"5\", quantidade: 15 }\n]",
+        "saidaEsperada": {
+          "valorTotalEstoque": 106475,
+          "produtosBaixoEstoque": [
+            {
+              "id": 4,
+              "nome": "Monitor Ultrawide",
+              "preco": 1800,
+              "estoque": 3
+            }
+          ]
+        }
+      }
+    ],
+    "id": 1777399101292
+  },
+  {
+    "titulo": "Debugando a Análise de Texto Complexa",
+    "missao": "Prezado(a) aluno(a),\n\nVocê recebeu um trecho de código JavaScript que deveria realizar uma análise complexa em strings, incluindo inversão de texto, contagem de vogais e busca case-insensitive por uma substring. No entanto, o código possui diversos bugs sutis que o impedem de funcionar corretamente ou de produzir os resultados esperados.\n\nSua tarefa é identificar e corrigir todos os erros lógicos e de sintaxe presentes no 'codigoSujo' para que ele execute conforme as especificações. Seu objetivo é fazer com que o 'codigoSujo' se comporte *exatamente* como o 'codigoLimpo' (gabarito) para todos os casos de teste.\n\n**Critérios para a correção:**\n1.  **Inversão de String:** Deve inverter a string de entrada completamente.\n2.  **Contagem de Vogais:** Deve contar todas as vogais (maiúsculas e minúsculas) na string de entrada, sem duplicidade.\n3.  **Busca de Substring:** Deve encontrar todas as ocorrências de uma substring dentro da string principal, de forma case-insensitive, e registrar suas posições iniciais. Deve lidar corretamente com substrings vazias ou ausentes.\n\nLembre-se de que a dificuldade é alta, e os erros podem ser bem discretos. Boa sorte!",
+    "codigoSujo": "function analisarTextoComplexo(texto, subBuscar) {\n    var resultado = {\n        textoOriginal: texto,\n        textoInvertido: \"\",\n        totalVogais: 0,\n        subStringEncontrada: false,\n        posicoesEncontradas: []\n    };\n\n    // 1. Inversão da string\n    for (var i = texto.length - 1; i >= 0; i++) {\n        resultado.textoInvertido += texto[i];\n    }\n\n    // 2. Contagem de vogais\n    var listaVogais = \"aeiouAEIOUa\";\n    for (var j = 0; j <= texto.length; j++) {\n        var caractereAtual = texto[j];\n        for (var k = 0; k < listaVogais.length; k++) {\n            if (caractereAtual === listaVogais[k]) {\n                resultado.totalVogais++;\n            }\n        }\n    }\n\n    // 3. Busca de substring\n    if (subBuscar) {\n        var textoParaBusca = \"\";\n        for (var l = 0; l < texto.length; l++) {\n            textoParaBusca += texto[l].toLowerCase();\n        }\n\n        var subBuscarParaBusca = subBuscar;\n        \n        var encontrou = false;\n        for (var n = 0; n < textoParaBusca.length; n++) {\n            var matchParcial = true;\n            for (var o = 0; o < subBuscarParaBusca.length - 1; o++) {\n                if (textoParaBusca[n + o] !== subBuscarParaBusca[o]) {\n                    matchParcial = false;\n                    break;\n                }\n            }\n            if (matchParcial) {\n                encontrou = true;\n                resultado.posicoesEncontradas.push(n);\n            }\n        }\n        resultado.subStringEncontrada = encontrou;\n    }\n\n    return resultado;\n}",
+    "codigoLimpo": "function analisarTextoComplexo(texto, subBuscar) {\n    var resultado = {\n        textoOriginal: texto,\n        textoInvertido: \"\",\n        totalVogais: 0,\n        subStringEncontrada: false,\n        posicoesEncontradas: []\n    };\n\n    // 1. Inverter a string\n    for (var i = texto.length - 1; i >= 0; i--) {\n        resultado.textoInvertido += texto[i];\n    }\n\n    // 2. Contar vogais (case-insensitive)\n    var vogaisPermitidas = \"aeiouAEIOU\";\n    for (var j = 0; j < texto.length; j++) {\n        var caractereAtual = texto[j];\n        for (var k = 0; k < vogaisPermitidas.length; k++) {\n            if (caractereAtual === vogaisPermitidas[k]) {\n                resultado.totalVogais++;\n                break; // Encontrou uma vogal, pode ir para o próximo caractere\n            }\n        }\n    }\n\n    // 3. Buscar substring (case-insensitive)\n    if (subBuscar !== undefined && subBuscar.length > 0) {\n        var textoParaBusca = \"\";\n        for (var l = 0; l < texto.length; l++) {\n            textoParaBusca += texto[l].toLowerCase();\n        }\n\n        var subBuscarParaBusca = \"\";\n        for (var m = 0; m < subBuscar.length; m++) {\n            subBuscarParaBusca += subBuscar[m].toLowerCase();\n        }\n        \n        var encontrou = false;\n        if (subBuscarParaBusca.length > 0) {\n            for (var n = 0; n <= textoParaBusca.length - subBuscarParaBusca.length; n++) { \n                var matchParcial = true;\n                for (var o = 0; o < subBuscarParaBusca.length; o++) {\n                    if (textoParaBusca[n + o] !== subBuscarParaBusca[o]) {\n                        matchParcial = false;\n                        break;\n                    }\n                }\n                if (matchParcial) {\n                    encontrou = true;\n                    resultado.posicoesEncontradas.push(n);\n                }\n            }\n        }\n        resultado.subStringEncontrada = encontrou;\n    }\n\n    return resultado;\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "analisarTextoComplexo",
+    "testes": [
+      {
+        "parametros": "\"Olá Mundo!\", \"mundo\"",
+        "saidaEsperada": {
+          "textoOriginal": "Olá Mundo!",
+          "textoInvertido": "!odnuM álO",
+          "totalVogais": 4,
+          "subStringEncontrada": true,
+          "posicoesEncontradas": [
+            4
+          ]
+        }
+      },
+      {
+        "parametros": "\"Desenvolvimento Web com JavaScript 2023\", \"javA\"",
+        "saidaEsperada": {
+          "textoOriginal": "Desenvolvimento Web com JavaScript 2023",
+          "textoInvertido": "3202 tpircSavaJ moc beW otneamivlovnesed",
+          "totalVogais": 11,
+          "subStringEncontrada": true,
+          "posicoesEncontradas": [
+            20
+          ]
+        }
+      },
+      {
+        "parametros": "\"Ana tem banana\", \"ana\"",
+        "saidaEsperada": {
+          "textoOriginal": "Ana tem banana",
+          "textoInvertido": "ananab met anA",
+          "totalVogais": 6,
+          "subStringEncontrada": true,
+          "posicoesEncontradas": [
+            0,
+            8
+          ]
+        }
+      },
+      {
+        "parametros": "\"Teste sem substring\", \"xyz\"",
+        "saidaEsperada": {
+          "textoOriginal": "Teste sem substring",
+          "textoInvertido": "gnirtsbus mes etseT",
+          "totalVogais": 5,
+          "subStringEncontrada": false,
+          "posicoesEncontradas": []
+        }
+      },
+      {
+        "parametros": "\"Hello World\", \"\"",
+        "saidaEsperada": {
+          "textoOriginal": "Hello World",
+          "textoInvertido": "dlroW olleH",
+          "totalVogais": 3,
+          "subStringEncontrada": false,
+          "posicoesEncontradas": []
+        }
+      },
+      {
+        "parametros": "\"\", \"abc\"",
+        "saidaEsperada": {
+          "textoOriginal": "",
+          "textoInvertido": "",
+          "totalVogais": 0,
+          "subStringEncontrada": false,
+          "posicoesEncontradas": []
+        }
+      }
+    ],
+    "id": 1777399156944
+  },
+  {
+    "titulo": "Caça aos Bugs em Análise de Strings Complexa",
+    "missao": "Você foi encarregado de revisar um módulo crítico para manipulação de strings. Este módulo deve ser capaz de inverter uma string, contar a ocorrência de um termo específico (case-insensitive e não-sobreposto) e contar o número total de vogais (também case-insensitive) em uma dada string. No entanto, o código atual apresenta diversos bugs lógicos e sintáticos sutis que o impedem de funcionar corretamente, apesar de não gerar erros de execução visíveis. Sua tarefa é identificar e corrigir todos os bugs para que o módulo retorne os resultados esperados conforme as especificações. Mantenha as declarações de função tradicionais e loops 'for' clássicos, conforme as boas práticas da empresa.",
+    "codigoSujo": "function processarStringAvancado(textoOriginal, termoBusca) {\n\n    function inverterTexto(texto) {\n        let inverso = \"\";\n        for (let i = 0; i < texto.length - 1; i++) {\n            inverso = texto[i] + inverso;\n        }\n        return inverso;\n    }\n\n    function contarOcorrencias(texto, termo) {\n        let contagem = 0;\n        let pos = 0;\n        const textoParaBusca = texto.toLowerCase();\n        while (true) {\n            pos = textoParaBusca.indexOf(termo, pos);\n            if (pos === -1) {\n                break;\n            }\n            contagem++;\n            pos++;\n        }\n        return contagem;\n    }\n\n    function contarVogais(texto) {\n        let contadorVogais = 0;\n        const vogaisPadrao = \"aeiou\";\n\n        for (let i = 0; i < texto.length; i++) {\n            if (vogaisPadrao.indexOf(texto[i]) !== -1) {\n                contadorVogais++;\n            }\n        }\n        return contadorVogais;\n    }\n\n    const resultadoInversao = inverterTexto(textoOriginal);\n    const resultadoOcorrencias = contarOcorrencias(textoOriginal, termoBusca);\n    const resultadoVogais = contarVogais(textoOriginal);\n\n    return {\n        textoInvertido: resultadoInversao,\n        ocorrenciasTermo: resultadoOcorrencias,\n        totalVogais: resultadoVogais\n    };\n}",
+    "codigoLimpo": "function processarStringAvancado(textoOriginal, termoBusca) {\n\n    function inverterTexto(texto) {\n        let inverso = \"\";\n        for (let i = 0; i < texto.length; i++) {\n            inverso = texto[i] + inverso;\n        }\n        return inverso;\n    }\n\n    function contarOcorrencias(texto, termo) {\n        let contagem = 0;\n        let pos = 0;\n        const textoParaBusca = texto.toLowerCase();\n        const termoParaBusca = termo.toLowerCase();\n        while (true) {\n            pos = textoParaBusca.indexOf(termoParaBusca, pos);\n            if (pos === -1) {\n                break;\n            }\n            contagem++;\n            pos += termoParaBusca.length;\n        }\n        return contagem;\n    }\n\n    function contarVogais(texto) {\n        let contadorVogais = 0;\n        const vogaisPadrao = \"aeiou\";\n\n        for (let i = 0; i < texto.length; i++) {\n            if (vogaisPadrao.indexOf(texto[i].toLowerCase()) !== -1) {\n                contadorVogais++;\n            }\n        }\n        return contadorVogais;\n    }\n\n    const resultadoInversao = inverterTexto(textoOriginal);\n    const resultadoOcorrencias = contarOcorrencias(textoOriginal, termoBusca);\n    const resultadoVogais = contarVogais(textoOriginal);\n\n    return {\n        textoInvertido: resultadoInversao,\n        ocorrenciasTermo: resultadoOcorrencias,\n        totalVogais: resultadoVogais\n    };\n}",
+    "tipo": "correcao",
+    "dificuldade": 5,
+    "nomeDaFuncao": "processarStringAvancado",
+    "testes": [
+      {
+        "parametros": "\"Exemplo Simples\", \"E\"",
+        "saidaEsperada": {
+          "textoInvertido": "selpmiS olpmexE",
+          "ocorrenciasTermo": 3,
+          "totalVogais": 5
+        }
+      },
+      {
+        "parametros": "\"Banana\", \"ana\"",
+        "saidaEsperada": {
+          "textoInvertido": "ananaB",
+          "ocorrenciasTermo": 1,
+          "totalVogais": 3
+        }
+      },
+      {
+        "parametros": "\"ALGORITMOS\", \"O\"",
+        "saidaEsperada": {
+          "textoInvertido": "SOMTIROGLA",
+          "ocorrenciasTermo": 2,
+          "totalVogais": 4
+        }
+      },
+      {
+        "parametros": "\"A linguagem JavaScript é poderosa.\", \"a\"",
+        "saidaEsperada": {
+          "textoInvertido": ".asoredop é tpircSavaJ megaugnil A",
+          "ocorrenciasTermo": 4,
+          "totalVogais": 13
+        }
+      }
+    ],
+    "id": 1777399279526
   }
 ]

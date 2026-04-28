@@ -172,13 +172,21 @@ async function enviarCodigo() {
         return;
     }
 
-    const res = await fetch("/api/avaliar", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({idQuestao: questaoAtual.id, codigo: editor.getValue()})
-    });
-    const dados = await res.json();
     const terminal = document.getElementById("terminal-aluno");
+
+    let res, dados;
+    try {
+        res = await fetch("/api/avaliar", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({idQuestao: questaoAtual.id, codigo: editor.getValue()})
+        });
+        if (!res.ok) throw new Error("Resposta inesperada do servidor: " + res.status);
+        dados = await res.json();
+    } catch (erro) {
+        terminal.innerText = "⚠️ Erro de conexão com o servidor. Verifique sua rede e tente novamente.";
+        return;
+    }
 
     if(dados.sucesso) {
         if(modoAtual === 'livre') {
