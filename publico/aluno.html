@@ -6,22 +6,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <link rel="stylesheet" href="estilo.css">
-    <style>
-        .abas-modo { display: flex; gap: 5px; margin-bottom: 20px; }
-        .aba { flex: 1; padding: 12px; text-align: center; background: #eee; cursor: pointer; border-radius: 5px; font-weight: bold; border: 1px solid #ccc; transition: 0.3s; }
-        .aba.ativa { background: var(--if-verde); color: white; border-color: var(--if-verde-escuro); }
-        .painel-config { display: none; background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 20px; }
-        .painel-config.ativo { display: block; }
-        .acoes-editor { display: flex; gap: 10px; margin-top: 15px; }
-        .acoes-editor button { flex: 1; font-size: 1.1em; padding: 12px; font-weight: bold; }
-        .modal-insignia { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; }
-        .conteudo-insignia { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 500px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .icone-insignia { font-size: 100px; margin-bottom: 20px; }
-    </style>
 </head>
 <body>
     <nav class="barra-admin">
-        <img src="logo_if.png" alt="Logo IF Sudeste MG" style="max-width: 250px;">
+        <img src="logo_if.png" alt="Logo IF Sudeste MG" class="logo-topo">
         <h1>Laboratório de Programação</h1>
         <div class="acoes-nav">
             <button onclick="irParaModoProfessor()" class="btn-modo-aluno">Modo Professor 👨‍🏫</button>
@@ -29,7 +17,7 @@
         </div>
     </nav>
 
-    <main class="container-admin" style="display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 20px;">
+    <main class="container-admin aluno-main-grid">
         
         <aside class="painel-jogador">
             <div class="abas-modo">
@@ -39,69 +27,69 @@
 
             <div id="config-livre" class="painel-config ativo">
                 <label>Tipo de Exercício:</label>
-                <select id="tipo-livre" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+                <select id="tipo-livre" class="campo-full">
                     <option value="correcao">Correção de Bugs</option>
                     <option value="refatoracao">Refatoração</option>
                 </select>
                 <label>Dificuldade:</label>
-                <select id="dif-livre" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+                <select id="dif-livre" class="campo-full">
                     <option value="1">Nível 1 (Básico)</option>
                     <option value="2">Nível 2</option>
                     <option value="3">Nível 3</option>
                     <option value="4">Nível 4</option>
                     <option value="5">Nível 5 (Avançado)</option>
                 </select>
-                <button onclick="buscarQuestaoLivre()" style="width: 100%;" class="btn-salvar">Buscar Novo Desafio</button>
+                <button onclick="buscarQuestaoLivre()" class="btn-salvar btn-full">Buscar Novo Desafio</button>
             </div>
 
             <div id="config-comp" class="painel-config">
-                <p style="font-size: 0.9em; color: #555; margin-bottom: 15px;">Foco: Correção de Bugs. Sem dicas ou gabarito.</p>
+                <p class="texto-destaque-config">Foco: Correção de Bugs. Sem dicas ou gabarito.</p>
                 <label>Nº de Questões:</label>
-                <input type="number" id="comp-qtd" value="3" min="1" max="10" style="width: 100%; margin-bottom: 12px; padding: 8px;">
+                <input type="number" id="comp-qtd" value="3" min="1" max="10" class="campo-full">
                 
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <div style="flex: 1;">
+                <div class="linha-campos-competicao">
+                    <div class="coluna-campo-competicao">
                         <label>Dificuldade Mín:</label>
-                        <input type="number" id="comp-min" value="1" min="1" max="5" style="width: 100%; padding: 8px;">
+                        <input type="number" id="comp-min" value="1" min="1" max="5" class="campo-full sem-margem-inferior">
                     </div>
-                    <div style="flex: 1;">
+                    <div class="coluna-campo-competicao">
                         <label>Dificuldade Máx:</label>
-                        <input type="number" id="comp-max" value="5" min="1" max="5" style="width: 100%; padding: 8px;">
+                        <input type="number" id="comp-max" value="5" min="1" max="5" class="campo-full sem-margem-inferior">
                     </div>
                 </div>
                 
-                <button onclick="iniciarCompeticao()" style="width: 100%; background-color: var(--if-verde-escuro);" class="btn-salvar">Iniciar Maratona</button>
+                <button onclick="iniciarCompeticao()" class="btn-salvar btn-full btn-iniciar-maratona">Iniciar Maratona</button>
             </div>
 
             <hr>
 
-            <div class="status-jogador" style="text-align: center; background: #fff; padding: 20px; border-radius: 8px; border: 2px solid var(--if-verde);">
-                <h3 id="display-modo" style="margin-top: 0; color: var(--if-verde-escuro);">Treinamento Livre</h3>
+            <div class="status-jogador status-jogador-card">
+                <h3 id="display-modo" class="titulo-display-modo">Treinamento Livre</h3>
                 
-                <div id="display-competitivo" style="display: none;">
-                    <p style="font-size: 1.1em; margin: 10px 0;">Questão: <strong id="comp-progresso">0/0</strong></p>
-                    <p style="font-size: 1.1em; margin: 10px 0;">Nível: <strong id="comp-nivel" style="color: #3498db;">-</strong></p>
-                    <p style="font-size: 1.4em; margin: 10px 0;">Pontuação: <strong id="comp-pontos" style="color: #f39c12;">0</strong></p>
-                    <p style="font-size: 0.9em; color: #666;">Falhas atuais: <span id="comp-tentativas">0</span></p>
+                <div id="display-competitivo" class="display-competitivo-escondido">
+                    <p class="texto-info-competicao">Questão: <strong id="comp-progresso">0/0</strong></p>
+                    <p class="texto-info-competicao">Nível: <strong id="comp-nivel" class="nivel-competicao">-</strong></p>
+                    <p class="texto-pontos-competicao">Pontuação: <strong id="comp-pontos" class="pontos-competicao">0</strong></p>
+                    <p class="texto-falhas-competicao">Falhas atuais: <span id="comp-tentativas">0</span></p>
                 </div>
             </div>
         </aside>
 
         <section class="area-trabalho">
-            <div class="detalhes-missao" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid var(--if-verde);">
-                <h2 id="titulo-missao" style="margin-top: 0;">Bem-vindo ao Lab!</h2>
-                <p id="missao-texto" style="font-size: 1.1em; color: #333;">Selecione um modo ao lado para carregar sua primeira missão.</p>
+            <div class="detalhes-missao detalhes-missao-card">
+                <h2 id="titulo-missao" class="titulo-missao">Bem-vindo ao Lab!</h2>
+                <p id="missao-texto" class="texto-missao">Selecione um modo ao lado para carregar sua primeira missão.</p>
             </div>
 
             <textarea id="editor-codigo"></textarea>
             
             <div class="acoes-editor">
-                <button id="btn-gabarito" onclick="mostrarGabarito()" class="btn-sair" style="background-color: #34495e;">Ver Gabarito 👁️</button>
-                <button id="btn-pular" onclick="pularQuestao()" class="btn-sair" style="background-color: #c0392b; display: none;">Pular Questão ⏭️</button>
-                <button id="btn-avaliar" onclick="enviarCodigo()" style="background-color: var(--if-verde);">Verificar Resposta ▶️</button>
+                <button id="btn-gabarito" onclick="mostrarGabarito()" class="btn-sair btn-gabarito">Ver Gabarito 👁️</button>
+                <button id="btn-pular" onclick="pularQuestao()" class="btn-sair btn-pular">Pular Questão ⏭️</button>
+                <button id="btn-avaliar" onclick="enviarCodigo()" class="btn-avaliar">Verificar Resposta ▶️</button>
             </div>
 
-            <div id="terminal-aluno" class="terminal" style="margin-top: 20px; min-height: 120px;">
+            <div id="terminal-aluno" class="terminal terminal-aluno">
                 O terminal exibirá o resultado dos testes aqui...
             </div>
         </section>
@@ -111,8 +99,8 @@
         <div class="conteudo-insignia">
             <div id="insignia-icone" class="icone-insignia">🏆</div>
             <h1 id="insignia-titulo">Incrível!</h1>
-            <p id="insignia-desc" style="font-size: 1.3em; margin: 25px 0; color: #444;"></p>
-            <button onclick="fecharModalResultado()" class="btn-salvar" style="padding: 15px 40px; font-size: 1.1em;">Continuar Treinando</button>
+            <p id="insignia-desc" class="descricao-insignia"></p>
+            <button onclick="fecharModalResultado()" class="btn-salvar btn-continuar">Continuar Treinando</button>
         </div>
     </div>
 

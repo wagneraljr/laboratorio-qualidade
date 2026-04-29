@@ -1,36 +1,86 @@
-/* =========================================================
-   PALETA E VARIÁVEIS REAJUSTADAS
-========================================================= */
+/* =============================================================================
+   estilo.css — Folha de Estilos Global da Plataforma
+   =============================================================================
+   Este arquivo define a aparência de todas as páginas do sistema.
+   Está organizado em camadas, do mais geral para o mais específico:
+
+     1. Fonte externa (importação do Google Fonts)
+     2. Variáveis globais (paleta de cores e tokens de design)
+     3. Reset e tipografia base
+     4. Componentes de navegação
+     5. Botões
+     6. Inputs e formulários
+     7. Layouts e containers
+     8. Componentes de código e gabarito
+     9. Componentes do painel do aluno
+    10. Paginação
+    11. Modais
+    12. Terminal
+    13. Página de login
+    14. Página sandbox
+    15. Página do aluno
+    16. Animações
+
+   CONCEITO: Variáveis CSS (Custom Properties)
+   As variáveis declaradas em :root funcionam como constantes de design.
+   Trocar a cor principal do sistema é editar uma única linha — todos os
+   componentes que usam var(--if-verde) atualizam automaticamente.
+   ============================================================================= */
+
+
+/* =============================================================================
+   1. FONTE EXTERNA
+   ============================================================================= */
+
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
 
+
+/* =============================================================================
+   2. VARIÁVEIS GLOBAIS (Design Tokens)
+   =============================================================================
+   Centralizamos aqui todos os valores que se repetem pelo sistema.
+   Alterar qualquer variável abaixo propaga a mudança para toda a interface.
+   ============================================================================= */
+
 :root {
-    --if-verde: #2F9E41;
-    --if-verde-escuro: #1D6B2A;
-    --if-vermelho: #CD191E;
+    /* Paleta de cores da identidade visual do IF Sudeste MG */
+    --if-verde:           #2F9E41;
+    --if-verde-escuro:    #1D6B2A;
+    --if-vermelho:        #CD191E;
     --if-vermelho-escuro: #A11115;
-    
-    --cor-fundo: #F8F9FA;
-    --cor-texto: #2D3436;
+
+    /* Cores semânticas de fundo e texto */
+    --cor-fundo:      #F8F9FA;
+    --cor-texto:      #2D3436;
     --cor-texto-claro: #636E72;
     --cor-fundo-card: #FFFFFF;
-    
-    --borda: 1px solid #DFE6E9;
-    --sombra: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    /* Tokens de borda, sombra e arredondamento */
+    --borda:      1px solid #DFE6E9;
+    --sombra:     0 2px 4px rgba(0, 0, 0, 0.05);
     --raio-borda: 6px;
 }
 
-/* =========================================================
-   RESETS E TIPOGRAFIA REDUZIDA
-========================================================= */
+
+/* =============================================================================
+   3. RESET E TIPOGRAFIA BASE
+   =============================================================================
+   O "reset" remove estilos padrão inconsistentes entre navegadores,
+   garantindo que a interface se comporte de forma previsível em todos eles.
+   ============================================================================= */
+
+/* Zera margens, paddings e padroniza o modelo de caixa em todos os elementos */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Inclui borda e padding no cálculo da largura/altura */
     font-family: 'Open Sans', sans-serif;
 }
 
+/* Base de 14px reduz a escala tipográfica proporcionalmente em toda a página.
+   rem (root em) é relativo a este valor — 1rem = 14px, 1.4rem = 19.6px, etc. */
 html {
-    font-size: 14px; /* Redução da base da fonte */
+    font-size: 14px;
 }
 
 body {
@@ -39,58 +89,71 @@ body {
     line-height: 1.5;
 }
 
+/* Hierarquia tipográfica: tamanhos decrescentes com cor da identidade visual */
 h1 { font-size: 1.6rem; color: var(--if-verde); }
 h2 { font-size: 1.4rem; color: var(--if-verde); }
 h3 { font-size: 1.2rem; color: var(--if-verde); }
 h4 { font-size: 1.1rem; }
 
-/* =========================================================
-   NAVEGAÇÃO
-========================================================= */
+
+/* =============================================================================
+   4. NAVEGAÇÃO
+   ============================================================================= */
+
+/* Barra superior presente em todas as páginas internas */
 .barra-admin {
-    background-color: #FFFFFF;
-    border-top: 3px solid var(--if-verde);
+    background-color: var(--cor-fundo-card);
+    border-top:    3px solid var(--if-verde); /* Faixa colorida no topo — identidade visual */
     border-bottom: var(--borda);
     padding: 10px 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Logo à esquerda, botões à direita */
     align-items: center;
     box-shadow: var(--sombra);
 }
 
-/* =========================================================
-   BOTÕES REAJUSTADOS (MENORES)
-========================================================= */
+
+/* =============================================================================
+   5. BOTÕES
+   ============================================================================= */
+
+/* Estilo base aplicado a todos os botões da plataforma */
 button {
     background-color: var(--if-verde);
     color: white;
     border: none;
-    padding: 8px 16px; /* Padding reduzido */
+    padding: 8px 16px;
     border-radius: var(--raio-borda);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease; /* Animação suave ao passar o mouse */
 }
 
 button:hover {
     background-color: var(--if-verde-escuro);
-    transform: translateY(-1px);
+    transform: translateY(-1px); /* Leve elevação ao hover — feedback visual */
 }
 
+/* Variantes de botão: herdam o estilo base e sobrescrevem apenas a cor */
 .btn-sair { background-color: var(--if-vermelho); }
 .btn-sair:hover { background-color: var(--if-vermelho-escuro); }
 
+/* Botão "fantasma": contorno sem preenchimento */
 .btn-modo-aluno {
     background-color: transparent;
     color: var(--if-verde);
     border: 1.5px solid var(--if-verde);
 }
 
-/* =========================================================
-   INPUTS E FORMULÁRIOS
-========================================================= */
-select, input {
+
+/* =============================================================================
+   6. INPUTS E FORMULÁRIOS
+   ============================================================================= */
+
+/* Estilo base para campos de texto e selects soltos (fora de .item-controle) */
+select,
+input {
     padding: 8px;
     margin-top: 4px;
     margin-bottom: 12px;
@@ -99,102 +162,10 @@ select, input {
     font-size: 0.9rem;
 }
 
-/* =========================================================
-   LAYOUTS
-========================================================= */
-.container-admin {
-    max-width: 1100px;
-    margin: 20px auto;
-    padding: 0 15px;
-}
-
-.card-desafio, .painel-jogador, .portal-container {
-    background-color: var(--cor-fundo-card);
-    padding: 20px;
-    border-radius: var(--raio-borda);
-    box-shadow: var(--sombra);
-    border: var(--borda);
-}
-
-/* =========================================================
-   ÁREA DE CÓDIGO E GABARITO (MELHORIA DE CONTRASTE)
-========================================================= */
-.gabarito-area {
-    background-color: #F1F2F6 !important; /* Fundo cinza muito claro */
-    border-left: 4px solid var(--if-verde);
-    padding: 15px !important;
-    color: #2F3542 !important; /* Texto quase preto para leitura */
-}
-
-.gabarito-area h5 {
-    margin-top: 10px;
-    color: var(--if-verde-escuro);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.gabarito-area pre {
-    background-color: #FFFFFF; /* Fundo branco para o código no gabarito */
-    color: #2D3436;
-    border: 1px solid #D1D8E0;
-    padding: 10px;
-    border-radius: 4px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.85rem;
-    overflow-x: auto;
-}
-
-.codigo-gabarito code {
-    color: #2D3436; 
-    font-weight: 600;
-}
-
-/* =========================================================
-   COMPONENTES DO ALUNO
-========================================================= */
-.status-jogador {
-    margin-top: 15px;
-    padding: 10px;
-    background: #E8F5E9;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-}
-
-.CodeMirror {
-    height: 400px !important; /* Altura reajustada */
-    border: var(--borda);
-    font-size: 14px;
-}
-
-/* Paginação */
-.botoes-paginacao { display: flex; gap: 5px; justify-content: center; margin-top: 20px; }
-.btn-pag { background: #eee; color: #333; border: 1px solid #ccc; padding: 5px 10px; }
-.btn-pag-ativo { background: var(--if-verde); color: white; padding: 5px 10px; font-weight: bold; }
-
-/* Modal */
-.modal { 
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; 
-}
-.modal-conteudo { 
-    background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 600px; 
-    max-height: 90vh; overflow-y: auto; 
-}
-.code-area { font-family: monospace; font-size: 12px; background: #f8f9fa; }
-
-.controles-geracao {
-    display: flex;
-    align-items: flex-end; /* Alinha pela base */
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-}
-
+/* Grupo de label + input/select usado nos formulários de controle */
 .item-controle {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Empilha label acima do campo */
 }
 
 .item-controle label {
@@ -204,16 +175,26 @@ select, input {
     color: var(--if-verde-escuro);
 }
 
-/* Remove a margem padrão e trava a altura das caixas */
-.item-controle select, 
+/* Dentro de .item-controle, zeramos as margens e fixamos altura para alinhar
+   os campos com o botão ao lado quando estão no mesmo flex container */
+.item-controle select,
 .item-controle input {
-    margin-bottom: 0 !important; 
     margin-top: 0 !important;
+    margin-bottom: 0 !important;
     height: 38px;
     box-sizing: border-box;
 }
 
-/* Trava a altura do botão para bater com as caixas */
+/* Linha de controles alinhados horizontalmente (ex: filtros do painel admin) */
+.controles-geracao {
+    display: flex;
+    align-items: flex-end; /* Alinha todos pela base, independente da altura */
+    gap: 15px;
+    flex-wrap: wrap;       /* Quebra linha em telas estreitas */
+    margin-bottom: 15px;
+}
+
+/* O botão dentro de .controles-geracao precisa da mesma altura dos campos */
 .controles-geracao button {
     height: 38px;
     margin-bottom: 0;
@@ -222,28 +203,585 @@ select, input {
     justify-content: center;
 }
 
+/* Área de texto usada para edição de código nos formulários do admin */
+.code-area {
+    font-family: monospace;
+    font-size: 12px;
+    background: #f8f9fa;
+}
+
+
+/* =============================================================================
+   7. LAYOUTS E CONTAINERS
+   ============================================================================= */
+
+/* Container central que limita a largura do conteúdo nas páginas internas */
+.container-admin {
+    max-width: 1100px;
+    margin: 20px auto; /* Centraliza horizontalmente com margens iguais */
+    padding: 0 15px;
+}
+
+/* Container da página inicial: ocupa a tela inteira e centraliza o conteúdo */
+.portal-wrapper {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+    min-height: 100vh;       /* Garante que o wrapper ocupe 100% da altura da tela */
+}
+
+/* Estilo compartilhado por cards de questão, painel do jogador e portal inicial */
+.card-desafio,
+.painel-jogador,
+.portal-container {
+    background-color: var(--cor-fundo-card);
+    padding: 20px;
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra);
+    border: var(--borda);
+}
+
+
+/* =============================================================================
+   8. COMPONENTES DE CÓDIGO E GABARITO
+   ============================================================================= */
+
+/* Área de exibição do gabarito de uma questão */
+.gabarito-area {
+    background-color: #F1F2F6 !important;
+    border-left: 4px solid var(--if-verde);
+    padding: 15px !important;
+    color: #2F3542 !important;
+}
+
+.gabarito-area h5 {
+    margin-top: 10px;
+    color: var(--if-verde-escuro);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+/* Bloco de código dentro da área de gabarito */
+.gabarito-area pre {
+    background-color: var(--cor-fundo-card);
+    color: var(--cor-texto);
+    border: 1px solid #D1D8E0;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    overflow-x: auto; /* Scroll horizontal para linhas longas */
+}
+
+.codigo-gabarito code {
+    color: var(--cor-texto);
+    font-weight: 600;
+}
+
+/* Editor CodeMirror embutido nas páginas do aluno e sandbox */
+.CodeMirror {
+    height: 400px !important;
+    border: var(--borda);
+    font-size: 14px;
+}
+
+
+/* =============================================================================
+   9. COMPONENTES DO PAINEL DO ALUNO
+   ============================================================================= */
+
+/* Faixa de status do jogador (pontos, modo, progresso) */
+.status-jogador {
+    margin-top: 15px;
+    padding: 10px;
+    background: #E8F5E9; /* Verde bem claro — reforça identidade sem pesar */
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+
+/* =============================================================================
+   10. PAGINAÇÃO
+   ============================================================================= */
+
+/* Container dos botões de página */
+.botoes-paginacao {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Botão de página inativa */
+.btn-pag {
+    background: #eee;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+}
+
+/* Botão da página atual (ativa) */
+.btn-pag-ativo {
+    background: var(--if-verde);
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+
+
+/* =============================================================================
+   11. MODAIS
+   ============================================================================= */
+
+/* Overlay escuro que cobre toda a tela por trás do modal */
+.modal {
+    display: none; /* Escondido por padrão — JS define display: flex para abrir */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000; /* Fica acima de todos os outros elementos */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Caixa branca centralizada dentro do overlay */
+.modal-conteudo {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto; /* Scroll interno se o conteúdo for muito longo */
+}
+
+
+/* =============================================================================
+   12. TERMINAL
+   ============================================================================= */
+
+/* Área de saída de texto estilo terminal de programação */
 .terminal {
     background: #1e1e1e;
-    color: #4af626;
+    color: #4af626;           /* Verde fosforescente — visual de terminal clássico */
     padding: 15px;
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
     min-height: 100px;
-    white-space: pre-wrap; /* Mantém as quebras de linha que enviamos do servidor */
+    white-space: pre-wrap;    /* Preserva quebras de linha enviadas pelo servidor */
     border: 1px solid #333;
 }
 
+/* Variante de erro: muda a cor do texto e da borda para vermelho */
 .terminal.erro {
     color: #ff5555;
     border-color: #ff5555;
 }
 
-/* Efeito para o título da Liga Elite */
+
+/* =============================================================================
+   13. PÁGINA DE LOGIN
+   ============================================================================= */
+
+/* Centraliza o card de login no meio da tela */
+body.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: #f0f2f5;
+}
+
+/* Card principal com foco visual na autenticação */
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Campos da tela de login ocupam toda a largura do card */
+body.login-page input {
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+/* Botão primário de acesso */
+.btn-entrar {
+    width: 100%;
+    padding: 12px;
+    background: var(--if-verde);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: 0.3s;
+}
+
+.btn-entrar:hover {
+    background: var(--if-verde-escuro);
+}
+
+/* Link de retorno para o modo aluno */
+.btn-voltar {
+    display: block;
+    margin-top: 20px;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.btn-voltar:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+/* Ajustes visuais de marca e textos do topo do card */
+.logo-login {
+    max-width: 250px;
+    margin-bottom: 20px;
+}
+
+.titulo-login {
+    color: #333;
+}
+
+.subtitulo-login {
+    color: #666;
+}
+
+
+/* =============================================================================
+   14. PÁGINA SANDBOX
+   ============================================================================= */
+
+/* Agrupa ações do topo (salvar e fechar) em linha */
+.acoes-nav {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Alarga a área útil do laboratório em relação ao layout padrão */
+.sandbox-main {
+    max-width: 1400px;
+}
+
+/* Cabeçalho da missão centralizado acima dos editores */
+.sandbox-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sandbox-missao-texto {
+    font-size: 1.1rem;
+    color: var(--cor-texto-claro);
+    margin-top: 10px;
+}
+
+/* Duas colunas: código original e gabarito */
+.sandbox-grid {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+/* Cartões que envolvem cada editor de código */
+.coluna-editor {
+    flex: 1;
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+    border: var(--borda);
+}
+
+/* Sandbox usa altura maior no CodeMirror para facilitar comparação */
+.sandbox-main .CodeMirror {
+    height: 500px !important;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.sandbox-titulo-original {
+    color: var(--if-vermelho);
+}
+
+.sandbox-titulo-gabarito {
+    color: var(--if-verde);
+}
+
+/* Botões de execução ocupam largura total da coluna */
+.btn-teste {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.btn-teste-logica {
+    background-color: #333;
+}
+
+/* Terminal com mais altura e rolagem no contexto do laboratório */
+.sandbox-main .terminal {
+    min-height: 120px;
+    margin-top: 15px;
+    overflow-y: auto;
+}
+
+
+/* =============================================================================
+   15. PÁGINA DO ALUNO
+   ============================================================================= */
+
+/* Logo do topo com largura controlada para manter proporção */
+.logo-topo {
+    max-width: 250px;
+}
+
+/* Define layout em duas áreas: painel lateral e editor */
+.aluno-main-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Abas de alternância entre modos livre e competitivo */
+.abas-modo {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.aba {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    background: #eee;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    transition: 0.3s;
+}
+
+.aba.ativa {
+    background: var(--if-verde);
+    color: white;
+    border-color: var(--if-verde-escuro);
+}
+
+/* Painéis de configuração alternados por classe ativa */
+.painel-config {
+    display: none;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.painel-config.ativo {
+    display: block;
+}
+
+/* Classes utilitárias para campos e botões de largura total */
+.campo-full {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 8px;
+}
+
+.sem-margem-inferior {
+    margin-bottom: 0;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.texto-destaque-config {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Linha com duas colunas para faixa de dificuldade da competição */
+.linha-campos-competicao {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.coluna-campo-competicao {
+    flex: 1;
+}
+
+.btn-iniciar-maratona {
+    background-color: var(--if-verde-escuro);
+}
+
+/* Card de status com foco nos indicadores do aluno */
+.status-jogador-card {
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid var(--if-verde);
+    display: block;
+}
+
+.titulo-display-modo {
+    margin-top: 0;
+    color: var(--if-verde-escuro);
+}
+
+.display-competitivo-escondido {
+    display: none;
+}
+
+.texto-info-competicao {
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+.nivel-competicao {
+    color: #3498db;
+}
+
+.texto-pontos-competicao {
+    font-size: 1.4em;
+    margin: 10px 0;
+}
+
+.pontos-competicao {
+    color: #f39c12;
+}
+
+.texto-falhas-competicao {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Bloco da missão atual destacado à esquerda por cor da identidade */
+.detalhes-missao-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 5px solid var(--if-verde);
+}
+
+.titulo-missao {
+    margin-top: 0;
+}
+
+.texto-missao {
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Linha de ações principais do editor */
+.acoes-editor {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.acoes-editor button {
+    flex: 1;
+    font-size: 1.1em;
+    padding: 12px;
+    font-weight: bold;
+}
+
+.btn-gabarito {
+    background-color: #34495e;
+}
+
+.btn-pular {
+    background-color: #c0392b;
+    display: none;
+}
+
+.btn-avaliar {
+    background-color: var(--if-verde);
+}
+
+.terminal-aluno {
+    margin-top: 20px;
+    min-height: 120px;
+}
+
+/* Modal de conquista exibido acima de toda a interface */
+.modal-insignia {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Conteúdo interno do modal de recompensa */
+.conteudo-insignia {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.icone-insignia {
+    font-size: 100px;
+    margin-bottom: 20px;
+}
+
+.descricao-insignia {
+    font-size: 1.3em;
+    margin: 25px 0;
+    color: #444;
+}
+
+.btn-continuar {
+    padding: 15px 40px;
+    font-size: 1.1em;
+}
+
+
+/* =============================================================================
+   16. ANIMAÇÕES
+   ============================================================================= */
+
+/* Efeito de brilho pulsante usado no título da Liga Elite */
 .liga-elite-anim {
     animation: glow 1.5s infinite alternate;
 }
 
 @keyframes glow {
     from { text-shadow: 0 0 5px #fff, 0 0 10px #8e44ad; }
-    to { text-shadow: 0 0 10px #fff, 0 0 20px #9b59b6; }
+    to   { text-shadow: 0 0 10px #fff, 0 0 20px #9b59b6; }
 }

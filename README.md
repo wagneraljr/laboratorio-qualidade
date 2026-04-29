@@ -1,145 +1,137 @@
 # Laboratório de Qualidade de Software
 
-Projeto desenvolvido para a disciplina **Qualidade e Teste de Software** — IF Sudeste MG, Campus Juiz de Fora.
+Projeto didático da disciplina Qualidade e Teste de Software, do IF Sudeste MG (Campus Juiz de Fora).
 
-Este laboratório fornece uma plataforma educativa onde um servidor gera automaticamente trechos de código (com bugs ou que precisam de refatoração) usando uma API de IA. Os alunos acessam esses desafios via interface web, implementam correções ou refatorações e submetem suas soluções para avaliação automática.
+A plataforma oferece um laboratório completo para:
+1. Geração de desafios de programação via IA.
+2. Resolução dos desafios pelos alunos em editor web.
+3. Avaliação automática com foco em lógica e qualidade de código.
 
-**Principais objetivos**
+## Visão Geral
 
-- Proporcionar exercícios práticos de correção de bugs e refatoração.
-- Permitir avaliação automatizada de soluções (funcionalidade + qualidade de código).
-- Apoiar atividades práticas em sala e trabalhos dirigidos.
+O projeto possui dois perfis principais:
+1. Professor: autentica no painel administrativo, gera desafios, edita banco de questões e calibra exercícios no sandbox.
+2. Aluno: seleciona modo de treino, resolve desafios no editor e recebe feedback automático.
 
-**Visão geral do fluxo**
+Fluxo simplificado:
+1. Professor acessa a área administrativa e autentica com senha.
+2. O servidor pode gerar novas questões usando Google Gemini.
+3. As questões ficam no banco local em JSON.
+4. O aluno recebe uma missão, envia o código e o avaliador executa testes.
 
-1. O professor autentica-se no painel (interface `publico/admin.html`) e solicita geração de desafios.
-2. O backend (`servidor/geradorIA.js`) consulta uma API generativa (Gemini) para compor exercícios em JavaScript e salva as questões em `servidor/bancoQuestoes.json`.
-3. O aluno acessa `publico/aluno.html`, solicita uma missão por tipo/dificuldade e recebe um objeto com `codigoSujo`, `missao`, `testes` etc.
-4. O aluno edita o código no editor integrando (CodeMirror) e submete para avaliação. O endpoint `/api/avaliar` executa a avaliação por meio de `servidor/avaliadorCodigo.js`.
+## Organização Didática do Código
 
-Componentes importantes:
+O próprio código foi organizado para ser didático:
+1. Arquivos com seções claras e comentários explicativos por responsabilidade.
+2. Separação explícita entre regras de negócio, acesso a dados, autenticação e interface.
+3. Estrutura orientada a estudo, manutenção e evolução incremental em sala de aula.
 
-- `publico/` — frontend estático (páginas do professor e do aluno, scripts do cliente e estilos).
-- `servidor/` — Node/Express backend (app.js, geradorIA.js, avaliadorCodigo.js, bancoQuestoes.json).
-- `servidor/geradorIA.js` — gera desafios usando `process.env.GEMINI_API_KEY`.
-- `servidor/avaliadorCodigo.js` — motor de avaliação (execução em VM + análise AST com `acorn`).
+Exemplos dessa abordagem:
+1. servidor/app.js organiza o backend por seções (configuração, autenticação, rotas do aluno e rotas do professor).
+2. servidor/avaliadorCodigo.js separa análise estrutural (AST) e testes de execução (VM).
+3. Frontend em publico com lógica separada por tela (aluno, admin, sandbox) e CSS centralizado em estilo.css.
 
-Como a geração funciona
+## Estrutura do Projeto
 
-- O gerador constrói um prompt direcionado e pede à IA um JSON contendo campos como `titulo`, `missao`, `codigoSujo`, `codigoLimpo`, `tipo`, `dificuldade`, `nomeDaFuncao` e `testes`.
-- Regras importantes definidas no prompt (ex.: usar `function` tradicional, `for` clássico, manter o nome da função idêntico etc.).
-- O módulo realiza tentativas com backoff exponencial em caso de falha de comunicação com a API.
+1. publico: páginas HTML, scripts de interface e folha de estilos global.
+2. servidor: API Express, gerador de desafios por IA, avaliador e banco de questões.
+3. package.json: dependências Node.js.
+4. requisitos.txt: resumo de requisitos e instalação.
 
-Variáveis de ambiente esperadas
+## Stack e Dependências
 
-- `GEMINI_API_KEY` — chave de acesso à API generativa (usada por `servidor/geradorIA.js`).
-- `ADMIN_PASSWORD` — senha do painel administrativo (usada em `/api/login`).
+1. Node.js + Express.
+2. Cookie Parser para autenticação com cookie assinado.
+3. Dotenv para variáveis de ambiente.
+4. Google Generative AI para geração de exercícios.
+5. Acorn para análise sintática (AST) no avaliador.
+6. CodeMirror (via CDN) no frontend.
 
-OBS: O arquivo `.env` deve conter essas variáveis e NÃO deve ser enviado ao repositório (já incluído em `.gitignore`).
+## Atualização Importante de Configuração (.env)
 
-Instalação e execução (local)
+Houve mudança de configuração obrigatória no ambiente.
 
-1. Requisitos mínimos:
+Além de GEMINI_API_KEY e ADMIN_PASSWORD, agora o servidor exige também SESSION_SECRET.
 
-- Node.js (recomendado: versão LTS, ex.: 18.x ou superior)
-- npm (vem com o Node.js)
+Variáveis obrigatórias:
+1. GEMINI_API_KEY: chave de acesso da API generativa.
+2. ADMIN_PASSWORD: senha de autenticação da área administrativa.
+3. SESSION_SECRET: segredo usado para assinar o cookie de autenticação.
 
-2. Instalar dependências:
+Exemplo de .env:
 
-Você pode instalar as dependências listadas em `package.json` executando:
+```env
+GEMINI_API_KEY=sua_chave
+ADMIN_PASSWORD=sua_senha_admin
+SESSION_SECRET=um_segredo_longo_e_aleatorio
+```
+
+Observação:
+1. Se SESSION_SECRET não estiver definido, o servidor encerra a inicialização (fail fast) para evitar execução insegura.
+
+## Mudanças e Reforços de Segurança
+
+O projeto foi reforçado com práticas importantes de segurança:
+1. Cookie de autenticação assinado com SESSION_SECRET.
+2. Cookie com flags de proteção: httpOnly, secure e sameSite strict.
+3. Rotas administrativas protegidas por middleware de autenticação.
+4. Sanitização de dados enviados ao aluno em endpoint público (remoção de campos sensíveis como gabarito e nome da função no modo competitivo).
+5. Execução de código do aluno em sandbox VM com timeout para reduzir risco de travamento e abuso.
+6. Bloqueio de acesso visual imediato ao painel admin no frontend até validação de sessão.
+
+## Endpoints Principais
+
+Autenticação:
+1. POST /api/login
+2. POST /api/logout
+
+Aluno:
+1. POST /api/missao-aleatoria
+2. POST /api/avaliar
+3. GET /api/banco-publico
+
+Professor (protegido):
+1. GET /api/admin/questoes
+2. POST /api/admin/abastecer
+3. POST /api/admin/questoes/criar
+4. POST /api/admin/questoes/atualizar
+5. DELETE /api/admin/questoes/:id
+6. POST /api/admin/sandbox/testar
+
+## Instalação e Execução Local
+
+1. Instale Node.js LTS (18+ recomendado).
+2. Instale dependências:
 
 ```bash
-cd laboratorio-qualidade
 npm install
 ```
-3. Crie um arquivo `.env` na raiz do projeto com, pelo menos, as variáveis abaixo:
 
-```
-GEMINI_API_KEY=insira_sua_chave_aqui
-ADMIN_PASSWORD=uma_senha_segura
-```
-
+3. Crie o arquivo .env na raiz com as 3 variáveis obrigatórias.
 4. Inicie o servidor:
 
 ```bash
 node servidor/app.js
 ```
 
-5. Acesse as interfaces no browser:
+5. Acesse as interfaces:
+1. Área do aluno em http://localhost:3000/aluno.html
+2. Login do professor em http://localhost:3000/login.html
+3. Painel admin em http://localhost:3000/admin.html
 
-- Painel do professor: http://localhost:3000/admin.html
-- Área do aluno: http://localhost:3000/aluno.html
+## Notas Operacionais
 
-Uso — professor
+1. O banco de questões fica em servidor/bancoQuestoes.json.
+2. A geração em lote inclui espera entre requisições para reduzir chance de rate limit da API de IA.
+3. Para ambiente de produção, use HTTPS e segredos fortes no .env.
 
-- Autentique-se no painel administrativo usando a senha definida em `ADMIN_PASSWORD`.
-- Use a seção "Gerar Novos Desafios" para solicitar à IA a criação em lote de exercícios (escolha tipo, dificuldade e quantidade).
-- As questões geradas são salvas em `servidor/bancoQuestoes.json` e ficam imediatamente disponíveis para os alunos.
+## Contribuição
 
-Uso — aluno
+Contribuições são bem-vindas via pull request, com foco em:
+1. melhoria de cobertura de testes;
+2. robustez de validações;
+3. evolução da didática do laboratório.
 
-- No painel do aluno, escolha tipo (correção ou refatoração) e dificuldade e clique para buscar no banco.
-- Edite o `codigoSujo` no editor, teste e submeta. O servidor retorna um relatório com o número de testes aprovados e mensagens de erro.
-
-Formato de retorno da avaliação (`/api/avaliar`)
-
-O endpoint responde com um objeto similar a:
-
-```json
-{
-  "sucesso": true,
-  "totalAcertos": 3,
-  "totalTestes": 3,
-  "erros": []
-}
-```
-
-Ou em caso de falhas de refatoração/código limpo:
-
-```json
-{
-  "sucesso": false,
-  "totalAcertos": 0,
-  "totalTestes": 3,
-  "erros": ["Falha de Refatoração: Você não renomeou as variáveis..."]
-}
-```
-
-Edição manual do banco de questões
-
-- É possível adicionar/editar questões diretamente em `servidor/bancoQuestoes.json`. Cada entrada deve seguir o formato usado pelo gerador (veja `bancoQuestoes.json` de exemplo).
-
-Exemplo mínimo de objeto de questão:
-
-```json
-{
-  "titulo": "Título do desafio",
-  "missao": "Instruções claras para o aluno",
-  "codigoSujo": "function soma(a,b){ return a-b }",
-  "codigoLimpo": "function soma(a,b){ return a+b }",
-  "tipo": "correcao",
-  "dificuldade": 2,
-  "nomeDaFuncao": "soma",
-  "testes": [ { "parametros": "[1,2]", "saidaEsperada": 3 } ],
-  "id": 123456789
-}
-```
-
-Notas sobre avaliação automática
-
-- Para `tipo: "refatoracao"` o avaliador compara variáveis e executa um linter simples (complexidade, números "mágicos"). Se o aluno não alterar nomes de variáveis ou se o linter detectar problemas, a submissão é reprovada mesmo que os testes passem.
-- A execução de código é feita em uma VM com timeout para evitar travamentos.
-
-Boas práticas e segurança
-
-- Não compartilhe chaves privadas; guarde-as em `.env` (já listado em `.gitignore`).
-- Evite expor a chave da API em repositórios públicos.
-- Use limites/quotas na geração por IA e monitore custos (a geração em lote faz esperas entre requisições).
-
-Contribuição
-
-- Sugestões de melhoria e correções podem ser feitas via pull request. Antes de contribuir, execute `npm install` e teste localmente.
-
-Professor Wagner de Almeida Junior
-IF Sudeste MG — Campus Juiz de Fora
+Professor Wagner de Almeida Junior  
+IF Sudeste MG - Campus Juiz de Fora
 
