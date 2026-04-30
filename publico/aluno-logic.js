@@ -97,6 +97,10 @@ async function irParaModoProfessor() {
 // Toda atualização visual relacionada à troca de modo acontece aqui.
 // Se um terceiro modo for adicionado no futuro, há um único lugar para editar.
 function selecionarModo(modo) {
+    // Detecta a transição ANTES de atualizar modoAtual.
+    // Assim conseguimos executar lógica específica de "saída" do competitivo.
+    let saiuDoCompetitivo = (modoAtual === "competitivo" && modo !== "competitivo");
+
     modoAtual = modo;
 
     let ehLivre       = (modo === "livre");
@@ -119,7 +123,29 @@ function selecionarModo(modo) {
     document.getElementById("btn-gabarito").style.display = ehLivre       ? "block" : "none";
     document.getElementById("btn-pular").style.display    = ehCompetitivo ? "block" : "none";
 
+    // Ao sair do competitivo, limpamos toda a sessão da maratona.
+    // Isso evita reaproveitar playlist, índice e pontuação antigos ao voltar depois.
+    if (saiuDoCompetitivo) {
+        resetarEstadoCompetitivo();
+    }
+
     limparAmbiente();
+}
+
+// Reseta todas as variáveis e indicadores visuais da maratona competitiva.
+function resetarEstadoCompetitivo() {
+    playlistCompetitiva    = [];
+    indiceQuestaoAtual     = 0;
+    pontosTotais           = 0;
+    pontosMaximosPossiveis = 0;
+    tentativasNestaQuestao = 0;
+    questaoConcluida       = false;
+
+    // Também limpamos o painel para impedir "efeito fantasma" da sessão anterior.
+    document.getElementById("comp-progresso").innerText  = "0/0";
+    document.getElementById("comp-nivel").innerText      = "-";
+    document.getElementById("comp-pontos").innerText     = "0";
+    document.getElementById("comp-tentativas").innerText = "0";
 }
 
 // Reseta o editor e os textos para o estado inicial (sem questão carregada)
@@ -128,6 +154,8 @@ function limparAmbiente() {
     document.getElementById("titulo-missao").innerText  = "Aguardando...";
     document.getElementById("missao-texto").innerText   = "Configure e inicie um desafio.";
     document.getElementById("terminal-aluno").innerText = "Aguardando execução...";
+    document.getElementById("btn-avaliar").innerText             = "Verificar Resposta ▶️";
+    document.getElementById("btn-avaliar").style.backgroundColor = "var(--if-verde)";
     editor.setValue("");
 }
 

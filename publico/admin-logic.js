@@ -267,16 +267,19 @@ function renderizarLista() {
     container.innerHTML = ""; // Limpa os cards anteriores antes de redesenhar
 
     for (let item of itensDaPagina) {
-        let card = document.createElement("div");
+        let card;
 
         if (idSendoEditado === item.id) {
-            // Modo de edição: exibe o formulário inline no lugar do card
+            // Modo de edição: ainda usa innerHTML pois o conteúdo é HTML
+            // estático gerado por nós, não interpolando dados do banco sem escape.
+            // Os valores dos campos (codigoSujo, etc.) são inseridos via .value
+            // nos inputs — o navegador os trata como texto, não como HTML.
+            card = document.createElement("div");
             card.className = "card-desafio card-edicao-inline";
-            card.innerHTML  = montarHtmlCardEdicao(item);
+            card.innerHTML = montarHtmlCardEdicao(item);
         } else {
-            // Modo de visualização: exibe o card resumido com ações
-            card.className = "card-desafio card-desafio-horizontal";
-            card.innerHTML  = montarHtmlCardVisualizacao(item);
+            // Modo de visualização: usa a API do DOM para evitar XSS
+            card = montarCardVisualizacao(item);
         }
 
         container.appendChild(card);
@@ -343,29 +346,94 @@ function montarHtmlCardEdicao(item) {
     `;
 }
 
-// Gera o HTML do card em modo de VISUALIZAÇÃO (resumo com botões de ação)
-function montarHtmlCardVisualizacao(item) {
-    return `
-        <div class="info-principal" style="margin-bottom: 10px;">
-            <h4>
-                ${item.titulo}
-                <span class="badge" style="font-size: 0.8rem; background: #eee; padding: 3px 8px;">
-                    ${formatarTipo(item.tipo)} | Nível ${item.dificuldade}
-                </span>
-            </h4>
-        </div>
-        <div class="acoes-card" style="display: flex; gap: 5px;">
-            <button onclick="toggleGabarito('${item.id}')">Detalhes</button>
-            <button onclick="window.open('sandbox.html?id=${item.id}', '_blank')"
-                    class="btn-salvar" style="background-color: #f39c12;">🧪 Laboratório</button>
-            <button onclick="ativarEdicao(${item.id})" class="btn-modo-aluno">Editar ✏️</button>
-            <button onclick="excluirQuestao(${item.id})" class="btn-sair">Excluir 🗑️</button>
-        </div>
-        <div id="gabarito-${item.id}" class="gabarito-area" style="display: none; width: 100%; margin-top: 15px;">
-            <p><strong>Missão:</strong> ${item.missao}</p>
-            <pre class="codigo-gabarito"><code>${item.codigoLimpo}</code></pre>
-        </div>
-    `;
+// Gera o card em modo de VISUALIZAÇÃO usando a API do DOM (sem innerHTML).
+//
+// CONCEITO DE SEGURANÇA: XSS (Cross-Site Scripting)
+// Interpolar dados do banco diretamente em innerHTML é perigoso: se um título
+// contiver HTML como <script>alert(1)</script> ou <img onerror=...>, o navegador
+// o executa como código. Isso se chama XSS — Cross-Site Scripting.
+//
+// A solução é construir os elementos com document.createElement() e preencher
+// texto com .textContent (que NUNCA interpreta HTML) em vez de .innerHTML.
+// Só usamos innerHTML onde o conteúdo é HTML estático escrito por nós mesmos,
+// nunca para dados vindos do banco ou do usuário.
+function montarCardVisualizacao(item) {
+    // --- Cabeçalho: título + badge de tipo/nível ---
+    let cabecalho = document.createElement("div");
+    cabecalho.className = "info-principal";
+    cabecalho.style.marginBottom = "10px";
+
+    let titulo = document.createElement("h4");
+
+    let textoTitulo = document.createTextNode(item.titulo + " ");
+    titulo.appendChild(textoTitulo);
+
+    let badge = document.createElement("span");
+    badge.className = "badge";
+    badge.style.cssText = "font-size: 0.8rem; background: #eee; padding: 3px 8px;";
+    badge.textContent = formatarTipo(item.tipo) + " | Nível " + item.dificuldade;
+    titulo.appendChild(badge);
+
+    cabecalho.appendChild(titulo);
+
+    // --- Botões de ação ---
+    let acoes = document.createElement("div");
+    acoes.className = "acoes-card";
+    acoes.style.cssText = "display: flex; gap: 5px;";
+
+    let btnDetalhes = document.createElement("button");
+    btnDetalhes.textContent = "Detalhes";
+    btnDetalhes.onclick = function() { toggleGabarito(item.id); };
+
+    let btnSandbox = document.createElement("button");
+    btnSandbox.textContent = "Laboratório 🧪";
+    btnSandbox.className = "btn-laboratorio";
+    btnSandbox.onclick = function() { window.open("sandbox.html?id=" + item.id, "_blank"); };
+
+    let btnEditar = document.createElement("button");
+    btnEditar.textContent = "Editar ✏️";
+    btnEditar.className = "btn-editar";
+    btnEditar.onclick = function() { ativarEdicao(item.id); };
+
+    let btnExcluir = document.createElement("button");
+    btnExcluir.textContent = "Excluir 🗑️";
+    btnExcluir.className = "btn-sair";
+    btnExcluir.onclick = function() { excluirQuestao(item.id); };
+
+    acoes.appendChild(btnDetalhes);
+    acoes.appendChild(btnSandbox);
+    acoes.appendChild(btnEditar);
+    acoes.appendChild(btnExcluir);
+
+    // --- Área de gabarito (oculta por padrão) ---
+    let gabaritoDiv = document.createElement("div");
+    gabaritoDiv.id = "gabarito-" + item.id;
+    gabaritoDiv.className = "gabarito-area";
+    gabaritoDiv.style.cssText = "display: none; width: 100%; margin-top: 15px;";
+
+    let missaoP = document.createElement("p");
+    let missaoStrong = document.createElement("strong");
+    missaoStrong.textContent = "Missão: ";
+    missaoP.appendChild(missaoStrong);
+    missaoP.appendChild(document.createTextNode(item.missao));
+
+    let pre = document.createElement("pre");
+    pre.className = "codigo-gabarito";
+    let code = document.createElement("code");
+    code.textContent = item.codigoLimpo; // textContent escapa < > & automaticamente
+    pre.appendChild(code);
+
+    gabaritoDiv.appendChild(missaoP);
+    gabaritoDiv.appendChild(pre);
+
+    // --- Monta o card completo ---
+    let card = document.createElement("div");
+    card.className = "card-desafio card-desafio-horizontal";
+    card.appendChild(cabecalho);
+    card.appendChild(acoes);
+    card.appendChild(gabaritoDiv);
+
+    return card;
 }
 
 // =============================================================================

@@ -31,6 +31,11 @@ Exemplos dessa abordagem:
 2. servidor/avaliadorCodigo.js separa análise estrutural (AST) e testes de execução (VM).
 3. Frontend em publico com lógica separada por tela (aluno, admin, sandbox) e CSS centralizado em estilo.css.
 
+## Índice de Estudo
+
+Para facilitar revisão de prova e estudo guiado em sala, o projeto possui um glossário de conceitos:
+1. CONCEITOS.md: índice dos padrões/conceitos aplicados com descrição curta e arquivos de referência.
+
 ## Estrutura do Projeto
 
 1. publico: páginas HTML, scripts de interface e folha de estilos global.
@@ -79,6 +84,34 @@ O projeto foi reforçado com práticas importantes de segurança:
 5. Execução de código do aluno em sandbox VM com timeout para reduzir risco de travamento e abuso.
 6. Bloqueio de acesso visual imediato ao painel admin no frontend até validação de sessão.
 
+## Robustez e Qualidade de Entrada de Dados
+
+O backend agora valida entrada de forma explícita nas rotas críticas.
+
+Principais reforços:
+1. Verificação de tipo, faixa e campos obrigatórios (ex.: dificuldade de 1 a 5, quantidade positiva).
+2. Retorno HTTP 400 com mensagem didática quando o payload é inválido.
+3. Retorno HTTP 404 para operações em questão inexistente (ex.: atualizar/excluir ID não encontrado).
+
+Exemplos de erros tratados:
+1. dificuldade: "abc"
+2. quantidade: -5
+3. idQuestao ausente ou não numérico
+4. payload de questão sem campos obrigatórios
+
+Benefício didático:
+1. Demonstra na prática validação defensiva de API, princípio básico de qualidade de software.
+
+## Desempenho no Acesso ao Banco de Questões
+
+Para reduzir custo de leitura/parse do JSON a cada submissão:
+1. O banco é carregado em memória na inicialização do servidor.
+2. Rotas de leitura usam o cache em memória.
+3. O cache é recarregado após rotas de escrita (criar, atualizar, excluir, abastecer).
+
+Benefício:
+1. Melhor tempo de resposta em cenários com muitas submissões de alunos.
+
 ## Endpoints Principais
 
 Autenticação:
@@ -118,6 +151,14 @@ node servidor/app.js
 1. Área do aluno em http://localhost:3000/aluno.html
 2. Login do professor em http://localhost:3000/login.html
 3. Painel admin em http://localhost:3000/admin.html
+
+## Troubleshooting Rápido
+
+Se o comando node servidor/app.js encerrar com código 1:
+1. Verifique se o arquivo .env existe na raiz do projeto.
+2. Confirme se SESSION_SECRET está definido (obrigatório).
+3. Confira se ADMIN_PASSWORD e GEMINI_API_KEY também estão preenchidos.
+4. Revise o terminal: mensagens de "ERRO CRÍTICO" no boot indicam configuração ausente.
 
 ## Notas Operacionais
 

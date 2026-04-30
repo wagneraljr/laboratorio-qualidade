@@ -146,6 +146,39 @@ button:hover {
     border: 1.5px solid var(--if-verde);
 }
 
+.btn-modo-aluno:hover {
+    background-color: var(--if-verde);
+    color: white;
+    border-color: var(--if-verde-escuro);
+}
+
+/* Botão do acesso ao Sandbox/Laboratório no painel do professor
+   segue o mesmo padrão "invertido" (contorno verde e fundo branco). */
+.btn-laboratorio {
+    background-color: transparent;
+    color: var(--if-verde);
+    border: 1.5px solid var(--if-verde);
+}
+
+.btn-laboratorio:hover {
+    background-color: var(--if-verde);
+    color: white;
+    border-color: var(--if-verde-escuro);
+}
+
+/* Botão de edição no admin: mesmo padrão invertido, mas na cor vermelha. */
+.btn-editar {
+    background-color: transparent;
+    color: var(--if-vermelho);
+    border: 1.5px solid var(--if-vermelho);
+}
+
+.btn-editar:hover {
+    background-color: var(--if-vermelho);
+    color: white;
+    border-color: var(--if-vermelho-escuro);
+}
+
 
 /* =============================================================================
    6. INPUTS E FORMULÁRIOS

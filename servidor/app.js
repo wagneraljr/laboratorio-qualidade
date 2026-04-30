@@ -44,12 +44,24 @@ app.use(cookieParser(segredoSessao));
 const caminhoPublico = path.join(__dirname, "..", "publico");
 const caminhoBanco   = path.join(__dirname, "bancoQuestoes.json");
 
+// Em produção (HTTPS), o cookie deve trafegar apenas em conexões seguras.
+// Em desenvolvimento local (HTTP), a flag "secure: true" impede que o cookie
+// seja enviado de volta ao servidor — o professor ficaria preso em loop de login.
+// A variável NODE_ENV resolve isso automaticamente:
+//   desenvolvimento: NODE_ENV não definido ou "development" → secure: false
+//   produção:        NODE_ENV="production"                  → secure: true
+const emProducao = process.env.NODE_ENV === "production";
+
 // Serve os arquivos HTML, CSS e JS da pasta "publico" automaticamente
 app.use(express.static(caminhoPublico));
 
 // -----------------------------------------------------------------------------
 // SEÇÃO 2: FUNÇÕES AUXILIARES (Acesso ao Banco de Dados)
 // -----------------------------------------------------------------------------
+
+// Cache em memória do banco de questões.
+// Ele é carregado na inicialização e reutilizado nas rotas de leitura.
+let bancoEmMemoria = [];
 
 // Lê e retorna o banco de questões do disco.
 //
@@ -60,7 +72,7 @@ app.use(express.static(caminhoPublico));
 // tratamento de erro em um único lugar. Isso também facilita escrever testes
 // automatizados: podemos substituir esta função por uma versão falsa ("mock")
 // que retorna dados fixos, sem precisar de um arquivo real no disco.
-function lerBanco() {
+function lerBancoDoDisco() {
     try {
         let conteudo = fs.readFileSync(caminhoBanco, "utf8");
         return JSON.parse(conteudo);
@@ -69,6 +81,18 @@ function lerBanco() {
         // o diagnóstico quando algo der errado em produção.
         throw new Error("Não foi possível ler o banco de questões: " + erro.message);
     }
+}
+
+// Atualiza o cache em memória lendo novamente o arquivo JSON no disco.
+// Usamos esta função apenas na inicialização e após rotas de escrita.
+function recarregarBancoEmMemoria() {
+    bancoEmMemoria = lerBancoDoDisco();
+    return bancoEmMemoria;
+}
+
+// Retorna o banco já carregado em memória.
+function lerBanco() {
+    return bancoEmMemoria;
 }
 
 // Salva a lista de questões no disco.
@@ -90,6 +114,84 @@ function atraso(milissegundos) {
     return new Promise(function(resolucao) {
         setTimeout(resolucao, milissegundos);
     });
+}
+
+// -----------------------------------------------------------------------------
+// SEÇÃO 2.1: VALIDAÇÃO DE ENTRADA (Didática e Reutilizável)
+// -----------------------------------------------------------------------------
+
+// Verifica se o valor é um inteiro dentro de um intervalo [min, max].
+function ehInteiroNoIntervalo(valor, min, max) {
+    let numero = Number(valor);
+    return Number.isInteger(numero) && numero >= min && numero <= max;
+}
+
+// Tipos de questão permitidos no sistema.
+function tipoQuestaoEhValido(tipo) {
+    return tipo === "correcao" || tipo === "refatoracao";
+}
+
+// Valida a estrutura mínima de uma lista de testes.
+function testesSaoValidos(testes) {
+    if (!Array.isArray(testes) || testes.length === 0) return false;
+
+    for (let teste of testes) {
+        if (!teste || typeof teste !== "object") return false;
+        if (typeof teste.parametros !== "string" || teste.parametros.trim() === "") return false;
+
+        // saidaEsperada pode ser número, string, array, boolean etc.
+        // O importante é o campo existir.
+        if (!Object.prototype.hasOwnProperty.call(teste, "saidaEsperada")) return false;
+    }
+
+    return true;
+}
+
+// Valida os campos essenciais de uma questão.
+function validarQuestao(questao, precisaDeId) {
+    if (!questao || typeof questao !== "object") {
+        return "Corpo da requisição inválido: esperado um objeto JSON.";
+    }
+
+    if (precisaDeId) {
+        if (typeof questao.id !== "number" || !Number.isFinite(questao.id)) {
+            return "Campo obrigatório inválido: 'id' deve ser número.";
+        }
+    }
+
+    if (typeof questao.titulo !== "string" || questao.titulo.trim() === "") {
+        return "Campo obrigatório inválido: 'titulo' deve ser texto não vazio.";
+    }
+
+    if (!tipoQuestaoEhValido(questao.tipo)) {
+        return "Campo obrigatório inválido: 'tipo' deve ser 'correcao' ou 'refatoracao'.";
+    }
+
+    if (!ehInteiroNoIntervalo(questao.dificuldade, 1, 5)) {
+        return "Campo obrigatório inválido: 'dificuldade' deve ser inteiro entre 1 e 5.";
+    }
+
+    if (typeof questao.missao !== "string" || questao.missao.trim() === "") {
+        return "Campo obrigatório inválido: 'missao' deve ser texto não vazio.";
+    }
+
+    if (typeof questao.codigoSujo !== "string" || questao.codigoSujo.trim() === "") {
+        return "Campo obrigatório inválido: 'codigoSujo' deve ser texto não vazio.";
+    }
+
+    if (typeof questao.codigoLimpo !== "string" || questao.codigoLimpo.trim() === "") {
+        return "Campo obrigatório inválido: 'codigoLimpo' deve ser texto não vazio.";
+    }
+
+    if (typeof questao.nomeDaFuncao !== "string" || questao.nomeDaFuncao.trim() === "") {
+        return "Campo obrigatório inválido: 'nomeDaFuncao' deve ser texto não vazio.";
+    }
+
+    if (!testesSaoValidos(questao.testes)) {
+        return "Campo obrigatório inválido: 'testes' deve ser um array com pelo menos 1 caso válido.";
+    }
+
+    return null; // null significa "válido"
 }
 
 // -----------------------------------------------------------------------------
@@ -127,6 +229,10 @@ app.post("/api/login", function(requisicao, resposta) {
     let senhaDigitada = requisicao.body.senha;
     let senhaCorreta  = process.env.ADMIN_PASSWORD;
 
+    if (typeof senhaDigitada !== "string" || senhaDigitada.trim() === "") {
+        return resposta.status(400).json({ sucesso: false, erro: "Campo obrigatório inválido: 'senha' deve ser texto não vazio." });
+    }
+
     if (senhaDigitada === senhaCorreta) {
         // Cria o cookie com quatro proteções de segurança combinadas:
         //   httpOnly: JavaScript do navegador não consegue ler o cookie (protege contra XSS)
@@ -136,7 +242,7 @@ app.post("/api/login", function(requisicao, resposta) {
         resposta.cookie("auth_token", "logado", {
             maxAge:   3600000, // Expira em 1 hora (valor em milissegundos)
             httpOnly: true,
-            secure:   true,
+            secure:   emProducao, // true em HTTPS (produção), false em HTTP (desenvolvimento local)
             sameSite: "strict",
             signed:   true
         });
@@ -160,7 +266,15 @@ app.post("/api/logout", function(requisicao, resposta) {
 // Rota: sortear uma questão por tipo e dificuldade (Modo Livre)
 app.post("/api/missao-aleatoria", function(requisicao, resposta) {
     let tipoDesejado        = requisicao.body.tipo;
-    let dificuldadeDesejada = parseInt(requisicao.body.dificuldade);
+    let dificuldadeDesejada = Number(requisicao.body.dificuldade);
+
+    if (!tipoQuestaoEhValido(tipoDesejado)) {
+        return resposta.status(400).json({ sucesso: false, erro: "Campo inválido: 'tipo' deve ser 'correcao' ou 'refatoracao'." });
+    }
+
+    if (!ehInteiroNoIntervalo(dificuldadeDesejada, 1, 5)) {
+        return resposta.status(400).json({ sucesso: false, erro: "Campo inválido: 'dificuldade' deve ser inteiro entre 1 e 5." });
+    }
 
     // CONCEITO DE TESTES: Tratamento de Exceção em Ponto de I/O
     // Usamos try/catch aqui porque lerBanco() acessa o disco — uma operação
@@ -209,6 +323,19 @@ app.post("/api/missao-aleatoria", function(requisicao, resposta) {
 app.post("/api/avaliar", function(requisicao, resposta) {
     let codigoDoAluno = requisicao.body.codigo;
     let idDaQuestao   = requisicao.body.idQuestao;
+
+    if (typeof codigoDoAluno !== "string" || codigoDoAluno.trim() === "") {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo obrigatório inválido: 'codigo' deve ser texto não vazio."] });
+    }
+
+    // Normaliza para número quando o cliente envia ID como string.
+    if (typeof idDaQuestao === "string" && idDaQuestao.trim() !== "") {
+        idDaQuestao = Number(idDaQuestao);
+    }
+
+    if (typeof idDaQuestao !== "number" || !Number.isFinite(idDaQuestao)) {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo obrigatório inválido: 'idQuestao' deve ser número."] });
+    }
 
     let listaDeQuestoes;
     try {
@@ -290,10 +417,23 @@ app.get("/api/admin/questoes", verificarAutenticacao, function(requisicao, respo
 
 // Rota: gerar questões em lote via IA
 app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisicao, resposta) {
-    let quantidade  = requisicao.body.quantidade;
+    let quantidade  = Number(requisicao.body.quantidade);
     let tipo        = requisicao.body.tipo;
-    let dificuldade = parseInt(requisicao.body.dificuldade);
+    let dificuldade = Number(requisicao.body.dificuldade);
     let totalGerados = 0;
+
+    if (!tipoQuestaoEhValido(tipo)) {
+        return resposta.status(400).json({ sucesso: false, erro: "Campo inválido: 'tipo' deve ser 'correcao' ou 'refatoracao'." });
+    }
+
+    if (!ehInteiroNoIntervalo(dificuldade, 1, 5)) {
+        return resposta.status(400).json({ sucesso: false, erro: "Campo inválido: 'dificuldade' deve ser inteiro entre 1 e 5." });
+    }
+
+    // Limite didático para evitar requisições exageradas por engano.
+    if (!ehInteiroNoIntervalo(quantidade, 1, 20)) {
+        return resposta.status(400).json({ sucesso: false, erro: "Campo inválido: 'quantidade' deve ser inteiro entre 1 e 20." });
+    }
 
     try {
         let listaDeQuestoes = lerBanco();
@@ -313,7 +453,7 @@ app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisica
             try {
                 let novoExercicio = await geradorIA.gerarNovoDesafio(tipo, dificuldade);
                 if (novoExercicio !== null) {
-                    novoExercicio.id = Date.now() + i; // Timestamp garante IDs únicos
+                    novoExercicio.id = Date.now() + Math.random(); // Timestamp + random garante IDs únicos
                     listaDeQuestoes.push(novoExercicio);
                     totalGerados++;
                 }
@@ -324,6 +464,7 @@ app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisica
         }
 
         salvarBanco(listaDeQuestoes);
+        recarregarBancoEmMemoria();
         resposta.json({ sucesso: true, quantidade: totalGerados });
 
     } catch (erro) {
@@ -334,7 +475,11 @@ app.post("/api/admin/abastecer", verificarAutenticacao, async function(requisica
 // Rota: excluir uma questão pelo ID
 app.delete("/api/admin/questoes/:id", verificarAutenticacao, function(requisicao, resposta) {
     // O parâmetro de URL chega como string; parseInt converte para número
-    let idParaExcluir = parseInt(requisicao.params.id);
+    let idParaExcluir = Number(requisicao.params.id);
+
+    if (typeof idParaExcluir !== "number" || !Number.isFinite(idParaExcluir)) {
+        return resposta.status(400).json({ sucesso: false, erro: "Parâmetro inválido: 'id' deve ser número." });
+    }
 
     try {
         let lista = lerBanco();
@@ -345,7 +490,12 @@ app.delete("/api/admin/questoes/:id", verificarAutenticacao, function(requisicao
             return questao.id !== idParaExcluir;
         });
 
+        if (novaLista.length === lista.length) {
+            return resposta.status(404).json({ sucesso: false, erro: "Questão não encontrada para exclusão." });
+        }
+
         salvarBanco(novaLista);
+        recarregarBancoEmMemoria();
         resposta.json({ sucesso: true });
     } catch (erro) {
         resposta.status(500).json({ sucesso: false, erro: erro.message });
@@ -356,8 +506,14 @@ app.delete("/api/admin/questoes/:id", verificarAutenticacao, function(requisicao
 app.post("/api/admin/questoes/atualizar", verificarAutenticacao, function(requisicao, resposta) {
     let questaoEditada = requisicao.body;
 
+    let erroValidacao = validarQuestao(questaoEditada, true);
+    if (erroValidacao) {
+        return resposta.status(400).json({ sucesso: false, erro: erroValidacao });
+    }
+
     try {
         let lista = lerBanco();
+        let encontrou = false;
 
         for (let i = 0; i < lista.length; i++) {
             if (lista[i].id === questaoEditada.id) {
@@ -369,11 +525,17 @@ app.post("/api/admin/questoes/atualizar", verificarAutenticacao, function(requis
                 // (como testes e nomeDaFuncao) são preservados do original.
                 // Sem isso, uma edição parcial apagaria esses dados silenciosamente.
                 lista[i] = Object.assign({}, lista[i], questaoEditada);
+                encontrou = true;
                 break;
             }
         }
 
+        if (!encontrou) {
+            return resposta.status(404).json({ sucesso: false, erro: "Questão não encontrada para atualização." });
+        }
+
         salvarBanco(lista);
+        recarregarBancoEmMemoria();
         resposta.json({ sucesso: true });
     } catch (erro) {
         resposta.status(500).json({ sucesso: false, erro: erro.message });
@@ -384,10 +546,23 @@ app.post("/api/admin/questoes/atualizar", verificarAutenticacao, function(requis
 app.post("/api/admin/questoes/criar", verificarAutenticacao, function(requisicao, resposta) {
     let novaQuestao = requisicao.body;
 
+    let erroValidacao = validarQuestao(novaQuestao, true);
+    if (erroValidacao) {
+        return resposta.status(400).json({ sucesso: false, erro: erroValidacao });
+    }
+
     try {
         let lista = lerBanco();
+
+        for (let questao of lista) {
+            if (questao.id === novaQuestao.id) {
+                return resposta.status(400).json({ sucesso: false, erro: "ID já existente. Use um ID único para criar nova questão." });
+            }
+        }
+
         lista.push(novaQuestao);
         salvarBanco(lista);
+        recarregarBancoEmMemoria();
         resposta.json({ sucesso: true });
     } catch (erro) {
         resposta.status(500).json({ sucesso: false, erro: erro.message });
@@ -397,6 +572,26 @@ app.post("/api/admin/questoes/criar", verificarAutenticacao, function(requisicao
 // Rota: testar código no Sandbox do Professor
 app.post("/api/admin/sandbox/testar", verificarAutenticacao, function(requisicao, resposta) {
     let { codigo, nomeDaFuncao, testes, forcarAvaliacaoAST, codigoSujoOriginal } = requisicao.body;
+
+    if (typeof codigo !== "string" || codigo.trim() === "") {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo obrigatório inválido: 'codigo' deve ser texto não vazio."] });
+    }
+
+    if (typeof nomeDaFuncao !== "string" || nomeDaFuncao.trim() === "") {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo obrigatório inválido: 'nomeDaFuncao' deve ser texto não vazio."] });
+    }
+
+    if (!testesSaoValidos(testes)) {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo obrigatório inválido: 'testes' deve ser um array com pelo menos 1 caso válido."] });
+    }
+
+    if (forcarAvaliacaoAST !== undefined && typeof forcarAvaliacaoAST !== "boolean") {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo inválido: 'forcarAvaliacaoAST' deve ser boolean."] });
+    }
+
+    if (forcarAvaliacaoAST === true && (typeof codigoSujoOriginal !== "string" || codigoSujoOriginal.trim() === "")) {
+        return resposta.status(400).json({ sucesso: false, erros: ["Campo obrigatório inválido: 'codigoSujoOriginal' deve ser texto não vazio quando forçar AST."] });
+    }
 
     // Ativa a análise AST apenas quando o professor testa o gabarito de uma refatoração.
     // Se estiver testando o código sujo, desativamos — ele falharia na comparação de
@@ -414,6 +609,15 @@ app.post("/api/admin/sandbox/testar", verificarAutenticacao, function(requisicao
 // -----------------------------------------------------------------------------
 // SEÇÃO 7: INICIALIZAÇÃO
 // -----------------------------------------------------------------------------
+
+// Carrega o banco uma vez no boot para evitar leitura/parse a cada requisição.
+try {
+    recarregarBancoEmMemoria();
+    console.log("Banco de questões carregado em memória com sucesso.");
+} catch (erro) {
+    console.error("ERRO CRÍTICO ao carregar banco de questões na inicialização:", erro.message);
+    process.exit(1);
+}
 
 app.listen(3000, "0.0.0.0", function() {
     console.log("Servidor rodando! Acesse: http://localhost:3000");

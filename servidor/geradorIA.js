@@ -101,7 +101,107 @@ function montarPrompt(tipoDeExercicio, nivelDificuldade) {
             ]
         }
         REGRA DOS TESTES: O valor de 'parametros' deve ser uma string com o conteúdo EXATO que vai dentro dos parênteses da função. Não envolva números soltos em colchetes.
+
+        VALIDAÇÃO OBRIGATÓRIA ANTES DE RESPONDER:
+        Antes de gerar o JSON final, simule mentalmente a execução de cada teste:
+        1. Chame nomeDaFuncao(parametros) usando o codigoLimpo (gabarito).
+        2. Confirme que o retorno é EXATAMENTE igual a saidaEsperada (mesmo tipo: número, string, array, boolean).
+        3. Se qualquer teste falhar nessa simulação, corrija o código ou o teste antes de responder.
+        Só inclua um teste no JSON se tiver certeza absoluta de que ele passa com o gabarito.
     `;
+}
+
+// =============================================================================
+// VALIDAÇÃO PROGRAMÁTICA DO EXERCÍCIO GERADO
+// =============================================================================
+
+// Valida o objeto retornado pela IA antes de aceitá-lo no banco.
+//
+// CONCEITO DE TESTES: Validação de Contrato (Contract Testing)
+// A IA é um sistema externo — não podemos garantir que ela sempre devolverá
+// dados no formato correto. Esta função age como um "porteiro": só deixa
+// passar questões que atendam a todos os critérios mínimos de qualidade.
+// Isso é o mesmo princípio de validar dados de entrada em qualquer sistema.
+//
+// CONCEITO DE TESTES: Teste de Execução Real (Smoke Test)
+// Além de checar a estrutura do JSON, executamos cada caso de teste contra
+// o gabarito usando a mesma máquina virtual do avaliador de alunos. Se um
+// teste não passar com o próprio gabarito, a questão nunca funcionaria —
+// é melhor descartar agora do que descobrir durante a aula.
+//
+// Retorna um objeto: { valido: true } ou { valido: false, motivo: "..." }
+function validarExercicio(exercicio) {
+    const vm = require("vm");
+
+    // --- ETAPA 1: Verificação de estrutura (campos obrigatórios) ---
+    //
+    // CONCEITO DE TESTES: Validação de Campos Obrigatórios
+    // Antes de qualquer lógica, verificamos se o JSON tem todos os campos
+    // que o resto do sistema espera. Sem isso, erros obscuros aparecem mais
+    // tarde em partes do código completamente diferentes.
+    const camposObrigatorios = ["titulo", "missao", "codigoSujo", "codigoLimpo", "nomeDaFuncao", "testes", "tipo", "dificuldade"];
+    for (let campo of camposObrigatorios) {
+        if (!exercicio[campo]) {
+            return { valido: false, motivo: `Campo obrigatório ausente: '${campo}'` };
+        }
+    }
+
+    // Pelo menos 2 testes são necessários para uma validação minimamente confiável
+    if (!Array.isArray(exercicio.testes) || exercicio.testes.length < 2) {
+        return { valido: false, motivo: "A questão precisa ter pelo menos 2 casos de teste." };
+    }
+
+    // --- ETAPA 2: Execução real dos testes contra o gabarito (Smoke Test) ---
+    //
+    // CONCEITO DE TESTES: Por que testar o gabarito?
+    // A IA pode gerar testes matematicamente incorretos — ex: dizer que
+    // somarArray([1,2,3]) retorna 7 quando o gabarito retorna 6. Isso faria
+    // o aluno "acertar" uma questão impossível ou "errar" uma questão correta.
+    // Executar os testes contra o gabarito garante consistência interna.
+    let totalTestes = exercicio.testes.length;
+    let testesPassando = 0;
+    let testesComErro = [];
+
+    for (let i = 0; i < totalTestes; i++) {
+        let teste = exercicio.testes[i];
+
+        // Cada teste roda em um sandbox isolado — o mesmo mecanismo usado
+        // para avaliar o código dos alunos (ver avaliadorCodigo.js).
+        try {
+            let ambiente = {};
+            vm.createContext(ambiente);
+            vm.runInContext(exercicio.codigoLimpo, ambiente, { timeout: 2000 });
+
+            let chamada   = exercicio.nomeDaFuncao + "(" + teste.parametros + ")";
+            let resultado = vm.runInContext(chamada, ambiente, { timeout: 2000 });
+
+            // Comparação por valor usando JSON.stringify — o mesmo critério
+            // usado pelo avaliador de alunos, garantindo consistência
+            if (JSON.stringify(resultado) === JSON.stringify(teste.saidaEsperada)) {
+                testesPassando++;
+            } else {
+                testesComErro.push(
+                    `Teste ${i + 1}: ${chamada} retornou ${JSON.stringify(resultado)}, ` +
+                    `esperado ${JSON.stringify(teste.saidaEsperada)}`
+                );
+            }
+        } catch (erro) {
+            testesComErro.push(`Teste ${i + 1}: exceção ao executar — ${erro.message}`);
+        }
+    }
+
+    // CONCEITO DE TESTES: Limiar de Aceitação
+    // Exigimos que TODOS os testes passem. Um único teste incorreto já
+    // compromete a integridade da questão — não há "aprovação parcial" aqui.
+    if (testesPassando < totalTestes) {
+        return {
+            valido: false,
+            motivo: `${testesComErro.length} teste(s) falharam com o próprio gabarito:\n  - ` + testesComErro.join("\n  - ")
+        };
+    }
+
+    // Questão passou em todas as verificações
+    return { valido: true };
 }
 
 // =============================================================================
@@ -138,7 +238,23 @@ async function gerarNovoDesafio(tipoDeExercicio, nivelDificuldade) {
 
             // JSON.parse lança uma exceção se o texto não for um JSON válido.
             // Isso ativa o catch abaixo e dispara uma nova tentativa.
-            return JSON.parse(texto);
+            let exercicio = JSON.parse(texto);
+
+            // CONCEITO DE TESTES: Validação Antes de Aceitar
+            // Só retornamos a questão se ela passar em todos os critérios:
+            // estrutura correta e todos os testes validados contra o gabarito.
+            // Se falhar, tratamos como se a tentativa tivesse dado erro —
+            // o backoff exponencial cuida do reenvio automaticamente.
+            let validacao = validarExercicio(exercicio);
+            if (!validacao.valido) {
+                // Lançamos um erro para cair no catch e acionar a próxima tentativa.
+                // A mensagem explica EXATAMENTE o que a IA gerou de errado,
+                // facilitando a depuração ao olhar os logs do servidor.
+                throw new Error("Questão inválida gerada pela IA: " + validacao.motivo);
+            }
+
+            console.log(`[IA] Questão "${exercicio.titulo}" validada com sucesso (${exercicio.testes.length} testes passaram).`);
+            return exercicio;
 
         } catch (erro) {
             console.warn(`[IA] Falha na tentativa ${tentativa} de ${MAX_TENTATIVAS}: ${erro.message}`);
